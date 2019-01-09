@@ -296,17 +296,16 @@ public class Chase {
      */
     static int do_chase(ThingImp th) {
         int DRAGONSHOT = 5;   /* one chance in DRAGONSHOT that a dragon will flame */
-        AbstractCoord cp;
-        Room rer, ree;    /* room of chaser, room of chasee */
-        int mindist = 32767, curdist;
-        boolean stoprun = false;    /* true means we are there */
-        boolean door;
+        int mindist = 32767;
         Coord thisTmp = new Coord();            /* Temporary destination for chaser */
 
-        rer = th.t_room;        /* Find room of chaser */
+        /* Find room of chaser */
+        /* room of chaser, room of chasee */
+        Room rer = th.t_room;
         if (th.containsState(StateEnum.ISGREED) && rer.r_goldval == 0) {
             th._t_dest = Global.player._t_pos;    /* If gold has been taken, run after hero */
         }
+        Room ree;
         if (th._t_dest == Global.player._t_pos) {    /* Find room of chasee */
             ree = Global.player.t_room;
         } else {
@@ -315,7 +314,7 @@ public class Chase {
         /*
          * We don't count doors as inside rooms for this routine
          */
-        door = (Global.places.get((th._t_pos.x << 5) + th._t_pos.y).p_ch == ObjectType.DOOR);
+        boolean door = (Global.places.get((th._t_pos.x << 5) + th._t_pos.y).p_ch == ObjectType.DOOR);
         /*
          * If the object of our desire is in a different room,
          * and we are not in a corridor, run to the door nearest to
@@ -325,8 +324,8 @@ public class Chase {
         while (true) {
             if (rer != ree) {
                 for (int i = 0; i < rer.r_nexits; i++) {
-                    cp = rer.r_exit[i];
-                    curdist = dist_cp(th._t_dest, (Coord) cp);
+                    AbstractCoord cp = rer.r_exit[i];
+                    int curdist = dist_cp(th._t_dest, (Coord) cp);
                     if (curdist < mindist) {
                         thisTmp = (Coord) cp;
                         mindist = curdist;
@@ -371,6 +370,8 @@ public class Chase {
          * so we run to it.  If we hit it we either want to fight it
          * or stop running
          */
+        /* true means we are there */
+        boolean stoprun = false;
         if (!chase(th, thisTmp)) {
             if (thisTmp.equals(Global.player._t_pos)) {
                 return (Fight.attack(th));
@@ -439,7 +440,6 @@ public class Chase {
          * closest to the chasee.
          */
         else {
-            int ey, ex;
             /*
              * This will eventually hold where we move to get closer
              * If we can't find an empty spot, we stay where we are.
@@ -447,11 +447,11 @@ public class Chase {
             curdist = dist_cp(er, ee);
             ch_ret = er;
 
-            ey = er.y + 1;
+            int ey = er.y + 1;
             if (ey >= Const.NUMLINES - 1) {
                 ey = Const.NUMLINES - 2;
             }
-            ex = er.x + 1;
+            int ex = er.x + 1;
             if (ex >= Const.NUMCOLS) {
                 ex = Const.NUMCOLS - 1;
             }
