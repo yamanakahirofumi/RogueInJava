@@ -1,0 +1,2 @@
+# RogueInJava
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/021660831cd24c3d8ae14cb4ab0207cd)](https://app.codacy.com/app/yamanakahirofumi/RogueInJava?utm_source=github.com&utm_medium=referral&utm_content=yamanakahirofumi/RogueInJava&utm_campaign=Badge_Grade_Dashboard)
