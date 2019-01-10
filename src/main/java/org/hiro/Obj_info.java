@@ -7,9 +7,17 @@ package org.hiro;
 public class Obj_info {
     String oi_name;
 	int oi_prob;  // なりやすさ
-	int oi_worth;  // 価値
-	String oi_guess;
+	private int oi_worth;  // 価値
+	String oi_guess;  // ニックネーム、推測した名前
 	boolean oi_know; // 知っているかどうか
+
+	public Obj_info(String oi_name, int oi_prob,int oi_worth){
+		this.oi_name = oi_name;
+		this.oi_prob = oi_prob;
+		this.oi_worth = oi_worth;
+		this.oi_guess = "";
+		this.oi_know = false;
+	}
 
 	public Obj_info(String oi_name, int oi_prob,int oi_worth, String oi_guess, boolean oi_know ){
 		this.oi_name = oi_name;
@@ -17,5 +25,13 @@ public class Obj_info {
 		this.oi_worth = oi_worth;
 		this.oi_guess = oi_guess;
 		this.oi_know = oi_know;
+	}
+
+	public int getProbability() {
+		return oi_prob;
+	}
+
+	public String getName(){
+		return this.oi_name;
 	}
 }

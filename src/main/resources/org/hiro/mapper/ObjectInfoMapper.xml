@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hiro.mapper.ObjectInfoMapper">
+    <select id="findAll" resultMap="objectinfoInit">
+        SELECT name, probability, worth FROM objectinfo
+    </select>
+    <select id="findByTypeByPlayer" resultMap="objectinfo">
+        SELECT name, probability, worth,
+          COALESCE(n.guessed, '') as guess, COALESCE(n.knowledge, FALSE) as know FROM objectinfo as o
+          LEFT OUTER JOIN objectinfo_knowledge AS n
+            ON o.type_id = #{typeId} AND o.id = n.info_id AND n.player_id = #{playerId}
+          order by probability desc
+    </select>
+
+    <resultMap id="objectinfoInit" type="org.hiro.Obj_info">
+        <constructor>
+            <arg name="oi_name" column="name"/>
+            <arg name="oi_prob" column="probability"/>
+            <arg name="oi_worth" column="worth"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="objectinfo" type="org.hiro.Obj_info">
+        <constructor>
+            <arg name="oi_name" column="name"/>
+            <arg name="oi_prob" column="probability"/>
+            <arg name="oi_worth" column="worth"/>
+            <arg name="oi_guess" column="guess"/>
+            <arg name="oi_know" column="know"/>
+        </constructor>
+    </resultMap>
+</mapper>
