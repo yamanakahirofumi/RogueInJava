@@ -148,7 +148,7 @@ public class ScrollMethod {
                  * Identify, let him figure something out
                  */
                 Global.scr_info[obj._o_which].oi_know = true;
-                IOUtil.msg("this scroll is an %s scroll", Global.scr_info[obj._o_which].oi_name);
+                IOUtil.msg("this scroll is an %s scroll", Global.scr_info[obj._o_which].getName());
                 Wizard.whatis(true, id_type[obj._o_which]);
             }
             break;
@@ -275,7 +275,7 @@ public class ScrollMethod {
                         Global.cur_weapon._o_dplus++;
                     }
                     IOUtil.msg("your %s glows %s for a moment",
-                            Global.weap_info[Global.cur_weapon._o_which].oi_name, Init.pick_color("blue"));
+                            Global.weap_info[Global.cur_weapon._o_which].getName(), Init.pick_color("blue"));
                 }
                 break;
             case S_SCARE:

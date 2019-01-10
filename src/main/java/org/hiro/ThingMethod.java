@@ -31,7 +31,7 @@ public class ThingMethod {
         int rnd = Util.rnd(100);
         int j;
         for (j = 0; j < nitems; j++) {
-            if (rnd < info.get(j).oi_prob) {
+            if (rnd < info.get(j).getProbability()) {
                 break;
             }
         }
@@ -205,7 +205,7 @@ public class ThingMethod {
                 }
                 op = Global.scr_info[which];
                 if (op.oi_know) {
-                    Global.prbuf = Global.prbuf + "of " + op.oi_name;
+                    Global.prbuf = Global.prbuf + "of " + op.getName();
                 } else if (op.oi_guess != null) {
                     Global.prbuf = Global.prbuf + "called " + op.oi_guess;
                 } else {
@@ -226,7 +226,7 @@ public class ThingMethod {
                 }
                 break;
             case WEAPON:
-                sp = Global.weap_info[which].oi_name;
+                sp = Global.weap_info[which].getName();
                 if (obj._o_count > 1) {
                     Global.prbuf = obj._o_count + " ";
                 } else {
@@ -246,7 +246,7 @@ public class ThingMethod {
                 }
                 break;
             case ARMOR:
-                sp = Global.arm_info[which].oi_name;
+                sp = Global.arm_info[which].getName();
                 if (obj.contains_o_flags(Const.ISKNOW)) {
                     Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj._o_arm, 0, ObjectType.ARMOR)
                             + " " + sp + " [";
@@ -309,7 +309,7 @@ public class ThingMethod {
             }
             try {
                 if (op.oi_know) {
-                    Global.prbuf = Global.prbuf + "of " + op.oi_name + prfunc.invoke(obj) + "(" + which + ")";
+                    Global.prbuf = Global.prbuf + "of " + op.getName() + prfunc.invoke(obj) + "(" + which + ")";
                 } else if (op.oi_guess != null) {
                     Global.prbuf = Global.prbuf + "called " + op.oi_guess + prfunc.invoke(obj) + "(" + which + ")";
                 }

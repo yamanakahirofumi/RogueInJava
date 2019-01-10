@@ -276,7 +276,7 @@ public class Fight {
             return;
         }
         if (weap._o_type == ObjectType.WEAPON) {
-            IOUtil.addmsg("the %s misses ", Global.weap_info[weap._o_which].oi_name);
+            IOUtil.addmsg("the %s misses ", Global.weap_info[weap._o_which].getName());
         } else {
             IOUtil.addmsg("you missed ");
         }
@@ -296,7 +296,7 @@ public class Fight {
             return;
         }
         if (weap._o_type == ObjectType.WEAPON) {
-            IOUtil.addmsg("the %s hits ", Global.weap_info[weap._o_which].oi_name);
+            IOUtil.addmsg("the %s hits ", Global.weap_info[weap._o_which].getName());
         } else {
             IOUtil.addmsg("you hit ");
         }

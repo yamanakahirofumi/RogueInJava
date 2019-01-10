@@ -304,7 +304,7 @@ public class StickMethod {
         bolt._o_hurldmg = "6x6";
         bolt._o_hplus = 100;
         bolt._o_dplus = 0;
-        Global.weap_info[WeaponEnum.FLAME.getValue()].oi_name = name;
+        Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
         int dirch = 0;
         switch (dir.y + dir.x) {
             case 0:

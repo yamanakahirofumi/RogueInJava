@@ -107,7 +107,7 @@ public class WeaponMethod {
                 Global.has_hit = false;
             }
             IOUtil.msg("the %s vanishes as it hits the ground",
-                    Global.weap_info[obj._o_which].oi_name);
+                    Global.weap_info[obj._o_which].getName());
         }
         ListMethod.discard(obj);
     }
