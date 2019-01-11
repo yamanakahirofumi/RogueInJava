@@ -11,6 +11,8 @@ public interface ObjectInfoMapper {
 
     List<Obj_info> findAll();
 
+    List<Obj_info> findByType(int typeId);
+
     List<Obj_info> findByTypeByPlayer(TypePlayer tp);
 
 }

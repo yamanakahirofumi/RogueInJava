@@ -131,9 +131,7 @@ public class Options {
             // wait_for(hw, ' ');
             // clearok(curscr, true);
             // touchwin(stdscr);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 

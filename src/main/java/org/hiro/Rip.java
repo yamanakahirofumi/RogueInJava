@@ -79,7 +79,7 @@ public class Rip {
      *	Convert a code to a monster name
      */
     static String killname(int monst, boolean doart) {
-        List<Help_list> nlist = new ArrayList<Help_list>();
+        List<Help_list> nlist = new ArrayList<>();
         {
             Help_list h = new Help_list('a', "arrow", true);
             nlist.add(h);

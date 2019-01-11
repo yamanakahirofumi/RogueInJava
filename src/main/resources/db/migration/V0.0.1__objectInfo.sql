@@ -14,7 +14,7 @@ CREATE TABLE objectinfo (
     id INT,
     type_id INT,
     probability INT,
-    worth　INT,
+    worth INT,
     name TEXT,
     FOREIGN KEY(type_id) REFERENCES objectinfo_types(id),
     PRIMARY KEY(id, type_id)

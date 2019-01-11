@@ -103,9 +103,7 @@ public class Daemon {
             if (dev.d_type == flag && dev.d_time == DAEMON) {
                 try {
                     dev.d_func.invoke(dev.d_arg);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -131,9 +129,7 @@ public class Daemon {
                 wire.d_type = Const.EMPTY;
                 try {
                     wire.d_func.invoke(wire.d_arg);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
