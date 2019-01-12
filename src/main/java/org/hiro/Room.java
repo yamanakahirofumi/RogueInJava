@@ -59,8 +59,7 @@ public class Room {
 		p.setPostion(coord);
 	}
 	public AbstractCoordinate randomPosition(){
-		AbstractCoordinate cp = factory.create().random(this.r_pos, this.r_max);
-		return cp;
+        return factory.create().random(this.r_pos, this.r_max);
 	}
 
 	public void addInfo(RoomInfoEnum r){
