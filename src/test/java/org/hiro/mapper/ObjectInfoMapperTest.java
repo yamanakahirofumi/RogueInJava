@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ObjectInfoMapperTest {
 
     @Autowired
-    ObjectInfoMapper mapper;
+    private ObjectInfoMapper mapper;
 
     @Test
     @DisplayName("Armors object info initial test")
