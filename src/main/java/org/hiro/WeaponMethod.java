@@ -85,11 +85,10 @@ public class WeaponMethod {
      *	Drop an item someplace around here.
      */
     static void fall(ThingImp obj, boolean pr) {
-        Place pp;
         Coordinate fpos = new Coordinate(); // 多分fallpos()で代入
 
         if (fallpos(obj._o_pos, fpos)) {
-            pp = Util.INDEX(fpos.y, fpos.x);
+            Place pp = Util.INDEX(fpos.y, fpos.x);
             pp.p_ch = obj._o_type;
             obj._o_pos = fpos;
             if (Chase.cansee(fpos.y, fpos.x)) {
@@ -109,7 +108,6 @@ public class WeaponMethod {
             IOUtil.msg("the %s vanishes as it hits the ground",
                     Global.weap_info[obj._o_which].getName());
         }
-        ListMethod.discard(obj);
     }
 
     /*

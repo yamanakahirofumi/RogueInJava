@@ -264,7 +264,6 @@ public class Fight {
                 Mach_dep.flush_type();
             }
         }
-        ListMethod.discard(tp);
     }
 
     /*
@@ -639,7 +638,6 @@ public class Fight {
                             mp = null;
                             steal = Pack.leave_pack(steal, true, false);
                             IOUtil.msg("she stole %s!", ThingMethod.inv_name(steal, true));
-                            ListMethod.discard(steal);
                         }
                     }
                     break;

@@ -36,7 +36,6 @@ public class ScrollMethod {
         /*
          * Get rid of the thing
          */
-        boolean discardit = (obj._o_count == 1);
         Pack.leave_pack(obj, false, false);
         ThingImp orig_obj = obj;
 
@@ -321,9 +320,6 @@ public class ScrollMethod {
 
         Misc.call_it(Global.scr_info[obj._o_which]);
 
-        if (discardit) {
-            ListMethod.discard(obj);
-        }
     }
 
     /*

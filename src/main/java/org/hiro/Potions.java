@@ -59,7 +59,6 @@ public class Potions {
      */
     static void quaff() {
         boolean MASTER = false;
-        boolean discardit = false;
 
         ThingImp obj = Pack.get_item("quaff", ObjectType.POTION);
         /*
@@ -84,7 +83,6 @@ public class Potions {
          * Calculate the effect it has on the poor guy.
          */
         boolean trip = Global.player.containsState(StateEnum.ISHALU);
-        discardit = (obj._o_count == 1);
         Pack.leave_pack(obj, false, false);
         PotionEnum p = PotionEnum.get(obj._o_which);
         boolean show;
@@ -243,10 +241,6 @@ public class Potions {
 
         Misc.call_it(Global.pot_info[obj._o_which]);
 
-        if (discardit) {
-            ListMethod.discard(obj);
-        }
-        return;
     }
 
     /*
