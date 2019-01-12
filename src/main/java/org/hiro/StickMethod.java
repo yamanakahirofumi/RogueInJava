@@ -129,7 +129,7 @@ public class StickMethod {
                     switch (st) {
                         case WS_INVIS:
                             tp.addState(StateEnum.ISINVIS);
-                            if (Chase.cansee(y, x)) {
+                            if (Chase.isSee(new Coordinate(x,y))) {
                                 Display.mvaddch(y, x, (char) tp._t_oldch);
                             }
                             break;

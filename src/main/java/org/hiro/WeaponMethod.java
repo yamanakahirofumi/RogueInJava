@@ -91,7 +91,7 @@ public class WeaponMethod {
             Place pp = Util.INDEX(fpos.y, fpos.x);
             pp.p_ch = obj._o_type;
             obj._o_pos = fpos;
-            if (Chase.cansee(fpos.y, fpos.x)) {
+            if (Chase.isSee(fpos)) {
                 if (pp.p_monst != null) {
                     pp.p_monst._t_oldch = obj._o_type.getValue();
                 } else
@@ -161,7 +161,7 @@ public class WeaponMethod {
             /*
              * Erase the old one
              */
-            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.cansee(obj._o_pos.y, obj._o_pos.x) && !Global.terse) {
+            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.isSee(obj._o_pos) && !Global.terse) {
                 ch = Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch;
                 if (ch == ObjectType.FLOOR && !Misc.show_floor())
                     ch = ObjectType.Blank;
@@ -180,7 +180,7 @@ public class WeaponMethod {
                  * It hasn't hit anything yet, so display it
                  * If it alright.
                  */
-                if (Chase.cansee(obj._o_pos.y, obj._o_pos.x) && !Global.terse) {
+                if (Chase.isSee(obj._o_pos) && !Global.terse) {
                     Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj._o_type.getValue());
                     Display.refresh();
                 }

@@ -23,7 +23,7 @@ public class Daemons {
          * change the things
          */
         for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.cansee(tp._o_pos.y, tp._o_pos.x)) {
+            if (Chase.isSee(tp._o_pos)) {
                 Display.mvaddch(tp._o_pos.y, tp._o_pos.x, Misc.rnd_thing().getValue());
             }
         }
@@ -31,7 +31,7 @@ public class Daemons {
         /*
          * change the stairs
          */
-        if (!Global.seenstairs && Chase.cansee(Global.stairs.y, Global.stairs.x)) {
+        if (!Global.seenstairs && Chase.isSee(Global.stairs)) {
             Display.mvaddch(Global.stairs.y, Global.stairs.x, Misc.rnd_thing().getValue());
         }
 
@@ -125,7 +125,7 @@ public class Daemons {
          * undo the things
          */
         for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.cansee(tp._o_pos.y, tp._o_pos.x)) {
+            if (Chase.isSee(tp._o_pos)) {
                 Display.mvaddch(tp._o_pos.y, tp._o_pos.x, tp._o_type.getValue());
             }
         }
@@ -136,7 +136,7 @@ public class Daemons {
         seemonst = Global.player.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
             Display.move(tp._t_pos.y, tp._t_pos.x);
-            if (Chase.cansee(tp._t_pos.y, tp._t_pos.x)) {
+            if (Chase.isSee(tp._t_pos)) {
                 if (!tp.containsState(StateEnum.ISINVIS) || Global.player.containsState(StateEnum.CANSEE))
                     Display.addch((char) tp._t_disguise);
                 else {

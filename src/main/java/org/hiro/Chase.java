@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
@@ -115,7 +116,7 @@ public class Chase {
         }
         int y = mp._t_pos.y;
         int x = mp._t_pos.x;
-        if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
+        if (dist_cp(mp._t_pos, Global.player._t_pos) < Const.LAMPDIST) {
             return y == Global.player._t_pos.y || x == Global.player._t_pos.x
                     || IOUtil.step_ok(Global.places.get((y << 5) + Global.player._t_pos.x).p_ch)
                     || IOUtil.step_ok(Global.places.get((Global.player._t_pos.y << 5) + x).p_ch);
@@ -137,28 +138,26 @@ public class Chase {
     }
 
     /*
-     * cansee:
+     * isSee:
      *	Returns true if the hero can see a certain coordinate.
      */
-    static boolean cansee(int y, int x) {
-
+    static boolean isSee(Coordinate c) {
         if (Global.player.containsState(StateEnum.ISBLIND)) {
             return false;
         }
-        if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
-            if ((Util.flat(y, x) & Const.F_PASS) != 0) {
-                return y == Global.player._t_pos.y || x == Global.player._t_pos.x ||
-                        IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) ||
-                        IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch);
+        if (dist_cp(c, Global.player._t_pos) < Const.LAMPDIST) {
+            if ((Util.flat(c.y, c.x) & Const.F_PASS) != 0) {
+                return c.y == Global.player._t_pos.y || c.x == Global.player._t_pos.x ||
+                        IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + c.y).p_ch) ||
+                        IOUtil.step_ok(Global.places.get((c.x << 5) + Global.player._t_pos.y).p_ch);
             }
         }
         /*
          * We can only see if the hero in the same room as
          * the coordinate and the room is lit or if it is close.
          */
-        Coordinate tp = new Coordinate(x, y);
         Room rer;
-        return ((rer = roomin(tp)) == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK));
+        return ((rer = roomin(c)) == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK));
     }
 
     /*
