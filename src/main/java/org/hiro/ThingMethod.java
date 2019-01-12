@@ -313,9 +313,7 @@ public class ThingMethod {
                 } else if (op.oi_guess != null) {
                     Global.prbuf = Global.prbuf + "called " + op.oi_guess + prfunc.invoke(obj) + "(" + which + ")";
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else if (obj._o_count == 1) {

@@ -146,7 +146,7 @@ public class Pack {
                 Global.inpack++;
             }
             if (newobj) {
-                nobj = ListMethod.new_item();
+                nobj = new ThingImp();
                 nobj = obj;
                 nobj._l_next = null;
                 nobj._l_prev = null;
@@ -417,7 +417,7 @@ public class Pack {
                     money(obj._o_arm);
                     Global.lvl_obj.remove(obj);
                     update_mdest(obj);
-                    ListMethod.discard(obj);
+                    Global.lvl_obj.remove(obj);
                     Global.player.t_room.r_goldval = 0;
                     break;
                 default:
