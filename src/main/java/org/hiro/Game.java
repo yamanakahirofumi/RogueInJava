@@ -18,7 +18,7 @@ public class Game {
     private List<InputDevice> inputDevices;
     private Player player;
 
-    /**
+    /*
      * Options
      */
     /**
