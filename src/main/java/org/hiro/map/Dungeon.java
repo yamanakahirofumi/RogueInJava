@@ -35,6 +35,6 @@ public class Dungeon {
     }
 
     public int getMaxLevel(){
-        return this.getMaxLevel();
+        return this.maxLevel;
     }
 }
