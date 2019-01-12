@@ -116,12 +116,9 @@ public class Chase {
         int y = mp._t_pos.y;
         int x = mp._t_pos.x;
         if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
-            if (y != Global.player._t_pos.y && x != Global.player._t_pos.x
-                    && !IOUtil.step_ok(Global.places.get((y << 5) + Global.player._t_pos.x).p_ch)
-                    && !IOUtil.step_ok(Global.places.get((Global.player._t_pos.y << 5) + x).p_ch)) {
-                return false;
-            }
-            return true;
+            return y == Global.player._t_pos.y || x == Global.player._t_pos.x
+                    || IOUtil.step_ok(Global.places.get((y << 5) + Global.player._t_pos.x).p_ch)
+                    || IOUtil.step_ok(Global.places.get((Global.player._t_pos.y << 5) + x).p_ch);
         }
         if (mp.t_room != Global.player.t_room) {
             return false;
@@ -150,12 +147,9 @@ public class Chase {
         }
         if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
             if ((Util.flat(y, x) & Const.F_PASS) != 0) {
-                if (y != Global.player._t_pos.y && x != Global.player._t_pos.x &&
-                        !IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) &&
-                        !IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch)) {
-                    return false;
-                }
-                return true;
+                return y == Global.player._t_pos.y || x == Global.player._t_pos.x ||
+                        IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) ||
+                        IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch);
             }
         }
         /*
@@ -320,7 +314,6 @@ public class Chase {
          * and we are not in a corridor, run to the door nearest to
          * our goal.
          */
-        over:
         while (true) {
             if (rer != ree) {
                 for (int i = 0; i < rer.r_nexits; i++) {
@@ -334,7 +327,7 @@ public class Chase {
                 if (door) {
                     rer = Global.passages[Util.flat(th._t_pos.y, th._t_pos.x) & Const.F_PNUM];
                     door = false;
-                    continue over;
+                    continue;
                 }
             } else {
                 thisTmp = th._t_dest;
@@ -363,7 +356,7 @@ public class Chase {
                     return (0);
                 }
             }
-            break over;
+            break;
         }
         /*
          * This now contains what we want to run to this time

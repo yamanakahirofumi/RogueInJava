@@ -146,10 +146,7 @@ public class Options {
         if (!"name".equals(opt.o_name)) {
             return false;
         }
-        if (!"file".equals(opt.o_name)) {
-            return false;
-        }
-        return true;
+        return "file".equals(opt.o_name);
     }
 
     /*

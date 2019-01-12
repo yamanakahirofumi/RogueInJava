@@ -424,10 +424,12 @@ public class Potions {
             if (Chase.see_monst(tp) && tp.containsState(StateEnum.ISRUN)) {    /* if it's visible and awake */
                 return true;            /* it must have moved there */
             }
-            if (Global.player.containsState(StateEnum.SEEMONST)        /* if she can detect monster */
-                    && tp._t_oldch == ObjectType.STAIRS.getValue()) {        /* and there once were stairs */
-                return true;            /* it must have moved there */
-            }
+
+            /* if she can detect monster */
+            /* and there once were stairs */
+            /* it must have moved there */
+            return Global.player.containsState(StateEnum.SEEMONST)
+                    && tp._t_oldch == ObjectType.STAIRS.getValue();
         }
         return false;
     }

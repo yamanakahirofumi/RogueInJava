@@ -82,13 +82,14 @@ public class DrawRoom {
                     rp.r_pos.y++;
                     rp.r_max.y--;
                 }
-            } else
+            } else {
                 do {
                     rp.r_max.x = Util.rnd(bsze.x - 4) + 4;
                     rp.r_max.y = Util.rnd(bsze.y - 4) + 4;
                     rp.r_pos.x = top.x + Util.rnd(bsze.x - rp.r_max.x);
                     rp.r_pos.y = top.y + Util.rnd(bsze.y - rp.r_max.y);
-                } while (!(rp.r_pos.y != 0));
+                } while (rp.r_pos.y == 0);
+            }
             draw_room(rp);
             /*
              * Put the gold in

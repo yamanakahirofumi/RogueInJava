@@ -106,7 +106,7 @@ public class Move {
                         case 'l':
                             b1 = (Global.player._t_pos.y != 1 && turn_ok(Global.player._t_pos.y - 1, Global.player._t_pos.x));
                             b2 = (Global.player._t_pos.y != Const.NUMLINES - 2 && turn_ok(Global.player._t_pos.y + 1, Global.player._t_pos.x));
-                            if (!(b1 ^ b2)) {
+                            if (b1 == b2) {
                                 break;
                             }
                             if (b1) {
@@ -122,7 +122,7 @@ public class Move {
                         case 'k':
                             b1 = (Global.player._t_pos.x != 0 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x - 1));
                             b2 = (Global.player._t_pos.x != Const.NUMCOLS - 1 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x + 1));
-                            if (!(b1 ^ b2)) {
+                            if (b1 == b2) {
                                 break;
                             }
                             if (b1) {
