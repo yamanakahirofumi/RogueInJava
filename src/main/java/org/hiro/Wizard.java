@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
@@ -16,7 +16,7 @@ public class Wizard {
      *	Bamf the hero someplace else
      */
     static void teleport() {
-        Coord c = new Coord();
+        Coordinate c = new Coordinate();
 
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
