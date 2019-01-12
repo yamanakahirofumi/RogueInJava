@@ -766,7 +766,7 @@ public class Command {
             {
                 Global.level--;
                 if (Global.level == 0) {
-                    // total_winner(); // 後で
+                    Rip.total_winner();
                 }
                 New_Level.new_level();
                 IOUtil.msg("you feel a wrenching sensation in your gut");

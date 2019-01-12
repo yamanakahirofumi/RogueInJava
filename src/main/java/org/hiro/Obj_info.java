@@ -62,4 +62,8 @@ public class Obj_info {
 	public void setName(String name){
 		this.name = name;
 	}
+
+	public int getWorth() {
+		return this.worth;
+	}
 }
