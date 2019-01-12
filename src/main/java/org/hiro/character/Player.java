@@ -14,49 +14,49 @@ public interface Player {
      *
      * @return 名前
      */
-    public String getName();
+    String getName();
 
     /**
      * フロアー内の現在地を返す
      *
      * @return 現在地
      */
-    public AbstractCoordinate getPostion();
+    AbstractCoordinate getPostion();
 
-    public void setPostion(AbstractCoordinate postion);
+    void setPostion(AbstractCoordinate postion);
 
     /**
      * ダンジョン内の現在の階層数を返す
      *
      * @return
      */
-    public int getLevel();
-    public void setLevel(int level);
+    int getLevel();
+    void setLevel(int level);
 
     /**
      * 現在のダンジョンを返す。
      * @return
      */
-    public String getDungeon();
-    public void setDungeon(String name);
+    String getDungeon();
+    void setDungeon(String name);
 
-    public int getStrength();
+    int getStrength();
 
-    public int getMaxHp();
+    int getMaxHp();
 
-    public int getFoodLeft();
+    int getFoodLeft();
 
-    public void addState(StateEnum s);
+    void addState(StateEnum s);
 
-    public void removeState(StateEnum s);
+    void removeState(StateEnum s);
 
-    public void changeFloor();
+    void changeFloor();
 
-    public Optional<Thing> eat(Thing thing);
+    Optional<Thing> eat(Thing thing);
 
     /** 装備周り */
-    public List<Weapon> getWeapons();
+    List<Weapon> getWeapons();
 
-    public boolean putOnWeapon(Weapon w);
+    boolean putOnWeapon(Weapon w);
 
 }
