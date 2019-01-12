@@ -4,15 +4,15 @@ package org.hiro.map;
  * Coordinate data type
  * 座標
  */
-public class Coord implements AbstractCoord {
+public class Coordinate implements AbstractCoordinate {
 	public int x;
 	public int y;
 
-	public Coord(){
+	public Coordinate(){
 		super();
 	}
 
-	public Coord(int x, int y){
+	public Coordinate(int x, int y){
 		super();
 		this.x = x;
 		this.y = y;
@@ -27,13 +27,13 @@ public class Coord implements AbstractCoord {
 	}
 
 	@Override
-	public AbstractCoord random(AbstractCoord position, AbstractCoord size) {
+	public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size) {
 		return null;
 	}
 
 	public boolean equals(Object obj) {
-		if(obj instanceof Coord){
-			Coord c = (Coord) obj;
+		if(obj instanceof Coordinate){
+			Coordinate c = (Coordinate) obj;
 			return this.x == c.x && this.y ==c.y;
 		}else {
 			return false;

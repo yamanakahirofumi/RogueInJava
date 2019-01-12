@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -269,7 +269,7 @@ public class Misc {
      * erase_lamp:
      *	Erase the area shown by a lamp in a dark room.
      */
-    static void erase_lamp(Coord pos, Room rp) {
+    static void erase_lamp(Coordinate pos, Room rp) {
 
         if (!(Global.see_floor && rp.containInfo(RoomInfoEnum.ISDARK)
                 && !rp.containInfo(RoomInfoEnum.ISGONE)
@@ -532,7 +532,7 @@ public class Misc {
      *	commands
      */
     static boolean get_dir() {
-        Coord last_delt = new Coord(0, 0);
+        Coordinate last_delt = new Coordinate(0, 0);
 
         if (Global.again && Global.last_dir != '\0') {
             Global.delta.y = last_delt.y;

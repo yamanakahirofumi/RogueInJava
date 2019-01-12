@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -12,7 +12,7 @@ public class Rooms {
      * enter_room:
      *	Code that is executed whenver you appear in a room
      */
-    static void enter_room(Coord cp) {
+    static void enter_room(Coordinate cp) {
 
         Room rp = Global.player.t_room = Chase.roomin(cp);
         Move.door_open(rp);
@@ -52,7 +52,7 @@ public class Rooms {
      * leave_room:
      *	Code for when we exit a room
      */
-    static void leave_room(Coord cp) {
+    static void leave_room(Coordinate cp) {
         Room rp = Global.player.t_room;
 
         if (rp.containInfo(RoomInfoEnum.ISMAZE)) {

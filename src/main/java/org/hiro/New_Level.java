@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingFactory;
@@ -140,7 +140,7 @@ public class New_Level {
          * amulet yet, put it somewhere on the ground
          */
         if (Global.level >= Const.AMULETLEVEL && !game.isGoal()) {
-            obj = ListMethod.new_item();
+            obj = new ThingImp();
             Global.lvl_obj.add(obj);
             obj._o_hplus = 0;
             obj._o_dplus = 0;
@@ -176,7 +176,7 @@ public class New_Level {
         int nm;
         int num_monst = nm = Util.rnd(spots) + MINTREAS;
         ThingImp tp;
-        Coord mp = new Coord();
+        Coordinate mp = new Coordinate();
         while (nm-- != 0) {
             DrawRoom.find_floor(rp, mp, 2 * MAXTRIES != 0, false);
             tp = new ThingImp();
@@ -200,7 +200,7 @@ public class New_Level {
         while (nm-- != 0) {
             spots = 0;
             if (DrawRoom.find_floor(rp, mp, MAXTRIES != 0, true)) {
-                tp = ListMethod.new_item();
+                tp = new ThingImp();
                 Monst.new_monster(tp, Monst.randmonster(false), mp);
                 tp.addState(StateEnum.ISMEAN);    /* no sloughers in THIS room */
                 Monst.give_pack(tp);

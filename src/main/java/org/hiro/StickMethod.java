@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.*;
@@ -163,7 +163,7 @@ public class StickMethod {
                             break;
                         case WS_TELAWAY:
                         case WS_TELTO: {
-                            Coord new_pos = new Coord();
+                            Coordinate new_pos = new Coordinate();
 
                             if (obj._o_which == StickEnum.WS_TELAWAY.getValue()) {
                                 do {
@@ -295,8 +295,8 @@ public class StickMethod {
      * fire_bolt:
      *	Fire a bolt in a given direction from a specific starting place
      */
-    static void fire_bolt(Coord start, Coord dir, String name) {
-        List<Coord> spotpos = new ArrayList<>();
+    static void fire_bolt(Coordinate start, Coordinate dir, String name) {
+        List<Coordinate> spotpos = new ArrayList<>();
         ThingImp bolt = new ThingImp();
 
         bolt._o_type = ObjectType.WEAPON;
@@ -318,15 +318,15 @@ public class StickMethod {
             case -2:
                 dirch = '\\';
         }
-        Coord pos = start;
+        Coordinate pos = start;
         boolean hit_hero = (start != Global.player._t_pos);
         boolean used = false;
         boolean changed = false;
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
-            Coord c1;
+            Coordinate c1;
             if(spotpos.size() <= i) {
-                c1 = new Coord();
+                c1 = new Coordinate();
                 spotpos.add(c1);
             }else{
                 c1 = spotpos.get(i);
@@ -458,7 +458,7 @@ public class StickMethod {
             }
         }
         for(int j =0; j<i; j++){
-            Coord c2 = spotpos.get(j);
+            Coordinate c2 = spotpos.get(j);
             Display.mvaddch(c2.y, c2.x, Global.places.get((c2.x << 5) + c2.y).p_ch.getValue());
         }
     }

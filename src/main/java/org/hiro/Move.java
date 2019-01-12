@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ArmorEnum;
@@ -42,7 +42,7 @@ public class Move {
     static void do_move(int dy, int dx) {
         ObjectType ch;
         char fl;
-        Coord nh = new Coord();
+        Coordinate nh = new Coordinate();
 
         Global.firstmove = false;
         if (Global.no_move != 0) {
@@ -182,7 +182,7 @@ public class Move {
         }
     }
 
-    static private void move_stuff(char fl, Coord nh) {
+    static private void move_stuff(char fl, Coordinate nh) {
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
         if ((fl & Const.F_PASS) != 0 &&
                 Global.places.get((Global.oldpos.x << 5) + Global.oldpos.y).p_ch == ObjectType.DOOR) {
@@ -195,8 +195,8 @@ public class Move {
      * rndmove:
      *	Move in a random direction if the monster/person is confused
      */
-    static Coord rndmove(ThingImp who) {
-        Coord ret = new Coord();  /* what we will be returning */
+    static Coordinate rndmove(ThingImp who) {
+        Coordinate ret = new Coordinate();  /* what we will be returning */
 
         int y = ret.y = who._t_pos.y + Util.rnd(3) - 1;
         int x = ret.x = who._t_pos.x + Util.rnd(3) - 1;
@@ -268,7 +268,7 @@ public class Move {
      * be_trapped:
      *	The guy stepped on a trap.... Make him pay.
      */
-    static int be_trapped(Coord tc) {
+    static int be_trapped(Coordinate tc) {
         Place pp;
         ThingImp arrow;
         ObjectType tr;
@@ -342,7 +342,7 @@ public class Move {
                     } else
                         IOUtil.msg("oh no! An arrow shot you");
                 } else {
-                    arrow = ListMethod.new_item();
+                    arrow = new ThingImp();
                     WeaponMethod.init_weapon(arrow, WeaponEnum.ARROW.getValue());
                     arrow._o_count = 1;
                     arrow._o_pos = Global.player._t_pos;

@@ -25,13 +25,13 @@ public class Dungeon {
 
     public void setPlayer(Player p){
         p.setDungeon(this.name);
-        Floor f = new Floor(1,maxRoomSize,new TwoDimensionsCoordFactory());
+        Floor f = new Floor(1,maxRoomSize,new TwoDimensionsCoordinateFactory());
         Floors.add(f);
         f.setPlayer(p);
     }
 
     private void createFloor(){
-        Floor f = new Floor(1,maxRoomSize,new TwoDimensionsCoordFactory());
+        Floor f = new Floor(1,maxRoomSize,new TwoDimensionsCoordinateFactory());
     }
 
     public int getMaxLevel(){

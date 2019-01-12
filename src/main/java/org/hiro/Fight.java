@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
@@ -51,7 +51,7 @@ public class Fight {
      * fight:
      *	The player attacks the monster.
      */
-    static boolean fight(Coord mp, ThingImp weap, boolean thrown) {
+    static boolean fight(Coordinate mp, ThingImp weap, boolean thrown) {
         ThingImp tp;
         boolean did_hit = true;
         String mname;
@@ -198,8 +198,8 @@ public class Fight {
             case 'L': {
                 ThingImp gold;
 
-                if (WeaponMethod.fallpos(tp._t_pos, (Coord) tp.t_room.r_gold) && Global.level >= Global.max_level) {
-                    gold = ListMethod.new_item();
+                if (WeaponMethod.fallpos(tp._t_pos, (Coordinate) tp.t_room.r_gold) && Global.level >= Global.max_level) {
+                    gold = new ThingImp();
                     gold._o_type = ObjectType.GOLD;
                     gold._o_arm = Util.GOLDCALC();
                     if (Monst.save(Const.VS_MAGIC)) {
@@ -241,7 +241,7 @@ public class Fight {
      * remove_mon:
      *	Remove a monster from the screen
      */
-    static void remove_mon(Coord mp, ThingImp tp, boolean waskill) {
+    static void remove_mon(Coordinate mp, ThingImp tp, boolean waskill) {
         ThingImp nexti;
 
         for (ThingImp obj = tp._t_pack; obj != null; obj = nexti) {
@@ -251,7 +251,7 @@ public class Fight {
             if (waskill) {
                 WeaponMethod.fall(obj, false);
             } else {
-                ListMethod.discard(obj);
+                tp._t_pack.removeItem(obj); // TODO: エラー
             }
         }
         Global.places.get((mp.x << 5) + mp.y).p_monst = null;

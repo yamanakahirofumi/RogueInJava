@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ScrollEnum;
@@ -106,7 +106,7 @@ public class ScrollMethod {
                  * otherwise give up
                  */
                 int i = 0;
-                Coord mp = new Coord();
+                Coordinate mp = new Coordinate();
                 ObjectType cho;
                 for (int y = Global.player._t_pos.y - 1; y <= Global.player._t_pos.y + 1; y++) {
                     for (int x = Global.player._t_pos.x - 1; x <= Global.player._t_pos.x + 1; x++) {
@@ -134,7 +134,7 @@ public class ScrollMethod {
                 if (i == 0)
                     IOUtil.msg("you hear a faint cry of anguish in the distance");
                 else {
-                    obj = ListMethod.new_item();
+                    obj = new ThingImp();
                     Monst.new_monster(obj, Monst.randmonster(false), mp);
                 }
                 break;

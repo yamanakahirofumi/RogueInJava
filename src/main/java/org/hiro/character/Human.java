@@ -1,6 +1,6 @@
 package org.hiro.character;
 
-import org.hiro.map.AbstractCoord;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
@@ -25,7 +25,7 @@ public class Human implements Player {
     private int stomachSize;
     HashSet<StateEnum> state;
     /** 位置情報 */
-    private AbstractCoord postion;
+    private AbstractCoordinate postion;
     private int level;
     private String dungeon;
     /** 装備周り */
@@ -50,12 +50,12 @@ public class Human implements Player {
     }
 
     @Override
-    public AbstractCoord getPostion() {
+    public AbstractCoordinate getPostion() {
         return this.postion;
     }
 
     @Override
-    public void setPostion(AbstractCoord postion) {
+    public void setPostion(AbstractCoordinate postion) {
         this.postion = postion;
     }
 

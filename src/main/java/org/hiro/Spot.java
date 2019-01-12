@@ -1,10 +1,10 @@
 package org.hiro;
 
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 
 public class Spot {
  int nexits;
  boolean used;
- Coord[] exits = new Coord[4];
+ Coordinate[] exits = new Coordinate[4];
 }

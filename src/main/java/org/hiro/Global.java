@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
@@ -79,9 +79,9 @@ public class Global {
     static File logfi;
     static File scoreboard;
 
-    static Coord stairs;
-    static Coord delta;
-    static Coord oldpos;
+    static Coordinate stairs;
+    static Coordinate delta;
+    static Coordinate oldpos;
 
     static Room oldrp;
 
@@ -125,7 +125,7 @@ public class Global {
     //static Human player;
     static ThingImp cur_weapon;
     static ThingImp cur_armor;
-    static ThingImp last_pick;
+    static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
 
     public static Obj_info[] things;

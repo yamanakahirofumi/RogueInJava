@@ -1,6 +1,6 @@
 package org.hiro.character;
 
-import org.hiro.map.AbstractCoord;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
@@ -21,9 +21,9 @@ public interface Player {
      *
      * @return 現在地
      */
-    public AbstractCoord getPostion();
+    public AbstractCoordinate getPostion();
 
-    public void setPostion(AbstractCoord postion);
+    public void setPostion(AbstractCoordinate postion);
 
     /**
      * ダンジョン内の現在の階層数を返す
