@@ -115,6 +115,11 @@ public class Human implements Player {
     }
 
     @Override
+    public boolean containsState(StateEnum s){
+        return  this.state.contains(s);
+    }
+
+    @Override
     public List<Weapon> getWeapons(){
         if(this.weapon == null) {
             return new ArrayList<>();

@@ -50,6 +50,8 @@ public interface Player {
 
     void removeState(StateEnum s);
 
+    boolean containsState(StateEnum s);
+
     void changeFloor();
 
     Optional<Thing> eat(Thing thing);
