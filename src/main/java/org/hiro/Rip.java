@@ -80,7 +80,7 @@ public class Rip {
      * killname:
      *	Convert a code to a monster name
      */
-    static String killname(int monst, boolean doart) {
+    private static String killname(int monst, boolean doart) {
         List<Help_list> nlist = new ArrayList<>();
         {
             Help_list h = new Help_list('a', "arrow", true);
@@ -131,7 +131,7 @@ public class Rip {
      * center:
      *	Return the index to center the given string
      */
-    static int center(String str) {
+    private static int center(String str) {
         return 28 - ((str.length() + 1) / 2);
     }
 
@@ -182,7 +182,6 @@ public class Rip {
 //            fprintf(Global.logfi, "%s", logmessage);
 //            fclose(Global.logfi);
         }
-        return;
     }
 
     /*
@@ -192,11 +191,8 @@ public class Rip {
     /* VARARGS2 */
     static void score(int amount, int flags, int monst) {
         boolean MASTER = false;
-        Score sc2;
-        String prbuf = "";
         int prflags = 0; // 本当はMASTERがtrueの時のみ宣言
 //    void( * fp)( int);
-        int uid;
         String[] reason = {"killed", "quit", "A total winner", "killed with Amulet"};
         String buf;
         String buf2;
@@ -237,6 +233,7 @@ public class Rip {
 
         if (MASTER) {
             if (Global.wizard) {
+                String prbuf = "";
                 if (prbuf.equals("names")) {
                     prflags = 1;
                 } else if (prbuf.equals("edit")) {
@@ -248,10 +245,10 @@ public class Rip {
         /*
          * Insert her in list if need be
          */
-        sc2 = null;
+        Score sc2 = null;
         Score endp = new Score();
         if (!Global.noscore) {
-            uid = Mdport.md_getuid();
+            int uid = Mdport.md_getuid();
             Score scp = new Score();
             int i = 0;
             for (i = 0; i < top_ten.size(); i++) {
