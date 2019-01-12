@@ -28,7 +28,7 @@ public class Floor {
 
         // DrawRoom do_rooms
 
-        AbstractCoordinate base = factory.getMaxCoord();
+        AbstractCoordinate base = factory.getMaxCoordinate();
 
         rooms = Stream.generate(() -> new Room(factory))
                 .limit(maxrooms)
