@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.*;
@@ -81,7 +81,7 @@ public class StickMethod {
                 /*
                  * Reddy Kilowat wand.  Light up the room
                  */
-                Global.ws_info[st.getValue()].oi_know = true;
+                Global.ws_info[st.getValue()].know();
                 if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
                     IOUtil.msg("the corridor glows and then fades");
                 } else {
@@ -149,7 +149,7 @@ public class StickMethod {
                             }
                             tp._t_oldch = oldch;
                             tp.setBaggage(pp);
-                            Global.ws_info[st.getValue()].oi_know |= Chase.see_monst(tp);
+                            Global.ws_info[st.getValue()].addKnown(Chase.see_monst(tp));
                             break;
                         }
                         case WS_CANCEL:
@@ -163,7 +163,7 @@ public class StickMethod {
                             break;
                         case WS_TELAWAY:
                         case WS_TELTO: {
-                            Coord new_pos = new Coord();
+                            Coordinate new_pos = new Coordinate();
 
                             if (obj._o_which == StickEnum.WS_TELAWAY.getValue()) {
                                 do {
@@ -181,7 +181,7 @@ public class StickMethod {
                 }
                 break;
             case WS_MISSILE:
-                Global.ws_info[StickEnum.WS_MISSILE.getValue()].oi_know = true;
+                Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
                 bolt._o_type = ObjectType.GOLD;
                 bolt._o_hurldmg = "1x4";
                 bolt._o_hplus = 100;
@@ -238,7 +238,7 @@ public class StickMethod {
                     name = "ice";
                 }
                 fire_bolt(Global.player._t_pos, Global.delta, name);
-                Global.ws_info[obj._o_which].oi_know = true;
+                Global.ws_info[obj._o_which].know();
                 break;
             case WS_NOP:
                 break;
@@ -295,8 +295,8 @@ public class StickMethod {
      * fire_bolt:
      *	Fire a bolt in a given direction from a specific starting place
      */
-    static void fire_bolt(Coord start, Coord dir, String name) {
-        List<Coord> spotpos = new ArrayList<>();
+    static void fire_bolt(Coordinate start, Coordinate dir, String name) {
+        List<Coordinate> spotpos = new ArrayList<>();
         ThingImp bolt = new ThingImp();
 
         bolt._o_type = ObjectType.WEAPON;
@@ -304,7 +304,7 @@ public class StickMethod {
         bolt._o_hurldmg = "6x6";
         bolt._o_hplus = 100;
         bolt._o_dplus = 0;
-        Global.weap_info[WeaponEnum.FLAME.getValue()].oi_name = name;
+        Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
         int dirch = 0;
         switch (dir.y + dir.x) {
             case 0:
@@ -318,15 +318,15 @@ public class StickMethod {
             case -2:
                 dirch = '\\';
         }
-        Coord pos = start;
+        Coordinate pos = start;
         boolean hit_hero = (start != Global.player._t_pos);
         boolean used = false;
         boolean changed = false;
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
-            Coord c1;
+            Coordinate c1;
             if(spotpos.size() <= i) {
-                c1 = new Coord();
+                c1 = new Coordinate();
                 spotpos.add(c1);
             }else{
                 c1 = spotpos.get(i);
@@ -458,7 +458,7 @@ public class StickMethod {
             }
         }
         for(int j =0; j<i; j++){
-            Coord c2 = spotpos.get(j);
+            Coordinate c2 = spotpos.get(j);
             Display.mvaddch(c2.y, c2.x, Global.places.get((c2.x << 5) + c2.y).p_ch.getValue());
         }
     }

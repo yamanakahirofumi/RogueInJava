@@ -17,12 +17,7 @@ public class Command {
      *	Process the user commands
      */
     static void command() {
-        int ch;
         int ntimes = 1;            /* Number of player moves */
-        int fp;
-        ThingImp mp;
-        int countch=0, direction=0;
-        boolean newcount = false;
         // void endmsg2 ();
 
         boolean MASTER = false;
@@ -35,6 +30,9 @@ public class Command {
          */
         Daemon.do_daemons(Const.BEFORE);
         Daemon.do_fuses(Const.BEFORE);
+        int direction = 0;
+        int countch = 0;
+        boolean newcount = false;
         while (ntimes-- != 0) {
             Global.again = false;
             if (Global.has_hit) {
@@ -72,6 +70,7 @@ public class Command {
                     Global.noscore = true;
                 }
             }
+            int ch;
             if (Global.no_command == 0) {
                 if (Global.running || Global.to_death) {
                     ch = Global.runch;
@@ -174,6 +173,7 @@ public class Command {
                     Global.last_dir = '\0';
                     Global.last_pick = null;
                 }
+                ThingImp mp;
                 over:
                 switch (ch) {
                     case ',': {
@@ -426,7 +426,7 @@ public class Command {
                         if (Misc.get_dir()) {
                             Global.delta.y += Global.player._t_pos.y;
                             Global.delta.x += Global.player._t_pos.x;
-                            fp = Util.flat(Global.delta.y, Global.delta.x);
+                            int fp = Util.flat(Global.delta.y, Global.delta.x);
                             if (!Global.terse) {
                                 IOUtil.addmsg("You have found ");
                             }
@@ -766,7 +766,7 @@ public class Command {
             {
                 Global.level--;
                 if (Global.level == 0) {
-                    // total_winner(); // 後で
+                    Rip.total_winner();
                 }
                 New_Level.new_level();
                 IOUtil.msg("you feel a wrenching sensation in your gut");

@@ -1,6 +1,8 @@
 package org.hiro;
 
 import org.hiro.output.Display;
+import org.hiro.things.RingEnum;
+import org.hiro.things.ThingImp;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 public class Rip {
     /*
      * death:
-     *	Do something really fun when he dies
+     *	Do something really fun break;case he dies
      */
     static void death(int monst) {
         String[] rip = {
@@ -78,8 +80,8 @@ public class Rip {
      * killname:
      *	Convert a code to a monster name
      */
-    static String killname(int monst, boolean doart) {
-        List<Help_list> nlist = new ArrayList<Help_list>();
+    private static String killname(int monst, boolean doart) {
+        List<Help_list> nlist = new ArrayList<>();
         {
             Help_list h = new Help_list('a', "arrow", true);
             nlist.add(h);
@@ -129,7 +131,7 @@ public class Rip {
      * center:
      *	Return the index to center the given string
      */
-    static int center(String str) {
+    private static int center(String str) {
         return 28 - ((str.length() + 1) / 2);
     }
 
@@ -180,7 +182,6 @@ public class Rip {
 //            fprintf(Global.logfi, "%s", logmessage);
 //            fclose(Global.logfi);
         }
-        return;
     }
 
     /*
@@ -190,11 +191,8 @@ public class Rip {
     /* VARARGS2 */
     static void score(int amount, int flags, int monst) {
         boolean MASTER = false;
-        Score sc2;
-        String prbuf="";
         int prflags = 0; // 本当はMASTERがtrueの時のみ宣言
 //    void( * fp)( int);
-        int uid;
         String[] reason = {"killed", "quit", "A total winner", "killed with Amulet"};
         String buf;
         String buf2;
@@ -235,6 +233,7 @@ public class Rip {
 
         if (MASTER) {
             if (Global.wizard) {
+                String prbuf = "";
                 if (prbuf.equals("names")) {
                     prflags = 1;
                 } else if (prbuf.equals("edit")) {
@@ -246,25 +245,25 @@ public class Rip {
         /*
          * Insert her in list if need be
          */
-        sc2 = null;
+        Score sc2 = null;
         Score endp = new Score();
         if (!Global.noscore) {
-            uid = Mdport.md_getuid();
+            int uid = Mdport.md_getuid();
             Score scp = new Score();
             int i = 0;
             for (i = 0; i < top_ten.size(); i++) {
                 scp = top_ten.get(i);
                 if (amount > scp.sc_score) {
                     break;
-                } else if (Global.allscore==0 &&    /* only one score per nowin uid */
+                } else if (Global.allscore == 0 &&    /* only one score per nowin uid */
                         flags != 2 && scp.sc_uid == uid && scp.sc_flags != 2) {
                     scp = endp;
                 }
             }
             if (i < top_ten.size()) {
-                if (flags != 2 && Global.allscore==0) {
-                    int j=i;
-                    for(; j<top_ten.size(); j++){
+                if (flags != 2 && Global.allscore == 0) {
+                    int j = i;
+                    for (; j < top_ten.size(); j++) {
                         sc2 = top_ten.get(j);
                         if (sc2.sc_uid == uid && sc2.sc_flags != 2) {
                             break;
@@ -362,5 +361,112 @@ public class Rip {
 //        }
     }
 
+    /*
+     * total_winner:
+     *	Code for a winner
+     */
+    static void total_winner() {
+        Display.clear();
+        Display.standout();
+        Display.addstr("                                                               \n");
+        Display.addstr("  @   @               @   @           @          @@@  @     @  \n");
+        Display.addstr("  @   @               @@ @@           @           @   @     @  \n");
+        Display.addstr("  @   @  @@@  @   @   @ @ @  @@@   @@@@  @@@      @  @@@    @  \n");
+        Display.addstr("   @@@@ @   @ @   @   @   @     @ @   @ @   @     @   @     @  \n");
+        Display.addstr("      @ @   @ @   @   @   @  @@@@ @   @ @@@@@     @   @     @  \n");
+        Display.addstr("  @   @ @   @ @  @@   @   @ @   @ @   @ @         @   @  @     \n");
+        Display.addstr("   @@@   @@@   @@ @   @   @  @@@@  @@@@  @@@     @@@   @@   @  \n");
+        Display.addstr("                                                               \n");
+        Display.addstr("     Congratulations, you have made it to the light of day!    \n");
+        Display.standend();
+        Display.addstr("\nYou have joined the elite ranks of those who have escaped the\n");
+        Display.addstr("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
+        Display.addstr("a great profit and are admitted to the Fighters' Guild.\n");
+        Display.mvaddstr(Display.LINES - 1, 0, "--Press space to continue--");
+        Display.refresh();
+        // wait_for(stdscr, ' ');
+        Display.clear();
+        Display.mvaddstr(0, 0, "   Worth  Item\n");
+
+        int oldpurse = Global.purse;
+        int worth = 0;
+        for (ThingImp obj : Global.player.getBaggage()) {
+            Obj_info op;
+            switch (obj._o_type) {
+                case FOOD:
+                    worth = 2 * obj._o_count;
+                    break;
+                case WEAPON:
+                    worth = Global.weap_info[obj._o_which].getWorth();
+                    worth *= 3 * (obj._o_hplus + obj._o_dplus) + obj._o_count;
+                    obj.add_o_flags(Const.ISKNOW);
+                    break;
+                case ARMOR:
+                    worth = Global.arm_info[obj._o_which].getWorth();
+                    worth += (9 - obj._o_arm) * 100;
+                    worth += (10 * (Global.a_class[obj._o_which] - obj._o_arm));
+                    obj.add_o_flags(Const.ISKNOW);
+                    break;
+                case SCROLL:
+                    worth = Global.scr_info[obj._o_which].getWorth();
+                    worth *= obj._o_count;
+                    op = Global.scr_info[obj._o_which];
+                    if (!op.isKnown()) {
+                        worth /= 2;
+                    }
+                    op.know();
+                    break;
+                case POTION:
+                    worth = Global.pot_info[obj._o_which].getWorth();
+                    worth *= obj._o_count;
+                    op = Global.pot_info[obj._o_which];
+                    if (!op.isKnown()) {
+                        worth /= 2;
+                    }
+                    op.know();
+                    break;
+                case RING:
+                    op = Global.ring_info[obj._o_which];
+                    worth = op.getWorth();
+                    if (obj._o_which == RingEnum.R_ADDSTR.getValue() || obj._o_which == RingEnum.R_ADDDAM.getValue() ||
+                            obj._o_which == RingEnum.R_PROTECT.getValue() || obj._o_which == RingEnum.R_ADDHIT.getValue()) {
+                        if (obj._o_arm > 0) {
+                            worth += obj._o_arm * 100;
+                        } else {
+                            worth = 10;
+                        }
+                    }
+                    if (!obj.contains_o_flags(Const.ISKNOW))
+                        worth /= 2;
+                    obj.add_o_flags(Const.ISKNOW);
+                    op.know();
+                    break;
+                case STICK:
+                    op = Global.ws_info[obj._o_which];
+                    worth = op.getWorth();
+                    worth += 20 * obj._o_arm;
+                    if (!obj.contains_o_flags(Const.ISKNOW)) {
+                        worth /= 2;
+                    }
+                    obj.add_o_flags(Const.ISKNOW);
+                    op.know();
+                    break;
+                case AMULET:
+                    worth = 1000;
+            }
+            if (worth < 0)
+                worth = 0;
+            // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inv_name(obj, false));
+            Global.purse += worth;
+        }
+        Display.printw("   %5d  Gold Pieces          ", oldpurse);
+        Display.refresh();
+        writelog(Global.purse, 2, ' ');
+        score(Global.purse, 2, ' ');
+        // printf("[Press return to exit]\n");
+        // fflush(null);
+        // getchar();
+        Main2.my_exit(0);
+    }
 
 }

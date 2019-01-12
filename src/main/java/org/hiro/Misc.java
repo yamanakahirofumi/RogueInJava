@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -80,16 +80,7 @@ public class Misc {
      */
     static void look(boolean wakeup) {
         boolean DEBUG = false;
-        int x, y;
-        ObjectType ch;
-        ThingImp tp;
-        Place pp;
-        Room rp;
-        int ey, ex;
         int passcount;
-        int pfl, fp;
-        ObjectType pch;
-        int sy, sx, sumhero = 0, diffhero = 0;
         if (DEBUG) {
             boolean done = false;
 
@@ -99,26 +90,28 @@ public class Misc {
             done = true;
         } /* DEBUG */
         passcount = 0;
-        rp = Global.player.t_room;
+        Room rp = Global.player.t_room;
         if (!Global.oldpos.equals(Global.player._t_pos)) {
             erase_lamp(Global.oldpos, Global.oldrp);
             Global.oldpos = Global.player._t_pos;
             Global.oldrp = rp;
         }
-        ey = Global.player._t_pos.y + 1;
-        ex = Global.player._t_pos.x + 1;
-        sx = Global.player._t_pos.x - 1;
-        sy = Global.player._t_pos.y - 1;
+        int ey = Global.player._t_pos.y + 1;
+        int ex = Global.player._t_pos.x + 1;
+        int sx = Global.player._t_pos.x - 1;
+        int sy = Global.player._t_pos.y - 1;
+        int sumhero = 0;
+        int diffhero = 0;
         if (Global.door_stop && !Global.firstmove && Global.running) {
             sumhero = Global.player._t_pos.y + Global.player._t_pos.x;
             diffhero = Global.player._t_pos.y - Global.player._t_pos.x;
         }
-        pp = Util.INDEX(Global.player._t_pos.y, Global.player._t_pos.x);
-        pch = pp.p_ch;
-        pfl = pp.p_flags;
+        Place pp = Util.INDEX(Global.player._t_pos.y, Global.player._t_pos.x);
+        ObjectType pch = pp.p_ch;
+        int pfl = pp.p_flags;
 
-        for (y = sy; y <= ey; y++)
-            if (y > 0 && y < Const.NUMLINES - 1) for (x = sx; x <= ex; x++) {
+        for (int y = sy; y <= ey; y++)
+            if (y > 0 && y < Const.NUMLINES - 1) for (int x = sx; x <= ex; x++) {
                 if (x < 0 || x >= Const.NUMCOLS) {
                     continue;
                 }
@@ -128,12 +121,12 @@ public class Misc {
                 }
 
                 pp = Util.INDEX(y, x);
-                ch = pp.p_ch;
+                ObjectType ch = pp.p_ch;
                 if (ch.getValue() == ObjectType.Blank.getValue()) {
                     /* nothing need be done with a ' ' */
                     continue;
                 }
-                fp = pp.p_flags;
+                int fp = pp.p_flags;
                 if (pch != ObjectType.DOOR && ch != ObjectType.DOOR) {
                     if ((pfl & Const.F_PASS) != (fp & Const.F_PASS)) {
                         continue;
@@ -148,6 +141,7 @@ public class Misc {
                     }
                 }
 
+                ThingImp tp;
                 if ((tp = pp.p_monst) == null) {
                     ch = trip_ch(y, x, ch);
                 } else if (Global.player.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
@@ -275,8 +269,7 @@ public class Misc {
      * erase_lamp:
      *	Erase the area shown by a lamp in a dark room.
      */
-    static void erase_lamp(Coord pos, Room rp) {
-        int y, x, ey, sy, ex;
+    static void erase_lamp(Coordinate pos, Room rp) {
 
         if (!(Global.see_floor && rp.containInfo(RoomInfoEnum.ISDARK)
                 && !rp.containInfo(RoomInfoEnum.ISGONE)
@@ -284,11 +277,11 @@ public class Misc {
             return;
         }
 
-        ey = pos.y + 1;
-        ex = pos.x + 1;
-        sy = pos.y - 1;
-        for (x = pos.x - 1; x <= ex; x++) {
-            for (y = sy; y <= ey; y++) {
+        int ey = pos.y + 1;
+        int ex = pos.x + 1;
+        int sy = pos.y - 1;
+        for (int x = pos.x - 1; x <= ex; x++) {
+            for (int y = sy; y <= ey; y++) {
                 if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
                     continue;
                 }
@@ -305,13 +298,12 @@ public class Misc {
      *	highest it has been, just in case
      */
     static void chg_str(int amt) {
-        int comp;
 
         if (amt == 0) {
             return;
         }
         Global.player._t_stats.s_str = add_str(Global.player._t_stats.s_str, amt);
-        comp = Global.player._t_stats.s_str;
+        int comp = Global.player._t_stats.s_str;
         if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR))
             comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
         if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR))
@@ -390,31 +382,6 @@ public class Misc {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        }
-    }
-
-    /*
-     * call_it:
-     *	Call an object something after use.
-     */
-    static void call_it(Obj_info info) {
-        if (info.oi_know) {
-            if (info.oi_guess != null) {
-                // free(info.oi_guess);
-                info.oi_guess = null;
-            }
-        } else if (info.oi_guess == null) {
-            IOUtil.msg(Global.terse ? "call it: " : "what do you want to call it? ");
-//            if (get_str(prbuf, stdscr) == 0) {
-//                if (info.oi_guess != null) {
-//                    // free(info.oi_guess);
-//                }
-//                info.oi_guess = malloc(strlen(prbuf) + 1);
-//                if (info.oi_guess != null) {
-//                    strcpy(info.oi_guess, prbuf);
-//                }
-//            }
-            IOUtil.msg("");
         }
     }
 
@@ -540,20 +507,20 @@ public class Misc {
      *	commands
      */
     static boolean get_dir() {
-        String prompt;
-        boolean gotit;
-        Coord last_delt = new Coord(0, 0);
+        Coordinate last_delt = new Coordinate(0, 0);
 
         if (Global.again && Global.last_dir != '\0') {
             Global.delta.y = last_delt.y;
             Global.delta.x = last_delt.x;
             Global.dir_ch = Global.last_dir;
         } else {
+            String prompt;
             if (!Global.terse) {
                 IOUtil.msg(prompt = "which direction? ");
             } else {
                 prompt = "direction: ";
             }
+            boolean gotit;
             do {
                 gotit = true;
                 switch (Global.dir_ch = IOUtil.readchar()) {

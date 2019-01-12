@@ -3,10 +3,14 @@ package org.hiro;
 import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.map.Dungeon;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@SpringBootConfiguration
+@SpringBootApplication
 public class Rogue {
 	public static void main(String[] args){
 		Game g = Game.getInstance();

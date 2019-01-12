@@ -17,17 +17,18 @@ public class Floor {
     private Place places; // リストが良いのか？二次元配列？Coordに合わせて？
     // private int maxrooms;
     private int level;
-    private AbstractCoordFactory factory;
+    private AbstractCoordinateFactory factory;
     private List<Thing> thingList; // ものリスト
 
-    Floor(int level,int maxrooms, AbstractCoordFactory factory){
+    Floor(int level,int maxrooms, AbstractCoordinateFactory factory){
 //        this.maxrooms = maxrooms;
         this.factory = factory;
         this.level = level;
         this.thingList = new LinkedList<>();
+
         // DrawRoom do_rooms
 
-        AbstractCoord base = factory.create();
+        AbstractCoordinate base = factory.getMaxCoordinate();
 
         rooms = Stream.generate(() -> new Room(factory))
                 .limit(maxrooms)
@@ -63,7 +64,7 @@ public class Floor {
             // 金を置く
             if(Util.rnd(2) == 0){
                 Gold g = new Gold(level);
-                AbstractCoord coord = r.randomPosition();
+                AbstractCoordinate coord = r.randomPosition();
                 // g.
                 this.thingList.add(g);
                 // r.r_gold = r.randomPosition();
@@ -75,6 +76,9 @@ public class Floor {
         // 道を作る
         // Passage.do_passages()
 
+        // trapを置く
+
+        // 階段を置く
     }
 
     /*

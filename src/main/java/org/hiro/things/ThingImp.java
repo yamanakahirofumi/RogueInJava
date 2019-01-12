@@ -4,7 +4,7 @@ import org.hiro.Obj_info;
 import org.hiro.Room;
 import org.hiro.Stats;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,12 +23,12 @@ public class ThingImp implements Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
     public ThingImp _l_next, _l_prev; /* Next pointer in link */
-    public Coord _t_pos;            /* Position */
+    public Coordinate _t_pos;            /* Position */
     public boolean _t_turn;            /* If slowed, is it a turn to move */
     public int _t_type;            /* What it is */
     public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
-    public Coord _t_dest;        /* Where it is running to */
+    public Coordinate _t_dest;        /* Where it is running to */
     @Deprecated
     public int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
@@ -41,7 +41,7 @@ public class ThingImp implements Thing {
 
     // これでアクセスされるパターン２
     public ObjectType _o_type;            /* What kind of object it is */
-    public Coord _o_pos;            /* Where it lives on the screen */
+    public Coordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
     public int _o_packch;            /* What character it is in the pack */
@@ -160,7 +160,7 @@ public class ThingImp implements Thing {
         String oi_name = cols[0];
         int oi_prob = Integer.valueOf(cols[1]);
         int oi_worth = Integer.valueOf(cols[2]);
-        String oi_guess = "null".equals(cols[3]) ? null : cols[3];
+        String oi_guess = "null".equals(cols[3]) ? "" : cols[3];
         boolean oi_know = Boolean.valueOf(cols[4]);
         // TODO:
         return new Obj_info(oi_name, oi_prob, oi_worth, oi_guess, oi_know);

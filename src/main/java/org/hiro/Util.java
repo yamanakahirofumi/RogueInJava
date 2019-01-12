@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
@@ -55,7 +55,7 @@ public class Util {
      * Coordのequals()に変更
      */
     @Deprecated
-    static boolean ce(Coord a, Coord b) {
+    static boolean ce(Coordinate a, Coordinate b) {
         return (a.x == b.x && a.y == b.y);
     }
 

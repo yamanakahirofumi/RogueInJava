@@ -146,7 +146,7 @@ public class Pack {
                 Global.inpack++;
             }
             if (newobj) {
-                nobj = ListMethod.new_item();
+                nobj = new ThingImp();
                 nobj = obj;
                 nobj._l_next = null;
                 nobj._l_prev = null;
@@ -211,7 +211,6 @@ public class Pack {
                 Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
                 update_mdest(obj);
                 discarded = true;
-                ListMethod.discard(obj);
                 IOUtil.msg("the scroll turns to dust as you pick it up");
                 return;
             }
@@ -242,7 +241,6 @@ public class Pack {
                             }
                             op._o_count++;
                             update_mdest(obj);
-                            ListMethod.discard(obj);
                             obj = op;
                             discarded = true;
                             lp = null;
@@ -269,7 +267,6 @@ public class Pack {
                                 }
                                 // goto dump_it;
                                 update_mdest(obj);
-                                ListMethod.discard(obj);
                                 obj = op;
                                 discarded = true;
                                 lp = null;
@@ -417,7 +414,7 @@ public class Pack {
                     money(obj._o_arm);
                     Global.lvl_obj.remove(obj);
                     update_mdest(obj);
-                    ListMethod.discard(obj);
+                    Global.lvl_obj.remove(obj);
                     Global.player.t_room.r_goldval = 0;
                     break;
                 default:

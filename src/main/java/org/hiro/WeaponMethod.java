@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
@@ -85,11 +85,10 @@ public class WeaponMethod {
      *	Drop an item someplace around here.
      */
     static void fall(ThingImp obj, boolean pr) {
-        Place pp;
-        Coord fpos = new Coord(); // 多分fallpos()で代入
+        Coordinate fpos = new Coordinate(); // 多分fallpos()で代入
 
         if (fallpos(obj._o_pos, fpos)) {
-            pp = Util.INDEX(fpos.y, fpos.x);
+            Place pp = Util.INDEX(fpos.y, fpos.x);
             pp.p_ch = obj._o_type;
             obj._o_pos = fpos;
             if (Chase.cansee(fpos.y, fpos.x)) {
@@ -107,16 +106,15 @@ public class WeaponMethod {
                 Global.has_hit = false;
             }
             IOUtil.msg("the %s vanishes as it hits the ground",
-                    Global.weap_info[obj._o_which].oi_name);
+                    Global.weap_info[obj._o_which].getName());
         }
-        ListMethod.discard(obj);
     }
 
     /*
      * fallpos:
      *	Pick a random position around the give (y, x) coordinates
      */
-    static boolean fallpos(Coord pos, Coord newpos) {
+    static boolean fallpos(Coordinate pos, Coordinate newpos) {
         int cnt = 0;
         for (int y = pos.y - 1; y <= pos.y + 1; y++)
             for (int x = pos.x - 1; x <= pos.x + 1; x++) {
@@ -143,7 +141,7 @@ public class WeaponMethod {
      *	Does the missile hit the monster?
      */
     static boolean hit_monster(int y, int x, ThingImp obj) {
-        Coord mp = new Coord(x, y);
+        Coordinate mp = new Coordinate(x, y);
         return Fight.fight(mp, obj, true);
     }
 

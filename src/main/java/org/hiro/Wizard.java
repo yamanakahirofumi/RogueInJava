@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
@@ -16,7 +16,7 @@ public class Wizard {
      *	Bamf the hero someplace else
      */
     static void teleport() {
-        Coord c = new Coord();
+        Coordinate c = new Coordinate();
 
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
@@ -109,13 +109,8 @@ public class Wizard {
     static void set_know(ThingImp obj, Obj_info[] info) {
         String guess;
 
-        info[obj._o_which].oi_know = true;
+        info[obj._o_which].know();
         obj.add_o_flags(Const.ISKNOW);
-        guess = info[obj._o_which].oi_guess;
-        if (guess != null) {
-            // free(guess);
-            info[obj._o_which].oi_guess = null;
-        }
     }
 
     /*

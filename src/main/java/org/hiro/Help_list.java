@@ -1,7 +1,9 @@
 package org.hiro;
 
-/*
+/**
  * Help list
+ *
+ * 元はh_list
  */
 public class Help_list {
 	char h_ch;

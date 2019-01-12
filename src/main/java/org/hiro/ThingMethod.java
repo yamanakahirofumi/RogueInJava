@@ -31,7 +31,7 @@ public class ThingMethod {
         int rnd = Util.rnd(100);
         int j;
         for (j = 0; j < nitems; j++) {
-            if (rnd < info.get(j).oi_prob) {
+            if (rnd < info.get(j).getProbability()) {
                 break;
             }
         }
@@ -204,10 +204,10 @@ public class ThingMethod {
                     Global.prbuf = obj._o_count + " scrolls ";
                 }
                 op = Global.scr_info[which];
-                if (op.oi_know) {
-                    Global.prbuf = Global.prbuf + "of " + op.oi_name;
-                } else if (op.oi_guess != null) {
-                    Global.prbuf = Global.prbuf + "called " + op.oi_guess;
+                if (op.isKnown()) {
+                    Global.prbuf = Global.prbuf + "of " + op.getName();
+                } else if (op.isTemporaryNamed()) {
+                    Global.prbuf = Global.prbuf + "called " + op.getTemporaryName();
                 } else {
                     Global.prbuf = Global.prbuf + "titled '" + Global.s_names[which] + "'";
                 }
@@ -226,7 +226,7 @@ public class ThingMethod {
                 }
                 break;
             case WEAPON:
-                sp = Global.weap_info[which].oi_name;
+                sp = Global.weap_info[which].getName();
                 if (obj._o_count > 1) {
                     Global.prbuf = obj._o_count + " ";
                 } else {
@@ -246,7 +246,7 @@ public class ThingMethod {
                 }
                 break;
             case ARMOR:
-                sp = Global.arm_info[which].oi_name;
+                sp = Global.arm_info[which].getName();
                 if (obj.contains_o_flags(Const.ISKNOW)) {
                     Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj._o_arm, 0, ObjectType.ARMOR)
                             + " " + sp + " [";
@@ -301,21 +301,19 @@ public class ThingMethod {
     static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
         char pb;
 
-        if (op.oi_know || op.oi_guess != null) {
+        if (op.isKnown() || op.isTemporaryNamed()) {
             if (obj._o_count == 1) {
                 Global.prbuf = "A " + type + " ";
             } else {
                 Global.prbuf = obj._o_count + " " + type + " ";
             }
             try {
-                if (op.oi_know) {
-                    Global.prbuf = Global.prbuf + "of " + op.oi_name + prfunc.invoke(obj) + "(" + which + ")";
-                } else if (op.oi_guess != null) {
-                    Global.prbuf = Global.prbuf + "called " + op.oi_guess + prfunc.invoke(obj) + "(" + which + ")";
+                if (op.isKnown()) {
+                    Global.prbuf = Global.prbuf + "of " + op.getName() + prfunc.invoke(obj) + "(" + which + ")";
+                } else if (op.isTemporaryNamed()) {
+                    Global.prbuf = Global.prbuf + "called " + op.getTemporaryName() + prfunc.invoke(obj) + "(" + which + ")";
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else if (obj._o_count == 1) {

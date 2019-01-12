@@ -59,7 +59,6 @@ public class Potions {
      */
     static void quaff() {
         boolean MASTER = false;
-        boolean discardit = false;
 
         ThingImp obj = Pack.get_item("quaff", ObjectType.POTION);
         /*
@@ -84,7 +83,6 @@ public class Potions {
          * Calculate the effect it has on the poor guy.
          */
         boolean trip = Global.player.containsState(StateEnum.ISHALU);
-        discardit = (obj._o_count == 1);
         Pack.leave_pack(obj, false, false);
         PotionEnum p = PotionEnum.get(obj._o_which);
         boolean show;
@@ -93,7 +91,7 @@ public class Potions {
                 do_pot(p, !trip);
                 break;
             case P_POISON:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 if (Util.ISWEARING(RingEnum.R_SUSTSTR)) {
                     IOUtil.msg("you feel momentarily sick");
                 } else {
@@ -103,7 +101,7 @@ public class Potions {
                 }
                 break;
             case P_HEALING:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 if ((Global.player._t_stats.s_hpt += Dice.roll(Global.player._t_stats.s_lvl, 4)) > Global.player._t_stats.s_maxhp) {
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
                 }
@@ -111,7 +109,7 @@ public class Potions {
                 IOUtil.msg("you begin to feel better");
                 break;
             case P_STRENGTH:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 Misc.chg_str(1);
                 IOUtil.msg("you feel stronger, now.  What bulging muscles!");
                 break;
@@ -140,7 +138,7 @@ public class Potions {
                             show = true;
                             // wmove(hw, tp._o_pos.y, tp._o_pos.x);
                             // waddch(hw, ObjectType.MAGIC);
-                            Global.pot_info[p.getValue()].oi_know = true;
+                            Global.pot_info[p.getValue()].know();
                         }
                     }
                     for (ThingImp mp : Global.mlist) {
@@ -154,11 +152,12 @@ public class Potions {
                     }
                 }
                 if (show) {
-                    Global.pot_info[p.getValue()].oi_know = true;
+                    Global.pot_info[p.getValue()].know();
                     IOUtil.show_win("You sense the presence of magic on this level.--More--");
-                } else
+                } else {
                     IOUtil.msg("you have a %s feeling for a moment, then it passes",
                             Misc.choose_str("normal", "strange"));
+                }
                 break;
             case P_LSD:
                 if (!trip) {
@@ -185,12 +184,12 @@ public class Potions {
                 Daemons.sight();
                 break;
             case P_RAISE:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 IOUtil.msg("you suddenly feel much more skillful");
                 raise_level();
                 break;
             case P_XHEAL:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 if ((Global.player._t_stats.s_hpt += Dice.roll(Global.player._t_stats.s_lvl, 8)) > Global.player._t_stats.s_maxhp) {
                     if (Global.player._t_stats.s_hpt > Global.player._t_stats.s_maxhp + Global.player._t_stats.s_lvl + 1)
                         ++Global.player._t_stats.s_maxhp;
@@ -201,7 +200,7 @@ public class Potions {
                 IOUtil.msg("you begin to feel much better");
                 break;
             case P_HASTE:
-                Global.pot_info[p.getValue()].oi_know = true;
+                Global.pot_info[p.getValue()].know();
                 Global.after = false;
                 if (Misc.add_haste(true))
                     IOUtil.msg("you feel yourself moving much faster");
@@ -241,12 +240,7 @@ public class Potions {
          * Throw the item away
          */
 
-        Misc.call_it(Global.pot_info[obj._o_which]);
 
-        if (discardit) {
-            ListMethod.discard(obj);
-        }
-        return;
     }
 
     /*
@@ -338,8 +332,8 @@ public class Potions {
         }
 
         Pact pp = p_actions.get(type.getValue());
-        if (!Global.pot_info[type.getValue()].oi_know) {
-            Global.pot_info[type.getValue()].oi_know = knowit;
+        if (!Global.pot_info[type.getValue()].isKnown()) {
+            Global.pot_info[type.getValue()].setKnown(knowit);
         }
         int t = Misc.spread(pp.pa_time);
         if (!Global.player.containsState(pp.pa_flags)) {
@@ -424,10 +418,12 @@ public class Potions {
             if (Chase.see_monst(tp) && tp.containsState(StateEnum.ISRUN)) {    /* if it's visible and awake */
                 return true;            /* it must have moved there */
             }
-            if (Global.player.containsState(StateEnum.SEEMONST)        /* if she can detect monster */
-                    && tp._t_oldch == ObjectType.STAIRS.getValue()) {        /* and there once were stairs */
-                return true;            /* it must have moved there */
-            }
+
+            /* if she can detect monster */
+            /* and there once were stairs */
+            /* it must have moved there */
+            return Global.player.containsState(StateEnum.SEEMONST)
+                    && tp._t_oldch == ObjectType.STAIRS.getValue();
         }
         return false;
     }

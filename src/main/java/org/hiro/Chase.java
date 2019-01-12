@@ -1,8 +1,8 @@
 package org.hiro;
 
 import org.hiro.character.StateEnum;
-import org.hiro.map.AbstractCoord;
-import org.hiro.map.Coord;
+import org.hiro.map.AbstractCoordinate;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -13,14 +13,14 @@ import org.hiro.things.ThingImp;
  * Code for one creature to chase another
  */
 public class Chase {
-    private static Coord ch_ret;
+    private static Coordinate ch_ret;
 
     /*
      * roomin:
      *	Find what room some coordinates are in. null means they aren't
      *	in any room.
      */
-    static Room roomin(Coord cp) {
+    static Room roomin(Coordinate cp) {
 
         int fp = Util.flat(cp.y, cp.x);
         if ((fp & Const.F_PASS) != 0) {
@@ -28,8 +28,8 @@ public class Chase {
         }
         for (int i = 0; i < Const.MAXROOMS; i++) {
             Room rp = Global.rooms.get(i);
-            if (cp.x <= ((Coord) rp.r_pos).x + ((Coord) rp.r_max).x && ((Coord) rp.r_pos).x <= cp.x
-                    && cp.y <= ((Coord) rp.r_pos).y + ((Coord) rp.r_max).y && ((Coord) rp.r_pos).y <= cp.y) {
+            if (cp.x <= ((Coordinate) rp.r_pos).x + ((Coordinate) rp.r_max).x && ((Coordinate) rp.r_pos).x <= cp.x
+                    && cp.y <= ((Coordinate) rp.r_pos).y + ((Coordinate) rp.r_max).y && ((Coordinate) rp.r_pos).y <= cp.y) {
                 return rp;
             }
         }
@@ -48,7 +48,7 @@ public class Chase {
      * runto:
      *	Set a monster running after the hero.
      */
-    static void runto(Coord runner) {
+    static void runto(Coordinate runner) {
         ThingImp tp;
 
         /*
@@ -74,7 +74,7 @@ public class Chase {
      * find_dest:
      *	find the proper destination for the monster
      */
-    static Coord find_dest(ThingImp tp) {
+    static Coordinate find_dest(ThingImp tp) {
         int prob;
 
         if ((prob = Global.monsters[tp._t_type - 'A'].m_carry) <= 0
@@ -116,12 +116,9 @@ public class Chase {
         int y = mp._t_pos.y;
         int x = mp._t_pos.x;
         if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
-            if (y != Global.player._t_pos.y && x != Global.player._t_pos.x
-                    && !IOUtil.step_ok(Global.places.get((y << 5) + Global.player._t_pos.x).p_ch)
-                    && !IOUtil.step_ok(Global.places.get((Global.player._t_pos.y << 5) + x).p_ch)) {
-                return false;
-            }
-            return true;
+            return y == Global.player._t_pos.y || x == Global.player._t_pos.x
+                    || IOUtil.step_ok(Global.places.get((y << 5) + Global.player._t_pos.x).p_ch)
+                    || IOUtil.step_ok(Global.places.get((Global.player._t_pos.y << 5) + x).p_ch);
         }
         if (mp.t_room != Global.player.t_room) {
             return false;
@@ -150,19 +147,16 @@ public class Chase {
         }
         if (dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
             if ((Util.flat(y, x) & Const.F_PASS) != 0) {
-                if (y != Global.player._t_pos.y && x != Global.player._t_pos.x &&
-                        !IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) &&
-                        !IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch)) {
-                    return false;
-                }
-                return true;
+                return y == Global.player._t_pos.y || x == Global.player._t_pos.x ||
+                        IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) ||
+                        IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch);
             }
         }
         /*
          * We can only see if the hero in the same room as
          * the coordinate and the room is lit or if it is close.
          */
-        Coord tp = new Coord(x, y);
+        Coordinate tp = new Coordinate(x, y);
         Room rer;
         return ((rer = roomin(tp)) == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK));
     }
@@ -171,7 +165,7 @@ public class Chase {
      * diag_ok:
      *	Check to see if the move is legal if it is diagonal
      */
-    static boolean diag_ok(Coord sp, Coord ep) {
+    static boolean diag_ok(Coordinate sp, Coordinate ep) {
         if (ep.x < 0 || ep.x >= Const.NUMCOLS || ep.y <= 0 || ep.y >= Const.NUMLINES - 1) {
             return false;
         }
@@ -187,7 +181,7 @@ public class Chase {
      *	Make the monster's new location be the specified one, updating
      *	all the relevant state.
      */
-    static void relocate(ThingImp th, Coord new_loc) {
+    static void relocate(ThingImp th, Coordinate new_loc) {
 
         if (!new_loc.equals(th._t_pos)) {
             Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
@@ -216,7 +210,7 @@ public class Chase {
      * set_oldch:
      *	Set the oldch character for the monster
      */
-    static void set_oldch(ThingImp tp, Coord cp) {
+    static void set_oldch(ThingImp tp, Coordinate cp) {
 
         if (tp._t_pos.equals(cp)) {
             return;
@@ -238,7 +232,7 @@ public class Chase {
      * dist_cp:
      *	Call dist() with appropriate arguments for coord pointers
      */
-    static int dist_cp(Coord c1, Coord c2) {
+    static int dist_cp(Coordinate c1, Coordinate c2) {
         return dist(c1.y, c1.x, c2.y, c2.x);
     }
 
@@ -253,7 +247,7 @@ public class Chase {
             /* remember this in case the monster's "next" is changed */
             next = tp._l_next;
             if (!tp.containsState(StateEnum.ISHELD) && tp.containsState(StateEnum.ISRUN)) {
-                Coord orig_pos = tp._t_pos;
+                Coordinate orig_pos = tp._t_pos;
                 boolean wastarget = tp.containsState(StateEnum.ISTARGET);
                 if (move_monst(tp) == -1)
                     continue;
@@ -296,17 +290,16 @@ public class Chase {
      */
     static int do_chase(ThingImp th) {
         int DRAGONSHOT = 5;   /* one chance in DRAGONSHOT that a dragon will flame */
-        AbstractCoord cp;
-        Room rer, ree;    /* room of chaser, room of chasee */
-        int mindist = 32767, curdist;
-        boolean stoprun = false;    /* true means we are there */
-        boolean door;
-        Coord thisTmp = new Coord();            /* Temporary destination for chaser */
+        int mindist = 32767;
+        Coordinate thisTmp = new Coordinate();            /* Temporary destination for chaser */
 
-        rer = th.t_room;        /* Find room of chaser */
+        /* Find room of chaser */
+        /* room of chaser, room of chasee */
+        Room rer = th.t_room;
         if (th.containsState(StateEnum.ISGREED) && rer.r_goldval == 0) {
             th._t_dest = Global.player._t_pos;    /* If gold has been taken, run after hero */
         }
+        Room ree;
         if (th._t_dest == Global.player._t_pos) {    /* Find room of chasee */
             ree = Global.player.t_room;
         } else {
@@ -315,27 +308,26 @@ public class Chase {
         /*
          * We don't count doors as inside rooms for this routine
          */
-        door = (Global.places.get((th._t_pos.x << 5) + th._t_pos.y).p_ch == ObjectType.DOOR);
+        boolean door = (Global.places.get((th._t_pos.x << 5) + th._t_pos.y).p_ch == ObjectType.DOOR);
         /*
          * If the object of our desire is in a different room,
          * and we are not in a corridor, run to the door nearest to
          * our goal.
          */
-        over:
         while (true) {
             if (rer != ree) {
                 for (int i = 0; i < rer.r_nexits; i++) {
-                    cp = rer.r_exit[i];
-                    curdist = dist_cp(th._t_dest, (Coord) cp);
+                    AbstractCoordinate cp = rer.r_exit[i];
+                    int curdist = dist_cp(th._t_dest, (Coordinate) cp);
                     if (curdist < mindist) {
-                        thisTmp = (Coord) cp;
+                        thisTmp = (Coordinate) cp;
                         mindist = curdist;
                     }
                 }
                 if (door) {
                     rer = Global.passages[Util.flat(th._t_pos.y, th._t_pos.x) & Const.F_PNUM];
                     door = false;
-                    continue over;
+                    continue;
                 }
             } else {
                 thisTmp = th._t_dest;
@@ -364,13 +356,15 @@ public class Chase {
                     return (0);
                 }
             }
-            break over;
+            break;
         }
         /*
          * This now contains what we want to run to this time
          * so we run to it.  If we hit it we either want to fight it
          * or stop running
          */
+        /* true means we are there */
+        boolean stoprun = false;
         if (!chase(th, thisTmp)) {
             if (thisTmp.equals(Global.player._t_pos)) {
                 return (Fight.attack(th));
@@ -410,10 +404,10 @@ public class Chase {
      *	chasee(ee).  Returns TRUE if we want to keep on chasing later
      *	FALSE if we reach the goal.
      */
-    static boolean chase(ThingImp tp, Coord ee) {
+    static boolean chase(ThingImp tp, Coordinate ee) {
         int curdist;
-        Coord er = tp._t_pos;
-        Coord tryp = new Coord();
+        Coordinate er = tp._t_pos;
+        Coordinate tryp = new Coordinate();
 
         /*
          * If the thing is confused, let it move randomly. Invisible
@@ -439,7 +433,6 @@ public class Chase {
          * closest to the chasee.
          */
         else {
-            int ey, ex;
             /*
              * This will eventually hold where we move to get closer
              * If we can't find an empty spot, we stay where we are.
@@ -447,11 +440,11 @@ public class Chase {
             curdist = dist_cp(er, ee);
             ch_ret = er;
 
-            ey = er.y + 1;
+            int ey = er.y + 1;
             if (ey >= Const.NUMLINES - 1) {
                 ey = Const.NUMLINES - 2;
             }
-            ex = er.x + 1;
+            int ex = er.x + 1;
             if (ex >= Const.NUMCOLS) {
                 ex = Const.NUMCOLS - 1;
             }

@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -21,7 +21,7 @@ public class Passage {
      *	add a passage character or secret passage here
      *  通路や秘密の通路の追加
      */
-    static void putpass(Coord cp) {
+    static void putpass(Coordinate cp) {
         Place pp = Util.INDEX(cp.y, cp.x);
         pp.p_flags |= Const.F_PASS;
         if (Util.rnd(10) + 1 < Global.level && Util.rnd(40) == 0) {
@@ -208,17 +208,17 @@ public class Passage {
         int distance = 0;
         int turn_distance = 0;
         Room rpt = null;
-        Coord startPosition = new Coord();
-        Coord endPosiiton = new Coord();
-        Coord direction = new Coord();
-        Coord turn_delta = new Coord();
+        Coordinate startPosition = new Coordinate();
+        Coordinate endPosiiton = new Coordinate();
+        Coordinate direction = new Coordinate();
+        Coordinate turn_delta = new Coordinate();
         if (direc == 'd') {
             rmt = rm + 3;                /* room # of dest */
             rpt = Global.rooms.get(rmt);            /* room pointer of dest */
             direction.x = 0;
             direction.y = 1;                /* direction of move */
-            startPosition = new Coord(rpf.r_pos.x, rpf.r_pos.y);            /* start of move */
-            endPosiiton = new Coord(rpt.r_pos.x, rpt.r_pos.y);            /* end of move */
+            startPosition = new Coordinate(rpf.r_pos.x, rpf.r_pos.y);            /* start of move */
+            endPosiiton = new Coordinate(rpt.r_pos.x, rpt.r_pos.y);            /* end of move */
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {    /* if not gone pick door pos */
                 do {
                     startPosition.x = rpf.r_pos.x + Util.rnd(rpf.r_max.x - 2) + 1;
@@ -239,8 +239,8 @@ public class Passage {
             rpt = Global.rooms.get(rmt);
             direction.x = 1;
             direction.y = 0;
-            startPosition = new Coord(rpf.r_pos.x, rpf.r_pos.y);
-            endPosiiton = new Coord(rpt.r_pos.x, rpt.r_pos.y);
+            startPosition = new Coordinate(rpf.r_pos.x, rpf.r_pos.y);
+            endPosiiton = new Coordinate(rpt.r_pos.x, rpt.r_pos.y);
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
                     startPosition.x = rpf.r_pos.x + rpf.r_max.x - 1;
@@ -283,7 +283,7 @@ public class Passage {
         /*
          * Get ready to move...
          */
-        Coord curr = new Coord(startPosition.x, startPosition.y);
+        Coordinate curr = new Coordinate(startPosition.x, startPosition.y);
         while (distance > 0) {
             /*
              * Move to new position
@@ -318,7 +318,7 @@ public class Passage {
      *	Add a door or possibly a secret door.  Also enters the door in
      *	the exits array of the room.
      */
-    static void door(Room rm, Coord cp) {
+    static void door(Room rm, Coordinate cp) {
         Place pp;
 
         rm.r_exit[rm.r_nexits++] = cp;

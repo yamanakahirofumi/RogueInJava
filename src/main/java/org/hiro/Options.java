@@ -131,9 +131,7 @@ public class Options {
             // wait_for(hw, ' ');
             // clearok(curscr, true);
             // touchwin(stdscr);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -148,10 +146,7 @@ public class Options {
         if (!"name".equals(opt.o_name)) {
             return false;
         }
-        if (!"file".equals(opt.o_name)) {
-            return false;
-        }
-        return true;
+        return "file".equals(opt.o_name);
     }
 
     /*

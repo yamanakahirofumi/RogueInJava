@@ -1,7 +1,7 @@
 package org.hiro;
 
 
-import org.hiro.map.Coord;
+import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
@@ -15,7 +15,7 @@ public class DrawRoom {
 
     static void do_rooms() {
         int left_out;
-        Coord bsze = new Coord();                /* maximum room size */
+        Coordinate bsze = new Coordinate();                /* maximum room size */
         bsze.x = Const.NUMCOLS / 3;
         bsze.y = Const.NUMLINES / 3;
         /*
@@ -37,7 +37,7 @@ public class DrawRoom {
             Room r = Global.rooms.get(rnd_room());
             r.addInfo(RoomInfoEnum.ISGONE);
         }
-        Coord top = new Coord();
+        Coordinate top = new Coordinate();
         /*
          * dig and populate all the rooms on the level
          */
@@ -82,13 +82,14 @@ public class DrawRoom {
                     rp.r_pos.y++;
                     rp.r_max.y--;
                 }
-            } else
+            } else {
                 do {
                     rp.r_max.x = Util.rnd(bsze.x - 4) + 4;
                     rp.r_max.y = Util.rnd(bsze.y - 4) + 4;
                     rp.r_pos.x = top.x + Util.rnd(bsze.x - rp.r_max.x);
                     rp.r_pos.y = top.y + Util.rnd(bsze.y - rp.r_max.y);
-                } while (!(rp.r_pos.y != 0));
+                } while (rp.r_pos.y == 0);
+            }
             draw_room(rp);
             /*
              * Put the gold in
@@ -99,15 +100,15 @@ public class DrawRoom {
 
                 gold = new ThingImp();
                 gold._o_arm = rp.r_goldval = Util.GOLDCALC();
-                find_floor(rp,(Coord) rp.r_gold, false, false);
-                gold._o_pos = (Coord) rp.r_gold;
+                find_floor(rp,(Coordinate) rp.r_gold, false, false);
+                gold._o_pos = (Coordinate) rp.r_gold;
                 Util.INDEX(rp.r_gold.y, rp.r_gold.x).p_ch = ObjectType.GOLD;
                 gold.set_o_flags(Const.ISMANY);
                 gold._o_group = GOLDGRP;
                 gold._o_type = ObjectType.GOLD;
                 Global.lvl_obj.add(gold);
             }
-            Coord mp = new Coord();
+            Coordinate mp = new Coordinate();
             /*
              * Put the monster in
              */
@@ -168,7 +169,7 @@ public class DrawRoom {
      *	Dig a maze
      */
     static void do_maze(Room rp) {
-        Coord pos = new Coord();
+        Coordinate pos = new Coordinate();
 
         for (int i = 0; i <= Const.NUMLINES / 3; i++) {
             for (int j = 0; j <= Const.NUMCOLS / 3; j++) {
@@ -198,7 +199,7 @@ public class DrawRoom {
 
     static void dig(int y, int x) {
         int newy, newx, nexty = 0, nextx = 0;
-        Coord[] del = new Coord[4];
+        Coordinate[] del = new Coordinate[4];
         // もしかしたらx,y逆かも
         del[0].x = 2;
         del[0].y = 0;
@@ -212,7 +213,7 @@ public class DrawRoom {
         for (; ; ) {
             int cnt = 0;
             for (int i = 0; i < 4; i++) {
-                Coord cp = del[i];
+                Coordinate cp = del[i];
                 newy = y + cp.y;
                 newx = x + cp.x;
                 if (newy < 0 || newy > Maxy || newx < 0 || newx > Maxx) {
@@ -231,7 +232,7 @@ public class DrawRoom {
             }
             accnt_maze(y, x, nexty, nextx);
             accnt_maze(nexty, nextx, y, x);
-            Coord pos = new Coord();
+            Coordinate pos = new Coordinate();
             if (nexty == y) {
                 pos.y = y + Starty;
                 if (nextx - x < 0) {
@@ -262,7 +263,7 @@ public class DrawRoom {
      */
     static void accnt_maze(int y, int x, int ny, int nx) {
         Spot sp;
-        Coord cp = new Coord();
+        Coordinate cp = new Coordinate();
 
         sp = maze[y][x];
         for (int i = 0; i < sp.nexits; i++) {
@@ -305,7 +306,7 @@ public class DrawRoom {
      *	Find a valid floor spot in this room.  If rp is NULL, then
      *	pick a new room each time around the loop.
      */
-    static boolean find_floor(Room rp, Coord cp, boolean limit, boolean monst) {
+    static boolean find_floor(Room rp, Coordinate cp, boolean limit, boolean monst) {
 
         boolean pickroom = (rp == null);
 
@@ -340,7 +341,7 @@ public class DrawRoom {
      * rnd_pos:
      *	Pick a random spot in a room
      */
-    static void rnd_pos(Room rp, Coord cp) {
+    static void rnd_pos(Room rp, Coordinate cp) {
         cp.x = rp.r_pos.x + Util.rnd(rp.r_max.x - 2) + 1;
         cp.y = rp.r_pos.y + Util.rnd(rp.r_max.y - 2) + 1;
     }
