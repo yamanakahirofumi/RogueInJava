@@ -386,31 +386,6 @@ public class Misc {
     }
 
     /*
-     * call_it:
-     *	Call an object something after use.
-     */
-    static void call_it(Obj_info info) {
-        if (info.oi_know) {
-            if (info.oi_guess != null) {
-                // free(info.oi_guess);
-                info.oi_guess = null;
-            }
-        } else if (info.oi_guess == null) {
-            IOUtil.msg(Global.terse ? "call it: " : "what do you want to call it? ");
-//            if (get_str(prbuf, stdscr) == 0) {
-//                if (info.oi_guess != null) {
-//                    // free(info.oi_guess);
-//                }
-//                info.oi_guess = malloc(strlen(prbuf) + 1);
-//                if (info.oi_guess != null) {
-//                    strcpy(info.oi_guess, prbuf);
-//                }
-//            }
-            IOUtil.msg("");
-        }
-    }
-
-    /*
      * show_floor:
      *	Should we show the floor in her room at this time?
      */

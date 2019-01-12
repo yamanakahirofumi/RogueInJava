@@ -109,13 +109,8 @@ public class Wizard {
     static void set_know(ThingImp obj, Obj_info[] info) {
         String guess;
 
-        info[obj._o_which].oi_know = true;
+        info[obj._o_which].know();
         obj.add_o_flags(Const.ISKNOW);
-        guess = info[obj._o_which].oi_guess;
-        if (guess != null) {
-            // free(guess);
-            info[obj._o_which].oi_guess = null;
-        }
     }
 
     /*

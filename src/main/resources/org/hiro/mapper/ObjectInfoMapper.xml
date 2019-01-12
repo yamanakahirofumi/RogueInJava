@@ -28,8 +28,8 @@
             <arg name="name" column="name"/>
             <arg name="probability" column="probability"/>
             <arg name="worth" column="worth"/>
-            <arg name="oi_guess" column="guess"/>
-            <arg name="oi_know" column="know"/>
+            <arg name="temporaryName" column="guess"/>
+            <arg name="known" column="know"/>
         </constructor>
     </resultMap>
 </mapper>

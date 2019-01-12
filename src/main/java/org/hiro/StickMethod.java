@@ -81,7 +81,7 @@ public class StickMethod {
                 /*
                  * Reddy Kilowat wand.  Light up the room
                  */
-                Global.ws_info[st.getValue()].oi_know = true;
+                Global.ws_info[st.getValue()].know();
                 if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
                     IOUtil.msg("the corridor glows and then fades");
                 } else {
@@ -149,7 +149,7 @@ public class StickMethod {
                             }
                             tp._t_oldch = oldch;
                             tp.setBaggage(pp);
-                            Global.ws_info[st.getValue()].oi_know |= Chase.see_monst(tp);
+                            Global.ws_info[st.getValue()].addKnown(Chase.see_monst(tp));
                             break;
                         }
                         case WS_CANCEL:
@@ -181,7 +181,7 @@ public class StickMethod {
                 }
                 break;
             case WS_MISSILE:
-                Global.ws_info[StickEnum.WS_MISSILE.getValue()].oi_know = true;
+                Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
                 bolt._o_type = ObjectType.GOLD;
                 bolt._o_hurldmg = "1x4";
                 bolt._o_hplus = 100;
@@ -238,7 +238,7 @@ public class StickMethod {
                     name = "ice";
                 }
                 fire_bolt(Global.player._t_pos, Global.delta, name);
-                Global.ws_info[obj._o_which].oi_know = true;
+                Global.ws_info[obj._o_which].know();
                 break;
             case WS_NOP:
                 break;

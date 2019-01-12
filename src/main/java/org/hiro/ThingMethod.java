@@ -204,10 +204,10 @@ public class ThingMethod {
                     Global.prbuf = obj._o_count + " scrolls ";
                 }
                 op = Global.scr_info[which];
-                if (op.oi_know) {
+                if (op.isKnown()) {
                     Global.prbuf = Global.prbuf + "of " + op.getName();
-                } else if (op.oi_guess != null) {
-                    Global.prbuf = Global.prbuf + "called " + op.oi_guess;
+                } else if (op.isTemporaryNamed()) {
+                    Global.prbuf = Global.prbuf + "called " + op.getTemporaryName();
                 } else {
                     Global.prbuf = Global.prbuf + "titled '" + Global.s_names[which] + "'";
                 }
@@ -301,17 +301,17 @@ public class ThingMethod {
     static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
         char pb;
 
-        if (op.oi_know || op.oi_guess != null) {
+        if (op.isKnown() || op.isTemporaryNamed()) {
             if (obj._o_count == 1) {
                 Global.prbuf = "A " + type + " ";
             } else {
                 Global.prbuf = obj._o_count + " " + type + " ";
             }
             try {
-                if (op.oi_know) {
+                if (op.isKnown()) {
                     Global.prbuf = Global.prbuf + "of " + op.getName() + prfunc.invoke(obj) + "(" + which + ")";
-                } else if (op.oi_guess != null) {
-                    Global.prbuf = Global.prbuf + "called " + op.oi_guess + prfunc.invoke(obj) + "(" + which + ")";
+                } else if (op.isTemporaryNamed()) {
+                    Global.prbuf = Global.prbuf + "called " + op.getTemporaryName() + prfunc.invoke(obj) + "(" + which + ")";
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();

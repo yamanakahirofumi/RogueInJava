@@ -160,7 +160,7 @@ public class ThingImp implements Thing {
         String oi_name = cols[0];
         int oi_prob = Integer.valueOf(cols[1]);
         int oi_worth = Integer.valueOf(cols[2]);
-        String oi_guess = "null".equals(cols[3]) ? null : cols[3];
+        String oi_guess = "null".equals(cols[3]) ? "" : cols[3];
         boolean oi_know = Boolean.valueOf(cols[4]);
         // TODO:
         return new Obj_info(oi_name, oi_prob, oi_worth, oi_guess, oi_know);

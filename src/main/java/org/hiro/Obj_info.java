@@ -28,27 +28,27 @@ public class Obj_info {
 	 * 未鑑定時につけられる名前
 	 *
 	 */
-	String oi_guess;
+	private String temporaryName;
 	/**
 	 * 鑑定済みフラグ
 	 *
 	 */
-	boolean oi_know;
+	private boolean known;
 
 	public Obj_info(String name, int probability, int worth){
 		this.name = name;
 		this.probability = probability;
 		this.worth = worth;
-		this.oi_guess = "";
-		this.oi_know = false;
+		this.temporaryName = "";
+		this.known = false;
 	}
 
-	public Obj_info(String name, int probability, int worth, String oi_guess, boolean oi_know ){
+	public Obj_info(String name, int probability, int worth, String temporaryName, boolean known){
 		this.name = name;
 		this.probability = probability;
 		this.worth = worth;
-		this.oi_guess = oi_guess;
-		this.oi_know = oi_know;
+		this.temporaryName = temporaryName;
+		this.known = known;
 	}
 
 	public int getProbability() {
@@ -65,5 +65,30 @@ public class Obj_info {
 
 	public int getWorth() {
 		return this.worth;
+	}
+
+	public void know(){
+		this.temporaryName = "";
+		this.known = true;
+	}
+
+	public String getTemporaryName() {
+		return temporaryName;
+	}
+
+	public boolean isTemporaryNamed(){
+		return this.temporaryName.length() > 0;
+	}
+
+	public boolean isKnown() {
+		return this.known;
+	}
+
+	public void setKnown(boolean known) {
+		this.known = known;
+	}
+
+	public void addKnown(boolean known){
+		this.known |= known;
 	}
 }

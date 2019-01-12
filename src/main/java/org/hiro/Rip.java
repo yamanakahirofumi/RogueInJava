@@ -411,19 +411,19 @@ public class Rip {
                     worth = Global.scr_info[obj._o_which].getWorth();
                     worth *= obj._o_count;
                     op = Global.scr_info[obj._o_which];
-                    if (!op.oi_know) {
+                    if (!op.isKnown()) {
                         worth /= 2;
                     }
-                    op.oi_know = true;
+                    op.know();
                     break;
                 case POTION:
                     worth = Global.pot_info[obj._o_which].getWorth();
                     worth *= obj._o_count;
                     op = Global.pot_info[obj._o_which];
-                    if (!op.oi_know) {
+                    if (!op.isKnown()) {
                         worth /= 2;
                     }
-                    op.oi_know = true;
+                    op.know();
                     break;
                 case RING:
                     op = Global.ring_info[obj._o_which];
@@ -439,7 +439,7 @@ public class Rip {
                     if (!obj.contains_o_flags(Const.ISKNOW))
                         worth /= 2;
                     obj.add_o_flags(Const.ISKNOW);
-                    op.oi_know = true;
+                    op.know();
                     break;
                 case STICK:
                     op = Global.ws_info[obj._o_which];
@@ -449,7 +449,7 @@ public class Rip {
                         worth /= 2;
                     }
                     obj.add_o_flags(Const.ISKNOW);
-                    op.oi_know = true;
+                    op.know();
                     break;
                 case AMULET:
                     worth = 1000;

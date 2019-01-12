@@ -85,7 +85,7 @@ public class ScrollMethod {
                         IOUtil.addmsg("s");
                     }
                     IOUtil.endmsg();
-                    Global.scr_info[ScrollEnum.S_HOLD.getValue()].oi_know = true;
+                    Global.scr_info[ScrollEnum.S_HOLD.getValue()].know();
                 } else
                     IOUtil.msg("you feel a strange sense of loss");
                 break;
@@ -93,7 +93,7 @@ public class ScrollMethod {
                 /*
                  * Scroll which makes you fall asleep
                  */
-                Global.scr_info[ScrollEnum.S_SLEEP.getValue()].oi_know = true;
+                Global.scr_info[ScrollEnum.S_SLEEP.getValue()].know();
                 Global.no_command += Util.rnd(Const.SLEEPTIME) + 4;
                 Global.player.removeState(StateEnum.ISRUN);
                 IOUtil.msg("you fall asleep");
@@ -146,7 +146,7 @@ public class ScrollMethod {
                 /*
                  * Identify, let him figure something out
                  */
-                Global.scr_info[obj._o_which].oi_know = true;
+                Global.scr_info[obj._o_which].know();
                 IOUtil.msg("this scroll is an %s scroll", Global.scr_info[obj._o_which].getName());
                 Wizard.whatis(true, id_type[obj._o_which]);
             }
@@ -155,7 +155,7 @@ public class ScrollMethod {
                 /*
                  * Scroll of magic mapping.
                  */
-                Global.scr_info[ScrollEnum.S_MAP.getValue()].oi_know = true;
+                Global.scr_info[ScrollEnum.S_MAP.getValue()].know();
                 IOUtil.msg("oh, now this scroll has a map on it");
                 /*
                  * take all the things we want to keep hidden out of the window
@@ -246,7 +246,7 @@ public class ScrollMethod {
                     }
                 }
                 if (chb) {
-                    Global.scr_info[ScrollEnum.S_FDET.getValue()].oi_know = true;
+                    Global.scr_info[ScrollEnum.S_FDET.getValue()].know();
                     IOUtil.show_win("Your nose tingles and you smell food.--More--");
                 } else
                     IOUtil.msg("your nose tingles");
@@ -260,7 +260,7 @@ public class ScrollMethod {
                 Room cur_room = Global.player.t_room;
                 Wizard.teleport();
                 if (cur_room != Global.player.t_room)
-                    Global.scr_info[ScrollEnum.S_TELEP.getValue()].oi_know = true;
+                    Global.scr_info[ScrollEnum.S_TELEP.getValue()].know();
             }
             break;
             case S_ENCH:
@@ -318,7 +318,6 @@ public class ScrollMethod {
         Misc.look(true);    /* put the result of the scroll on the screen */
         IOUtil.status();
 
-        Misc.call_it(Global.scr_info[obj._o_which]);
 
     }
 
