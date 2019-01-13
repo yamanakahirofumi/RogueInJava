@@ -2,7 +2,6 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
-import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -29,8 +28,7 @@ public class Chase {
         }
         for (int i = 0; i < Const.MAXROOMS; i++) {
             Room rp = Global.rooms.get(i);
-            if (cp.x <= rp.r_pos.x + rp.r_max.x && rp.r_pos.x <= cp.x
-                    && cp.y <= rp.r_pos.y + rp.r_max.y && rp.r_pos.y <= cp.y) {
+            if(rp.isInMyRoom(cp)){
                 return rp;
             }
         }
@@ -139,6 +137,8 @@ public class Chase {
 
     /*
      * isSee:
+     *
+     * 昔はcan_see()
      *	Returns true if the hero can see a certain coordinate.
      */
     static boolean isSee(Coordinate c) {
@@ -316,10 +316,10 @@ public class Chase {
         while (true) {
             if (rer != ree) {
                 for (int i = 0; i < rer.r_nexits; i++) {
-                    AbstractCoordinate cp = rer.r_exit[i];
-                    int curdist = dist_cp(th._t_dest, (Coordinate) cp);
+                    Coordinate cp = rer.r_exit[i];
+                    int curdist = dist_cp(th._t_dest, cp);
                     if (curdist < mindist) {
-                        thisTmp = (Coordinate) cp;
+                        thisTmp = cp;
                         mindist = curdist;
                     }
                 }

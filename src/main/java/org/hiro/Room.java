@@ -87,4 +87,8 @@ public class Room {
 		this.info.clear();
 	}
 
+	public boolean isInMyRoom(Coordinate c){
+		return c.x <= r_pos.x + r_max.x && r_pos.x <= c.x && c.y <= r_pos.y + r_max.y && r_pos.y <= c.y;
+	}
+
 }
