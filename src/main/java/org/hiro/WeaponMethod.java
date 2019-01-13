@@ -74,8 +74,8 @@ public class WeaponMethod {
          * AHA! Here it has hit something.  If it is a wall or a door,
          * or if it misses (combat) the monster, put it on the floor
          */
-        if (Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_monst == null ||
-                !hit_monster(obj._o_pos.y, obj._o_pos.x, obj)) {
+        if (Util.getPlace(obj._o_pos).p_monst == null ||
+                !hit_monster(obj._o_pos, obj)) {
             fall(obj, true);
         }
     }
@@ -88,7 +88,7 @@ public class WeaponMethod {
         Coordinate fpos = new Coordinate(); // 多分fallpos()で代入
 
         if (fallpos(obj._o_pos, fpos)) {
-            Place pp = Util.INDEX(fpos.y, fpos.x);
+            Place pp = Util.getPlace(fpos);
             pp.p_ch = obj._o_type;
             obj._o_pos = fpos;
             if (Chase.isSee(fpos)) {
@@ -123,11 +123,11 @@ public class WeaponMethod {
                  * put the object there, set it in the level list
                  * and re-draw the room if he can see it
                  */
-                if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                if (Global.player._t_pos.equals(new Coordinate(x, y))) {
                     continue;
                 }
                 ObjectType ch;
-                if (((ch = Global.places.get((x << 5) + y).p_ch) == ObjectType.FLOOR || ch == ObjectType.PASSAGE)
+                if (((ch = Util.INDEX(y, x).p_ch) == ObjectType.FLOOR || ch == ObjectType.PASSAGE)
                         && Util.rnd(++cnt) == 0) {
                     newpos.y = y;
                     newpos.x = x;
@@ -140,8 +140,7 @@ public class WeaponMethod {
      * hit_monster:
      *	Does the missile hit the monster?
      */
-    static boolean hit_monster(int y, int x, ThingImp obj) {
-        Coordinate mp = new Coordinate(x, y);
+    static boolean hit_monster(Coordinate mp, ThingImp obj) {
         return Fight.fight(mp, obj, true);
     }
 
@@ -162,7 +161,7 @@ public class WeaponMethod {
              * Erase the old one
              */
             if (!obj._o_pos.equals(Global.player._t_pos) && Chase.isSee(obj._o_pos) && !Global.terse) {
-                ch = Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch;
+                ch = Util.getPlace(obj._o_pos).p_ch;
                 if (ch == ObjectType.FLOOR && !Misc.show_floor())
                     ch = ObjectType.Blank;
                 Display.mvaddch(obj._o_pos.y, obj._o_pos.x, ch.getValue());
@@ -175,7 +174,7 @@ public class WeaponMethod {
              */
             obj._o_pos.y += ydelta;
             obj._o_pos.x += xdelta;
-            if (IOUtil.step_ok(ch = Util.winat(obj._o_pos.y, obj._o_pos.x)) && ch != ObjectType.DOOR) {
+            if (IOUtil.step_ok(ch = Util.winat(obj._o_pos)) && ch != ObjectType.DOOR) {
                 /*
                  * It hasn't hit anything yet, so display it
                  * If it alright.

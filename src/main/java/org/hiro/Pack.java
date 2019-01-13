@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -166,7 +167,7 @@ public class Pack {
      *	into account
      */
     static ObjectType floor_at() {
-        ObjectType ch = Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch;
+        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch == ObjectType.FLOOR) {
             ch = floor_ch();
         }
@@ -196,7 +197,7 @@ public class Pack {
 
         boolean from_floor = false;
         if (obj == null) {
-            if ((obj = Misc.find_obj(Global.player._t_pos.y, Global.player._t_pos.x)) == null)
+            if ((obj = Misc.find_obj(Global.player._t_pos)) == null)
                 return;
             from_floor = true;
         }
@@ -208,7 +209,7 @@ public class Pack {
             if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
                 Global.lvl_obj.remove(obj);
                 Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-                Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
                 update_mdest(obj);
                 discarded = true;
                 IOUtil.msg("the scroll turns to dust as you pick it up");
@@ -327,7 +328,7 @@ public class Pack {
      */
     static void update_mdest(ThingImp obj) {
         for (ThingImp mp : Global.mlist) {
-            if (mp._t_dest == obj._o_pos) {
+            if (mp._t_dest.equals(obj._o_pos)) {
                 mp._t_dest = Global.player._t_pos;
             }
         }
@@ -359,7 +360,7 @@ public class Pack {
         if (from_floor) {
             Global.lvl_obj.remove( obj);
             Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-            Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         }
 
         return true;
@@ -397,11 +398,11 @@ public class Pack {
     static void pick_up(int ch) {
         Boolean MASTER = false;
 
-        if (Global.player.containsState(StateEnum.ISLEVIT)) {
+        if (Human.instance.containsState(StateEnum.ISLEVIT)) {
             return;
         }
 
-        ThingImp obj = Misc.find_obj(Global.player._t_pos.y, Global.player._t_pos.x);
+        ThingImp obj = Misc.find_obj(Global.player._t_pos);
         if (Global.move_on) {
             move_msg(obj);
         } else {
@@ -442,7 +443,7 @@ public class Pack {
     static void money(int value) {
         Global.purse += value;
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch =
+        Util.getPlace(Global.player._t_pos).p_ch =
                 Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         if (value > 0) {
             if (!Global.terse) {

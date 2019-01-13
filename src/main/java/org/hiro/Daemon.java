@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +48,7 @@ public class Daemon {
      *	Release the poor player from his confusion
      */
     static void unconfuse() {
-        Global.player.removeState(StateEnum.ISHUH);
+        Human.instance.removeState(StateEnum.ISHUH);
         IOUtil.msg("you feel less %s now", Misc.choose_str("trippy", "confused"));
     }
 

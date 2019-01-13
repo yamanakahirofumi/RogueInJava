@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -38,7 +39,7 @@ public class Daemons {
         /*
          * change the monsters
          */
-        boolean seemonst = Global.player.containsState(StateEnum.SEEMONST);
+        boolean seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
             Display.move(tp._t_pos.y, tp._t_pos.x);
             if (Chase.see_monst(tp)) {
@@ -65,7 +66,7 @@ public class Daemons {
                 Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
             }
         }
-        Global.player.removeState(StateEnum.CANSEE);
+        Human.instance.removeState(StateEnum.CANSEE);
     }
 
     /*
@@ -73,14 +74,14 @@ public class Daemons {
      *	He gets his sight back
      */
     static void sight() {
-        if (Global.player.containsState(StateEnum.ISBLIND)) {
+        if (Human.instance.containsState(StateEnum.ISBLIND)) {
             try {
                 Method m = Daemons.class.getMethod("sight");
                 Daemon.extinguish(m);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            Global.player.removeState(StateEnum.ISBLIND);
+            Human.instance.removeState(StateEnum.ISBLIND);
             if (!Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
                 Rooms.enter_room(Global.player._t_pos);
             }
@@ -94,7 +95,7 @@ public class Daemons {
      *	Land from a levitation potion
      */
     static void land() {
-        Global.player.removeState(StateEnum.ISLEVIT);
+        Human.instance.removeState(StateEnum.ISLEVIT);
         IOUtil.msg(Misc.choose_str("bummer!  You've hit the ground",
                 "you float gently to the ground"));
     }
@@ -106,7 +107,7 @@ public class Daemons {
     static void come_down() {
         boolean seemonst;
 
-        if (!Global.player.containsState(StateEnum.ISHALU)) {
+        if (!Human.instance.containsState(StateEnum.ISHALU)) {
             return;
         }
         try {
@@ -115,9 +116,9 @@ public class Daemons {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        Global.player.removeState(StateEnum.ISHALU);
+        Human.instance.removeState(StateEnum.ISHALU);
 
-        if (Global.player.containsState(StateEnum.ISBLIND)) {
+        if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return;
         }
 
@@ -133,14 +134,14 @@ public class Daemons {
         /*
          * undo the monsters
          */
-        seemonst = Global.player.containsState(StateEnum.SEEMONST);
+        seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
             Display.move(tp._t_pos.y, tp._t_pos.x);
             if (Chase.isSee(tp._t_pos)) {
-                if (!tp.containsState(StateEnum.ISINVIS) || Global.player.containsState(StateEnum.CANSEE))
+                if (!tp.containsState(StateEnum.ISINVIS) || Human.instance.containsState(StateEnum.CANSEE))
                     Display.addch((char) tp._t_disguise);
                 else {
-                    Display.addch(Global.places.get((tp._t_pos.x << 5) + tp._t_pos.y).p_ch.getValue());
+                    Display.addch(Util.getPlace(tp._t_pos).p_ch.getValue());
                 }
             } else if (seemonst) {
                 Display.standout();
@@ -156,7 +157,7 @@ public class Daemons {
      *	End the hasting
      */
     static void nohaste() {
-        Global.player.removeState(StateEnum.ISHASTE);
+        Human.instance.removeState(StateEnum.ISHASTE);
         IOUtil.msg("you feel yourself slowing down");
     }
 

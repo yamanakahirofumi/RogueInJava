@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -34,7 +35,7 @@ public class Potions {
                 if (!can_see) {
                     Display.standout();
                 }
-                if (!Global.player.containsState(StateEnum.ISHALU)) {
+                if (!Human.instance.containsState(StateEnum.ISHALU)) {
                     Display.addch((char) mp._t_type);
                 } else {
                     Display.addch((char) (Util.rnd(26) + 'A'));
@@ -46,9 +47,9 @@ public class Potions {
             }
         }
         if (turn_off) {
-            Global.player.removeState(StateEnum.SEEMONST);
+            Human.instance.removeState(StateEnum.SEEMONST);
         } else {
-            Global.player.addState(StateEnum.SEEMONST);
+            Human.instance.addState(StateEnum.SEEMONST);
         }
         return add_new;
     }
@@ -82,7 +83,7 @@ public class Potions {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        boolean trip = Global.player.containsState(StateEnum.ISHALU);
+        boolean trip = Human.instance.containsState(StateEnum.ISHALU);
         Pack.leave_pack(obj, false, false);
         PotionEnum p = PotionEnum.get(obj._o_which);
         boolean show;
@@ -102,7 +103,8 @@ public class Potions {
                 break;
             case P_HEALING:
                 Global.pot_info[p.getValue()].know();
-                if ((Global.player._t_stats.s_hpt += Dice.roll(Global.player._t_stats.s_lvl, 4)) > Global.player._t_stats.s_maxhp) {
+                Human.instance.addHp(Dice.roll(Global.player._t_stats.s_lvl, 4));
+                if (Human.instance.getHp() > Human.instance.getMaxHp()) {
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
                 }
                 Daemons.sight();
@@ -114,7 +116,7 @@ public class Potions {
                 IOUtil.msg("you feel stronger, now.  What bulging muscles!");
                 break;
             case P_MFIND:
-                Global.player.addState(StateEnum.SEEMONST);
+                Human.instance.addState(StateEnum.SEEMONST);
                 try {
                     Method m = Potions.class.getMethod("turn_see_off");
                     Daemon.fuse(m, 1, Const.HUHDURATION, Const.AFTER);
@@ -161,13 +163,13 @@ public class Potions {
                 break;
             case P_LSD:
                 if (!trip) {
-                    if (Global.player.containsState(StateEnum.SEEMONST)) {
+                    if (Human.instance.containsState(StateEnum.SEEMONST)) {
                         turn_see(false);
                     }
                     try {
                         Method m = Daemons.class.getMethod("visuals");
                         Daemon.start_daemon(m, 0, Const.BEFORE);
-                    }catch (NoSuchMethodException e){
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                     Global.seenstairs = seen_stairs();
@@ -176,7 +178,7 @@ public class Potions {
                 break;
             case P_SEEINVIS:
                 Global.prbuf = "this potion tastes like " + Global.fruit + " juice";
-                show = Global.player.containsState(StateEnum.CANSEE);
+                show = Human.instance.containsState(StateEnum.CANSEE);
                 do_pot(p, false);
                 if (!show) {
                     invis_on();
@@ -190,9 +192,11 @@ public class Potions {
                 break;
             case P_XHEAL:
                 Global.pot_info[p.getValue()].know();
-                if ((Global.player._t_stats.s_hpt += Dice.roll(Global.player._t_stats.s_lvl, 8)) > Global.player._t_stats.s_maxhp) {
-                    if (Global.player._t_stats.s_hpt > Global.player._t_stats.s_maxhp + Global.player._t_stats.s_lvl + 1)
+                Human.instance.addHp(Dice.roll(Global.player._t_stats.s_lvl, 8));
+                if (Human.instance.getHp() > Human.instance.getMaxHp()) {
+                    if (Human.instance.getHp() > Human.instance.getMaxHp() + Global.player._t_stats.s_lvl + 1) {
                         ++Global.player._t_stats.s_maxhp;
+                    }
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
                 }
                 Daemons.sight();
@@ -207,19 +211,19 @@ public class Potions {
                 break;
             case P_RESTORE:
                 if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
-                    Global.player._t_stats.s_str = Misc.add_str(Global.player._t_stats.s_str, -Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
                 }
                 if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
-                    Global.player._t_stats.s_str = Misc.add_str(Global.player._t_stats.s_str, -Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
                 }
-                if (Global.player._t_stats.s_str < Global.max_stats.s_str) {
+                if (Human.instance.getCurrentStrength() < Global.max_stats.s_str) {
                     Global.player._t_stats.s_str = Global.max_stats.s_str;
                 }
                 if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
-                    Global.player._t_stats.s_str = Misc.add_str(Global.player._t_stats.s_str, Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
                 }
                 if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
-                    Global.player._t_stats.s_str = Misc.add_str(Global.player._t_stats.s_str, Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
                 break;
@@ -336,8 +340,8 @@ public class Potions {
             Global.pot_info[type.getValue()].setKnown(knowit);
         }
         int t = Misc.spread(pp.pa_time);
-        if (!Global.player.containsState(pp.pa_flags)) {
-            Global.player.addState(pp.pa_flags);
+        if (!Human.instance.containsState(pp.pa_flags)) {
+            Human.instance.addState(pp.pa_flags);
             Daemon.fuse(pp.pa_daemon, 0, t, Const.AFTER);
             Misc.look(false);
         } else {
@@ -387,10 +391,10 @@ public class Potions {
      *	Turn on the ability to see invisible
      */
     static void invis_on() {
-        Global.player.addState(StateEnum.CANSEE);
+        Human.instance.addState(StateEnum.CANSEE);
         for (ThingImp mp : Global.mlist) {
             if (mp.containsState(StateEnum.ISINVIS) && Chase.see_monst(mp)
-                    && !Global.player.containsState(StateEnum.ISHALU)) {
+                    && !Human.instance.containsState(StateEnum.ISHALU)) {
                 Display.mvaddch(mp._t_pos.y, mp._t_pos.x, (char) mp._t_disguise);
             }
         }
@@ -414,7 +418,7 @@ public class Potions {
         /*
          * if a monster is on the stairs, this gets hairy
          */
-        if ((tp = Global.places.get((Global.stairs.x << 5) + Global.stairs.y).p_monst) != null) {
+        if ((tp = Util.getPlace(Global.stairs).p_monst) != null) {
             if (Chase.see_monst(tp) && tp.containsState(StateEnum.ISRUN)) {    /* if it's visible and awake */
                 return true;            /* it must have moved there */
             }
@@ -422,7 +426,7 @@ public class Potions {
             /* if she can detect monster */
             /* and there once were stairs */
             /* it must have moved there */
-            return Global.player.containsState(StateEnum.SEEMONST)
+            return Human.instance.containsState(StateEnum.SEEMONST)
                     && tp._t_oldch == ObjectType.STAIRS.getValue();
         }
         return false;

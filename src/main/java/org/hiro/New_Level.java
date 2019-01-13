@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -19,7 +20,7 @@ public class New_Level {
 
     static void new_level() {
 
-        Global.player.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
+        Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
         if (Global.level > Global.max_level) {
             Global.max_level = Global.level;
         }
@@ -66,10 +67,10 @@ public class New_Level {
                  */
                 do {
                     DrawRoom.find_floor(null, Global.stairs, false, false);
-                } while (Global.places.get((Global.stairs.x << 5) + Global.stairs.y).p_ch.getValue() != ObjectType.FLOOR.getValue() &&
-                        (Util.flat(Global.stairs.y, Global.stairs.x) & Const.F_REAL) != 0);
+                } while (Util.getPlace(Global.stairs).p_ch.getValue() != ObjectType.FLOOR.getValue() &&
+                        (Util.flat(Global.stairs) & Const.F_REAL) != 0);
 
-                int sp = Util.flat(Global.stairs.y, Global.stairs.x);
+                int sp = Util.flat(Global.stairs);
                 sp &= ~(Const.F_REAL | Const.F_TMASK);
                 sp |= Util.rnd(Const.NTRAPS);
             }
@@ -78,7 +79,7 @@ public class New_Level {
          * Place the staircase down.
          */
         DrawRoom.find_floor(null, Global.stairs, false, false);
-        Global.places.get((Global.stairs.x << 5) + Global.stairs.y).p_ch = ObjectType.STAIRS;
+        Util.getPlace(Global.stairs).p_ch = ObjectType.STAIRS;
         Global.seenstairs = false;
 
         for (ThingImp tp : Global.mlist) {
@@ -88,10 +89,10 @@ public class New_Level {
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);
         Rooms.enter_room(Global.player._t_pos);
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
-        if (Global.player.containsState(StateEnum.SEEMONST)) {
+        if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }
-        if (Global.player.containsState(StateEnum.ISHALU)) {
+        if (Human.instance.containsState(StateEnum.ISHALU)) {
             Daemons.visuals();
         }
     }
@@ -132,7 +133,7 @@ public class New_Level {
                  * Put it somewhere
                  */
                 DrawRoom.find_floor(null, obj._o_pos, false, false);
-                Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch = obj._o_type;
+                Util.getPlace(obj._o_pos).p_ch = obj._o_type;
             }
         }
         /*
@@ -152,7 +153,7 @@ public class New_Level {
              * Put it somewhere
              */
             DrawRoom.find_floor(null, obj._o_pos, false, false);
-            Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch = ObjectType.AMULET;
+            Util.getPlace(obj._o_pos).p_ch = ObjectType.AMULET;
         }
     }
 
@@ -182,7 +183,7 @@ public class New_Level {
             tp = new ThingImp();
             tp._o_pos = mp;
             Global.lvl_obj.add(tp);
-            Global.places.get((mp.x << 5) + mp.y).p_ch = tp._o_type;
+            Util.getPlace(mp).p_ch = tp._o_type;
         }
 
         /*

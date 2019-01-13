@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -16,13 +17,13 @@ public class Rooms {
 
         Room rp = Global.player.t_room = Chase.roomin(cp);
         Move.door_open(rp);
-        if (!rp.containInfo(RoomInfoEnum.ISDARK) && !Global.player.containsState(StateEnum.ISBLIND))
+        if (!rp.containInfo(RoomInfoEnum.ISDARK) && !Human.instance.containsState(StateEnum.ISBLIND))
             for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++) {
                 Display.move(y, rp.r_pos.x);
                 for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
-                    ThingImp tp = Global.places.get((x << 5) + y).p_monst;
+                    ThingImp tp = Util.INDEX(y, x).p_monst;
                     // chtype ch;
-                    ObjectType ch = Global.places.get((x << 5) + y).p_ch;
+                    ObjectType ch = Util.INDEX(y, x).p_ch;
                     if (tp == null) {
                         if (Util.CCHAR(Display.inch()) != ch.getValue()) {
                             Display.addch(ch.getValue());
@@ -32,7 +33,7 @@ public class Rooms {
                     } else {
                         tp._t_oldch = ch.getValue();
                         if (!Chase.see_monst(tp)) {
-                            if (Global.player.containsState(StateEnum.SEEMONST)) {
+                            if (Human.instance.containsState(StateEnum.SEEMONST)) {
                                 Display.standout();
                                 Display.addch((char) tp._t_disguise);
                                 Display.standend();
@@ -62,13 +63,13 @@ public class Rooms {
         ObjectType floor;
         if (rp.containInfo(RoomInfoEnum.ISGONE)) {
             floor = ObjectType.PASSAGE;
-        } else if (!rp.containInfo(RoomInfoEnum.ISDARK) || Global.player.containsState(StateEnum.ISBLIND)) {
+        } else if (!rp.containInfo(RoomInfoEnum.ISDARK) || Human.instance.containsState(StateEnum.ISBLIND)) {
             floor = ObjectType.FLOOR;
         } else {
             floor = ObjectType.Blank;
         }
 
-        Global.player.t_room = Global.passages[Util.flat(cp.y, cp.x) & Const.F_PNUM];
+        Global.player.t_room = Global.passages[Util.flat(cp) & Const.F_PNUM];
         for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++)
             for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
                 Display.move(y, x);
@@ -83,7 +84,7 @@ public class Rooms {
                      * standout bit
                      */
                     if (Character.isUpperCase(ch)) {
-                        if (Global.player.containsState(StateEnum.SEEMONST)) {
+                        if (Human.instance.containsState(StateEnum.SEEMONST)) {
                             Display.standout();
                             Display.addch((char) ch);
                             Display.standend();

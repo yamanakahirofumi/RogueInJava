@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 
@@ -170,8 +171,7 @@ public class IOUtil {
      *	Display the important stats line.  Keep the cursor where it was.
      */
     static void status() {
-        int oy, ox, temp;
-        int hpwidth = 0;
+        int oy, ox;
         int s_hungry = 0;
         int s_lvl = 0;
         int s_pur = -1;
@@ -185,9 +185,9 @@ public class IOUtil {
          * If nothing has changed since the last status, don't
          * bother.
          */
-        temp = (Global.cur_armor != null ? Global.cur_armor._o_arm : Global.player._t_stats.s_arm);
-        if (s_hp == Global.player._t_stats.s_hpt && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
-                && s_arm == temp && s_str == Global.player._t_stats.s_str && s_lvl == Global.level
+        int temp = (Global.cur_armor != null ? Global.cur_armor._o_arm : Global.player._t_stats.s_arm);
+        if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
+                && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Global.level
                 && s_hungry == Global.hungry_state
                 && !Global.stat_msg
         )
@@ -196,6 +196,7 @@ public class IOUtil {
         s_arm = temp;
 
         // getyx(stdscr, oy, ox);
+        int hpwidth = 0;
         if (s_hp != Global.player._t_stats.s_maxhp) {
             temp = Global.player._t_stats.s_maxhp;
             s_hp = Global.player._t_stats.s_maxhp;
@@ -209,25 +210,25 @@ public class IOUtil {
          */
         s_lvl = Global.level;
         s_pur = Global.purse;
-        s_hp = Global.player._t_stats.s_hpt;
-        s_str = Global.player._t_stats.s_str;
+        s_hp = Human.instance.getHp();
+        s_str = Human.instance.getCurrentStrength();
         s_exp = Global.player._t_stats.s_exp;
         s_hungry = Global.hungry_state;
 
         if (Global.stat_msg) {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    Global.level, Global.purse, hpwidth, Global.player._t_stats.s_hpt, hpwidth,
-                    Global.player._t_stats.s_maxhp, Global.player._t_stats.s_str, Global.max_stats.s_str,
-                    10 - s_arm, Global.player._t_stats.s_lvl, Global.player._t_stats.s_exp,
+                    Global.level, Global.purse, hpwidth, s_hp, hpwidth,
+                    Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
+                    10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);
         } else {
             Display.move(Const.STATLINE, 0);
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    Global.level, Global.purse, hpwidth, Global.player._t_stats.s_hpt, hpwidth,
-                    Global.player._t_stats.s_maxhp, Global.player._t_stats.s_str, Global.max_stats.s_str,
-                    10 - s_arm, Global.player._t_stats.s_lvl, Global.player._t_stats.s_exp,
+                    Global.level, Global.purse, hpwidth, s_hp, hpwidth,
+                    Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
+                    10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);
         }
 

@@ -1,6 +1,8 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
@@ -22,7 +24,7 @@ public class Command {
 
         boolean MASTER = false;
 
-        if (Global.player.containsState(StateEnum.ISHASTE)) {
+        if (Human.instance.containsState(StateEnum.ISHASTE)) {
             ntimes++;
         }
         /*
@@ -43,10 +45,10 @@ public class Command {
              * these are illegal things for the player to be, so if any are
              * set, someone's been poking in memeory
              */
-            if (Global.player.containsState(StateEnum.ISSLOW) || Global.player.containsState(StateEnum.ISGREED)
-                    || Global.player.containsState(StateEnum.ISINVIS)
-                    || Global.player.containsState(StateEnum.ISREGEN)
-                    || Global.player.containsState(StateEnum.ISTARGET)) {
+            if (Human.instance.containsState(StateEnum.ISSLOW) || Human.instance.containsState(StateEnum.ISGREED)
+                    || Human.instance.containsState(StateEnum.ISINVIS)
+                    || Human.instance.containsState(StateEnum.ISREGEN)
+                    || Human.instance.containsState(StateEnum.ISTARGET)) {
                 System.exit(1);
             }
 
@@ -181,7 +183,7 @@ public class Command {
                         int found = 0;
                         for (ThingImp obj : Global.lvl_obj) {
                             obj2 = obj;
-                            if (obj._o_pos.y == Global.player._t_pos.y && obj._o_pos.x == Global.player._t_pos.x) {
+                            if (Global.player._t_pos.equals(obj._o_pos)) {
                                 found = 1;
                                 break;
                             }
@@ -264,7 +266,7 @@ public class Command {
                     case ('U' & 037):
                     case ('B' & 037):
                     case ('N' & 037): {
-                        if (!Global.player.containsState(StateEnum.ISBLIND)) {
+                        if (!Human.instance.containsState(StateEnum.ISBLIND)) {
                             Global.door_stop = true;
                             Global.firstmove = true;
                         }
@@ -287,8 +289,8 @@ public class Command {
                         }
                         Global.delta.y += Global.player._t_pos.y;
                         Global.delta.x += Global.player._t_pos.x;
-                        if (((mp = Global.places.get((Global.delta.x << 5) + Global.delta.y).p_monst) == null)
-                                || ((!Chase.see_monst(mp)) && !Global.player.containsState(StateEnum.SEEMONST))) {
+                        if (((mp = Util.getPlace(Global.delta).p_monst) == null)
+                                || ((!Chase.see_monst(mp)) && !Human.instance.containsState(StateEnum.SEEMONST))) {
                             if (!Global.terse) {
                                 IOUtil.addmsg("I see ");
                             }
@@ -426,13 +428,13 @@ public class Command {
                         if (Misc.get_dir()) {
                             Global.delta.y += Global.player._t_pos.y;
                             Global.delta.x += Global.player._t_pos.x;
-                            int fp = Util.flat(Global.delta.y, Global.delta.x);
+                            int fp = Util.flat(Global.delta);
                             if (!Global.terse) {
                                 IOUtil.addmsg("You have found ");
                             }
-                            if (Global.places.get((Global.delta.x << 5) + Global.delta.y).p_ch != ObjectType.TRAP) {
+                            if (Util.getPlace(Global.delta).p_ch != ObjectType.TRAP) {
                                 IOUtil.msg("no trap there");
-                            } else if (Global.player.containsState(StateEnum.ISHALU)) {
+                            } else if (Human.instance.containsState(StateEnum.ISHALU)) {
                                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
                             } else {
                                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
@@ -534,7 +536,7 @@ public class Command {
                                     // add_pass();  // TODO: 後で
                                     break;
                                 case ('X' & 037):
-                                    Potions.turn_see(Global.player.containsState(StateEnum.SEEMONST));
+                                    Potions.turn_see(Human.instance.containsState(StateEnum.SEEMONST));
                                     break;
                                 case '~': {
                                     ThingImp item;
@@ -629,48 +631,49 @@ public class Command {
 
         int ey = Global.player._t_pos.y + 1;
         int ex = Global.player._t_pos.x + 1;
-        int probinc = (Global.player.containsState(StateEnum.ISHALU) ? 3 : 0);
-        probinc += (Global.player.containsState(StateEnum.ISBLIND) ? 2 : 0);
+        int probinc = (Human.instance.containsState(StateEnum.ISHALU) ? 3 : 0);
+        probinc += (Human.instance.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
         for (int y = Global.player._t_pos.y - 1; y <= ey; y++)
             for (int x = Global.player._t_pos.x - 1; x <= ex; x++) {
-                if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                Coordinate target = new Coordinate(x, y);
+                if (Global.player._t_pos.equals(target)) {
                     continue;
                 }
-                int fp = Util.flat(y, x);
+                int fp = Util.flat(target);
                 if ((fp & Const.F_REAL) == 0) {
-                    switch (Global.places.get((x << 5) + y).p_ch) {
+                    switch (Util.getPlace(target).p_ch) {
                         case Vert:
                         case Horizon:
                             if (Util.rnd(5 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.DOOR;
+                            Util.getPlace(target).p_ch = ObjectType.DOOR;
                             IOUtil.msg("a secret door");
-                            found = foundone(x, y);
+                            found = foundone(target);
                             break;
                         case FLOOR:
                             if (Util.rnd(2 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.TRAP;
+                            Util.getPlace(target).p_ch = ObjectType.TRAP;
                             if (!Global.terse) {
                                 IOUtil.addmsg("you found ");
                             }
-                            if (Global.player.containsState(StateEnum.ISHALU)) {
+                            if (Human.instance.containsState(StateEnum.ISHALU)) {
                                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
                             } else {
                                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
-                                Global.places.get((x << 5) + y).p_flags |= Const.F_SEEN;
+                                Util.getPlace(target).p_flags |= Const.F_SEEN;
                             }
-                            found = foundone(x, y);
+                            found = foundone(target);
                             break;
                         case Blank:
                             if (Util.rnd(3 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.PASSAGE;
-                            found = foundone(x, y);
+                            Util.getPlace(target).p_ch = ObjectType.PASSAGE;
+                            found = foundone(target);
                     }
                 }
             }
@@ -679,8 +682,8 @@ public class Command {
         }
     }
 
-    static private boolean foundone(int x, int y) {
-        Global.places.get((x << 5) + y).p_flags |= Const.F_REAL;
+    static private boolean foundone(Coordinate coordinate) {
+        Util.getPlace(coordinate).p_flags |= Const.F_REAL;
         Global.count = 0;
         Global.running = false;
         return true;
@@ -739,14 +742,13 @@ public class Command {
      * d_level:
      *	He wants to go down a level
      */
-    static void d_level()
-    {
-        if (levit_check()){
-            return;}
-        if (Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch != ObjectType.STAIRS){
-            IOUtil.msg("I see no way down");}
-        else
-        {
+    static void d_level() {
+        if (levit_check()) {
+            return;
+        }
+        if (Util.getPlace(Global.player._t_pos).p_ch != ObjectType.STAIRS) {
+            IOUtil.msg("I see no way down");
+        } else {
             Global.level++;
             Global.seenstairs = false;
             New_Level.new_level();
@@ -757,24 +759,24 @@ public class Command {
      * u_level:
      *	He wants to go up a level
      */
-    static void u_level()
-    {
-        if (levit_check()){
-            return;}
-        if (Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch == ObjectType.STAIRS){
-            if (Game.getInstance().isGoal())
-            {
+    static void u_level() {
+        if (levit_check()) {
+            return;
+        }
+        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.STAIRS) {
+            if (Game.getInstance().isGoal()) {
                 Global.level--;
                 if (Global.level == 0) {
                     Rip.total_winner();
                 }
                 New_Level.new_level();
                 IOUtil.msg("you feel a wrenching sensation in your gut");
+            } else {
+                IOUtil.msg("your way is magically blocked");
             }
-            else{
-                IOUtil.msg("your way is magically blocked");}}
-        else{
-            IOUtil.msg("I see no way up");}
+        } else {
+            IOUtil.msg("I see no way up");
+        }
     }
 
     /*
@@ -782,9 +784,8 @@ public class Command {
      *	Check to see if she's levitating, and if she is, print an
      *	appropriate message.
      */
-    static boolean levit_check()
-    {
-        if (!Global.player.containsState(StateEnum.ISLEVIT)) {
+    static boolean levit_check() {
+        if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
             return false;
         }
         IOUtil.msg("You can't.  You're floating off the ground!");

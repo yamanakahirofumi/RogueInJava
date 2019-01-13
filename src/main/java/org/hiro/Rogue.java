@@ -26,7 +26,7 @@ public class Rogue {
 		g.addDungeons(d);
 
 		// プレーヤーメイク
-		Player p = new Human("user1");
+		Player p = new Human(Global.whoami);
 		g.setPlayer(p);
 
 		g.move(dungeonName,p);

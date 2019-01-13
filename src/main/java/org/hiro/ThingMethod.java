@@ -376,7 +376,7 @@ public class ThingMethod {
      */
     static void drop() {
 
-        ObjectType ch = Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch;
+        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
             Global.after = false;
             IOUtil.msg("there is something there already");
@@ -394,8 +394,8 @@ public class ThingMethod {
          * Link it into the level object list
          */
         Global.lvl_obj.add(obj);
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = obj._o_type;
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_flags |= Const.F_DROPPED;
+        Util.getPlace(Global.player._t_pos).p_ch = obj._o_type;
+        Util.getPlace(Global.player._t_pos).p_flags |= Const.F_DROPPED;
         obj._o_pos = Global.player._t_pos;
         if (obj._o_type == ObjectType.AMULET) {
             Game.getInstance().setGoal(false);

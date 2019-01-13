@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -33,9 +34,9 @@ public class Wizard {
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap
          */
-        if (Global.player.containsState(StateEnum.ISHELD)) {
+        if (Human.instance.containsState(StateEnum.ISHELD)) {
 
-            Global.player.removeState(StateEnum.ISHELD);
+            Human.instance.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
             for (ThingImp mp : Global.mlist) {
                 if (mp._t_type == 'F')

@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -64,7 +65,7 @@ public class Monst {
         Display.move(cp.y, cp.x); //ncursesライブラリ move()
         tp._t_oldch = Util.CCHAR(Display.inch());
         tp.t_room = Chase.roomin(cp);
-        Global.places.get((cp.x << 5) + cp.y).p_monst = tp;
+        Util.getPlace(cp).p_monst = tp;
         mp = Global.monsters[tp._t_type - 'A'];
         tp._t_stats.s_lvl = mp.m_stats.s_lvl + lev_add;
         tp._t_stats.s_maxhp = tp._t_stats.s_hpt = Dice.roll(tp._t_stats.s_lvl, 8);
@@ -128,7 +129,7 @@ public class Monst {
         String mname;
         boolean MASTER = false;
 
-        if ((tp = Global.places.get((x << 5) + y).p_monst) == null) {
+        if ((tp = Util.INDEX(y, x).p_monst) == null) {
             if (MASTER) {
 //    msg("can't find monster in wake_monster");
             }
@@ -141,21 +142,21 @@ public class Monst {
          */
         if (!tp.containsState(StateEnum.ISRUN) && Util.rnd(3) != 0
                 && tp.containsState(StateEnum.ISMEAN) && !tp.containsState(StateEnum.ISHELD)
-                && !Util.ISWEARING(RingEnum.R_STEALTH) && !Global.player.containsState(StateEnum.ISLEVIT)) {
+                && !Util.ISWEARING(RingEnum.R_STEALTH) && !Human.instance.containsState(StateEnum.ISLEVIT)) {
             tp._t_dest = Global.player._t_pos;
             tp.addState(StateEnum.ISRUN);
         }
-        if (ch == 'M' && !Global.player.containsState(StateEnum.ISBLIND) && !Global.player.containsState(StateEnum.ISHALU)
+        if (ch == 'M' && !Human.instance.containsState(StateEnum.ISBLIND) && !Human.instance.containsState(StateEnum.ISHALU)
                 && !tp.containsState(StateEnum.ISFOUND) && !tp.containsState(StateEnum.ISCANC)
                 && tp.containsState(StateEnum.ISRUN)) {
             rp = Global.player.t_room;
             if (rp == null || rp.containInfo(RoomInfoEnum.ISDARK)
-                    || Chase.dist(y, x, Global.player._t_pos.y, Global.player._t_pos.x) < Const.LAMPDIST) {
+                    || Chase.dist_cp(new Coordinate(x, y), Global.player._t_pos) < Const.LAMPDIST) {
                 tp.addState(StateEnum.ISFOUND);
                 if (!save(Const.VS_MAGIC)) {
                     try {
                         Method unconfuse = Daemon.class.getMethod("unconfuse");
-                        if (Global.player.containsState(StateEnum.ISHUH)) {
+                        if (Human.instance.containsState(StateEnum.ISHUH)) {
                             Daemon.lengthen(unconfuse, Misc.spread(Const.HUHDURATION));
                         } else {
                             Daemon.fuse(unconfuse, 0, Misc.spread(Const.HUHDURATION), Const.AFTER);
@@ -163,7 +164,7 @@ public class Monst {
                     } catch (NoSuchMethodException ex) {
                         throw new RuntimeException("This is bug.", ex);
                     }
-                    Global.player.addState(StateEnum.ISHUH);
+                    Human.instance.addState(StateEnum.ISHUH);
                     mname = Fight.set_mname(tp);
                     // addmsg("%s", mname);
                     if (!mname.equals("it")) {

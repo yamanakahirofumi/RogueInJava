@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -45,7 +46,7 @@ public class ScrollMethod {
                 /*
                  * Scroll of monster confusion.  Give him that power.
                  */
-                Global.player.addState(StateEnum.CANHUH);
+                Human.instance.addState(StateEnum.CANHUH);
                 IOUtil.msg("your hands begin to glow %s", Init.pick_color("red"));
                 break;
             case S_ARMOR:
@@ -66,7 +67,7 @@ public class ScrollMethod {
                     if (x >= 0 && x < Const.NUMCOLS) {
                         for (int y = Global.player._t_pos.y - 2; y <= Global.player._t_pos.y + 2; y++) {
                             if (y >= 0 && y <= Const.NUMLINES - 1) {
-                                if ((obj = Global.places.get((x << 5) + y).p_monst) != null && obj.containsState(StateEnum.ISRUN)) {
+                                if ((obj = Util.INDEX(y, x).p_monst) != null && obj.containsState(StateEnum.ISRUN)) {
                                     obj.removeState(StateEnum.ISRUN);
                                     obj.addState(StateEnum.ISHELD);
                                     ch++;
@@ -95,7 +96,7 @@ public class ScrollMethod {
                  */
                 Global.scr_info[ScrollEnum.S_SLEEP.getValue()].know();
                 Global.no_command += Util.rnd(Const.SLEEPTIME) + 4;
-                Global.player.removeState(StateEnum.ISRUN);
+                Human.instance.removeState(StateEnum.ISRUN);
                 IOUtil.msg("you fall asleep");
                 break;
             case S_CREATE:
@@ -109,23 +110,23 @@ public class ScrollMethod {
                 ObjectType cho;
                 for (int y = Global.player._t_pos.y - 1; y <= Global.player._t_pos.y + 1; y++) {
                     for (int x = Global.player._t_pos.x - 1; x <= Global.player._t_pos.x + 1; x++) {
+                        Coordinate tmp = new Coordinate(x, y);
                         /*
                          * Don't put a monster in top of the player.
                          */
-                        if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                        if (Global.player._t_pos.equals(tmp)) {
                             continue;
                         }
                         /*
                          * Or anything else nasty
                          * Also avoid a xeroc which is disguised as scroll
                          */
-                        else if (Global.places.get((x << 5) + y).p_monst == null && IOUtil.step_ok(cho = Util.winat(y, x))) {
+                        else if (Util.getPlace(tmp).p_monst == null && IOUtil.step_ok(cho = Util.winat(tmp))) {
                             if (cho == ObjectType.SCROLL
-                                    && Misc.find_obj(y, x)._o_which == ScrollEnum.S_SCARE.getValue()) {
+                                    && Misc.find_obj(tmp)._o_which == ScrollEnum.S_SCARE.getValue()) {
                                 continue;
                             } else if (Util.rnd(++i) == 0) {
-                                mp.y = y;
-                                mp.x = x;
+                                mp = tmp;
                             }
                         }
                     }
@@ -225,10 +226,12 @@ public class ScrollMethod {
                                 break;
                         }
                         if (chp != ObjectType.Blank) {
-                            if ((obj = pp.p_monst) != null){
-                                obj._t_oldch = chp.getValue();}
-                            if (obj == null || !Global.player.containsState(StateEnum.SEEMONST)){
-                                Display.mvaddch(y, x, chp.getValue());}
+                            if ((obj = pp.p_monst) != null) {
+                                obj._t_oldch = chp.getValue();
+                            }
+                            if (obj == null || !Human.instance.containsState(StateEnum.SEEMONST)) {
+                                Display.mvaddch(y, x, chp.getValue());
+                            }
                         }
                     }
                 break;

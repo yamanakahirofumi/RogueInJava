@@ -53,7 +53,7 @@ public class Global {
     static boolean q_comm;
     static int hungry_state;
     static boolean stat_msg;
-    static int inpack = 0;                /* Number of things in pack */
+    static int inpack = 0;                    /* Number of things in pack */
     static int vf_hit;
     static int lastscore;
     static int quiet;
@@ -61,7 +61,7 @@ public class Global {
     static int take;
     static boolean noscore;
     static boolean move_on;
-    static int max_hit;
+    static int max_hit;                       /* Max damage done to her in to_death */
     static int dir_ch;
     static int allscore;
     static int food_left = Const.HUNGERTIME;
@@ -121,6 +121,7 @@ public class Global {
     static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
     static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
     static ThingImp cur_ring[];
+    @Deprecated
     static ThingImp player;
     //static Human player;
     static ThingImp cur_weapon;

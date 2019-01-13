@@ -102,7 +102,7 @@ public class DrawRoom {
                 gold._o_arm = rp.r_goldval = Util.GOLDCALC();
                 find_floor(rp,(Coordinate) rp.r_gold, false, false);
                 gold._o_pos = (Coordinate) rp.r_gold;
-                Util.INDEX(rp.r_gold.y, rp.r_gold.x).p_ch = ObjectType.GOLD;
+                Util.getPlace(rp.r_gold).p_ch = ObjectType.GOLD;
                 gold.set_o_flags(Const.ISMANY);
                 gold._o_group = GOLDGRP;
                 gold._o_type = ObjectType.GOLD;
@@ -219,7 +219,7 @@ public class DrawRoom {
                 if (newy < 0 || newy > Maxy || newx < 0 || newx > Maxx) {
                     continue;
                 }
-                if ((Util.flat(newy + Starty, newx + Startx) & Const.F_PASS) != 0) {
+                if ((Util.flat(new Coordinate(newx + Startx, newy + Starty)) & Const.F_PASS) != 0) {
                     continue;
                 }
                 if (Util.rnd(++cnt) == 0) {
@@ -296,8 +296,9 @@ public class DrawRoom {
     static private void horiz(Room rp, int starty) {
         int x;
 
-        for (x = rp.r_pos.x; x <= rp.r_pos.x + rp.r_max.x - 1; x++)
+        for (x = rp.r_pos.x; x <= rp.r_pos.x + rp.r_max.x - 1; x++) {
             Util.INDEX(starty, x).p_ch = ObjectType.Horizon;
+        }
     }
 
 
@@ -323,7 +324,7 @@ public class DrawRoom {
                 compchar = (rp.containInfo(RoomInfoEnum.ISMAZE) ? ObjectType.PASSAGE : ObjectType.FLOOR);
             }
             rnd_pos(rp, cp);
-            Place pp = Util.INDEX(cp.y, cp.x);
+            Place pp = Util.getPlace(cp);
             if (monst) {
                 // 足元に何もない　かつ 歩けるとこ
                 if (pp.p_monst == null && IOUtil.step_ok(pp.p_ch)) {

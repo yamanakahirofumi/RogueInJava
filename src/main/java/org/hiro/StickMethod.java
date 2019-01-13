@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  Functions to implement the various sticks one might find
- *  while wandering around the dungeon.
+ * Functions to implement the various sticks one might find
+ * while wandering around the dungeon.
  */
 public class StickMethod {
     /*
@@ -73,8 +74,6 @@ public class StickMethod {
         }
         StickEnum st = StickEnum.get(obj._o_which);
         ThingImp tp;
-        int y;
-        int x;
         String name;
         switch (st) {
             case WS_LIGHT:
@@ -103,7 +102,7 @@ public class StickMethod {
                  * evenly from the monsters in the room (or next to hero
                  * if he is in a passage)
                  */
-                if (Global.player._t_stats.s_hpt < 2) {
+                if (Human.instance.getHp() < 2) {
                     IOUtil.msg("you are too weak to use it");
                     return;
                 } else {
@@ -115,22 +114,23 @@ public class StickMethod {
             case WS_TELAWAY:
             case WS_TELTO:
             case WS_CANCEL:
-                y = Global.player._t_pos.y;
-                x = Global.player._t_pos.x;
-                while (IOUtil.step_ok(Util.winat(y, x))) {
-                    y += Global.delta.y;
-                    x += Global.delta.x;
+                Coordinate tmp = new Coordinate();
+                tmp.y = Global.player._t_pos.y;
+                tmp.x = Global.player._t_pos.x;
+                while (IOUtil.step_ok(Util.winat(tmp))) {
+                    tmp.y += Global.delta.y;
+                    tmp.x += Global.delta.x;
                 }
-                if ((tp = Global.places.get((x << 5) + y).p_monst) != null) {
+                if ((tp = Util.getPlace(tmp).p_monst) != null) {
                     int monster = tp._t_type;
                     if (monster == 'F') {
-                        Global.player.removeState(StateEnum.ISHELD);
+                        Human.instance.removeState(StateEnum.ISHELD);
                     }
                     switch (st) {
                         case WS_INVIS:
                             tp.addState(StateEnum.ISINVIS);
-                            if (Chase.isSee(new Coordinate(x,y))) {
-                                Display.mvaddch(y, x, (char) tp._t_oldch);
+                            if (Chase.isSee(tmp)) {
+                                Display.mvaddch(tmp.y, tmp.x, (char) tp._t_oldch);
                             }
                             break;
                         case WS_POLYMORPH: {
@@ -138,14 +138,14 @@ public class StickMethod {
                             List<ThingImp> pp = tp.getBaggage();
                             Global.mlist.remove(tp);
                             if (Chase.see_monst(tp)) {
-                                Display.mvaddch(y, x, Global.places.get((x << 5) + y).p_ch.getValue());
+                                Display.mvaddch(tmp.y, tmp.x, Util.getPlace(tmp).p_ch.getValue());
                             }
                             int oldch = tp._t_oldch;
-                            Global.delta.y = y;
-                            Global.delta.x = x;
+                            Global.delta.y = tmp.y;
+                            Global.delta.x = tmp.x;
                             Monst.new_monster(tp, monster = Util.rnd(26) + 'A', Global.delta);
                             if (Chase.see_monst(tp)) {
-                                Display.mvaddch(y, x, (char) monster);
+                                Display.mvaddch(tmp.y, tmp.x, (char) monster);
                             }
                             tp._t_oldch = oldch;
                             tp.setBaggage(pp);
@@ -158,7 +158,7 @@ public class StickMethod {
                             tp.removeState(StateEnum.CANHUH);
                             tp._t_disguise = tp._t_type;
                             if (Chase.see_monst(tp)) {
-                                Display.mvaddch(y, x, (char) tp._t_disguise);
+                                Display.mvaddch(tmp.y, tmp.x, (char) tp._t_disguise);
                             }
                             break;
                         case WS_TELAWAY:
@@ -190,9 +190,9 @@ public class StickMethod {
                 if (Global.cur_weapon != null)
                     bolt._o_launch = Global.cur_weapon._o_which;
                 WeaponMethod.do_motion(bolt, Global.delta.y, Global.delta.x);
-                if ((tp = Global.places.get((bolt._o_pos.x << 5) + bolt._o_pos.y).p_monst) != null
+                if ((tp = Util.getPlace(bolt._o_pos).p_monst) != null
                         && !Monst.save_throw(Const.VS_MAGIC, tp)) {
-                    WeaponMethod.hit_monster(bolt._o_pos.y, bolt._o_pos.x, bolt);
+                    WeaponMethod.hit_monster(bolt._o_pos, bolt);
                 } else if (Global.terse) {
                     IOUtil.msg("missle vanishes");
                 } else {
@@ -201,13 +201,14 @@ public class StickMethod {
                 break;
             case WS_HASTE_M:
             case WS_SLOW_M:
-                y = Global.player._t_pos.y;
-                x = Global.player._t_pos.x;
-                while (IOUtil.step_ok(Util.winat(y, x))) {
-                    y += Global.delta.y;
-                    x += Global.delta.x;
+                Coordinate tmp2 = new Coordinate();
+                tmp2.y = Global.player._t_pos.y;
+                tmp2.x = Global.player._t_pos.x;
+                while (IOUtil.step_ok(Util.winat(tmp2))) {
+                    tmp2.y += Global.delta.y;
+                    tmp2.x += Global.delta.x;
                 }
-                if ((tp = Global.places.get((x << 5) + y).p_monst) != null) {
+                if ((tp = Util.getPlace(tmp2).p_monst) != null) {
                     if (obj._o_which == StickEnum.WS_HASTE_M.getValue()) {
                         if (tp.containsState(StateEnum.ISSLOW)) {
                             tp.removeState(StateEnum.ISSLOW);
@@ -222,8 +223,8 @@ public class StickMethod {
                         }
                         tp._t_turn = true;
                     }
-                    Global.delta.y = y;
-                    Global.delta.x = x;
+                    Global.delta.y = tmp2.y;
+                    Global.delta.x = tmp2.x;
                     Chase.runto(Global.delta);
                 }
                 break;
@@ -259,8 +260,8 @@ public class StickMethod {
          * First cnt how many things we need to spread the hit points among
          */
         Room corp;
-        if (Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch == ObjectType.DOOR) {
-            corp = Global.passages[Util.flat(Global.player._t_pos.y, Global.player._t_pos.x) & Const.F_PNUM];
+        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.DOOR) {
+            corp = Global.passages[Util.flat(Global.player._t_pos) & Const.F_PNUM];
         } else {
             corp = null;
         }
@@ -268,8 +269,8 @@ public class StickMethod {
         List<ThingImp> drainee = new ArrayList<>();
         for (ThingImp mp : Global.mlist) {
             if (mp.t_room == Global.player.t_room || mp.t_room == corp ||
-                    (inpass && Global.places.get((mp._t_pos.x << 5) + mp._t_pos.y).p_ch == ObjectType.DOOR &&
-                            Global.passages[Util.flat(mp._t_pos.y, mp._t_pos.x) & Const.F_PNUM] == Global.player.t_room)) {
+                    (inpass && Util.getPlace(mp._t_pos).p_ch == ObjectType.DOOR &&
+                            Global.passages[Util.flat(mp._t_pos) & Const.F_PNUM] == Global.player.t_room)) {
                 drainee.add(mp);
             }
         }
@@ -278,7 +279,7 @@ public class StickMethod {
             return;
         }
         Global.player._t_stats.s_hpt /= 2;
-        int cnt = Global.player._t_stats.s_hpt / drainee.size();
+        int cnt = Human.instance.getHp() / drainee.size();
         /*
          * Now zot all of the monsters
          */
@@ -325,17 +326,17 @@ public class StickMethod {
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
             Coordinate c1;
-            if(spotpos.size() <= i) {
+            if (spotpos.size() <= i) {
                 c1 = new Coordinate();
                 spotpos.add(c1);
-            }else{
+            } else {
                 c1 = spotpos.get(i);
             }
 
             pos.y += dir.y;
             pos.x += dir.x;
             c1 = pos;
-            ObjectType ch = Util.winat(pos.y, pos.x);
+            ObjectType ch = Util.winat(pos);
             ThingImp tp;
             switch (ch) {
                 case DOOR:
@@ -344,12 +345,12 @@ public class StickMethod {
                      * and he fires at the wall the door is in, it would
                      * otherwise loop infinitely
                      */
-                    if (Global.player._t_pos.equals( pos)) {
+                    if (Global.player._t_pos.equals(pos)) {
                         // defaultと同じ
-                        if (!hit_hero && (tp = Global.places.get((pos.x << 5) + pos.y).p_monst) != null) {
+                        if (!hit_hero && (tp = Util.getPlace(pos).p_monst) != null) {
                             hit_hero = true;
                             changed = !changed;
-                            tp._t_oldch = Global.places.get((pos.x << 5) + pos.y).p_ch.getValue();
+                            tp._t_oldch = Util.getPlace(pos).p_ch.getValue();
                             if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                                 bolt._o_pos = pos;
                                 used = true;
@@ -360,9 +361,9 @@ public class StickMethod {
                                     }
                                     IOUtil.endmsg();
                                 } else
-                                    WeaponMethod.hit_monster(pos.y, pos.x, bolt);
+                                    WeaponMethod.hit_monster(pos, bolt);
                             } else if (ch.getValue() != 'M' || tp._t_disguise == 'M') {
-                                if (start == Global.player._t_pos)
+                                if (Global.player._t_pos.equals(start))
                                     Chase.runto(pos);
                                 if (Global.terse) {
                                     IOUtil.msg("%s misses", name);
@@ -370,15 +371,15 @@ public class StickMethod {
                                     IOUtil.msg("the %s whizzes past %s", name, Fight.set_mname(tp));
                                 }
                             }
-                        } else if (hit_hero && pos.equals( Global.player._t_pos)) {
+                        } else if (hit_hero && pos.equals(Global.player._t_pos)) {
                             hit_hero = false;
                             changed = !changed;
                             if (!Monst.save(Const.VS_MAGIC)) {
                                 if ((Global.player._t_stats.s_hpt -= Dice.roll(6, 6)) <= 0) {
-                                    if (start == Global.player._t_pos) {
+                                    if (Global.player._t_pos.equals(start)) {
                                         Rip.death('b');
                                     } else {
-                                        Rip.death(Global.places.get((start.x << 5) + start.y).p_monst._t_type);
+                                        Rip.death(Util.getPlace(start).p_monst._t_type);
                                     }
                                 }
                                 used = true;
@@ -408,10 +409,10 @@ public class StickMethod {
                     IOUtil.msg("the %s bounces", name);
                     break;
                 default:
-                    if (!hit_hero && (tp = Global.places.get((pos.x << 5) + pos.y).p_monst) != null) {
+                    if (!hit_hero && (tp = Util.getPlace(pos).p_monst) != null) {
                         hit_hero = true;
                         changed = !changed;
-                        tp._t_oldch = Global.places.get((pos.x << 5) + pos.y).p_ch.getValue();
+                        tp._t_oldch = Util.getPlace(pos).p_ch.getValue();
                         if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                             bolt._o_pos = pos;
                             used = true;
@@ -422,9 +423,9 @@ public class StickMethod {
                                 }
                                 IOUtil.endmsg();
                             } else
-                                WeaponMethod.hit_monster(pos.y, pos.x, bolt);
+                                WeaponMethod.hit_monster(pos, bolt);
                         } else if (ch.getValue() != 'M' || tp._t_disguise == 'M') {
-                            if (start == Global.player._t_pos)
+                            if (Global.player._t_pos.equals(start))
                                 Chase.runto(pos);
                             if (Global.terse) {
                                 IOUtil.msg("%s misses", name);
@@ -437,10 +438,10 @@ public class StickMethod {
                         changed = !changed;
                         if (!Monst.save(Const.VS_MAGIC)) {
                             if ((Global.player._t_stats.s_hpt -= Dice.roll(6, 6)) <= 0) {
-                                if (start == Global.player._t_pos) {
+                                if (Global.player._t_pos.equals(start)) {
                                     Rip.death('b');
                                 } else {
-                                    Rip.death(Global.places.get((start.x << 5) + start.y).p_monst._t_type);
+                                    Rip.death(Util.getPlace(start).p_monst._t_type);
                                 }
                             }
                             used = true;
@@ -457,9 +458,9 @@ public class StickMethod {
                     Display.refresh();
             }
         }
-        for(int j =0; j<i; j++){
+        for (int j = 0; j < i; j++) {
             Coordinate c2 = spotpos.get(j);
-            Display.mvaddch(c2.y, c2.x, Global.places.get((c2.x << 5) + c2.y).p_ch.getValue());
+            Display.mvaddch(c2.y, c2.x, Util.getPlace(c2).p_ch.getValue());
         }
     }
 

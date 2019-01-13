@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -26,7 +27,7 @@ public class Move {
         if (!rp.containInfo(RoomInfoEnum.ISGONE)) {
             for (int y = rp.r_pos.y; y < rp.r_pos.y + rp.r_max.y; y++) {
                 for (int x = rp.r_pos.x; x < rp.r_pos.x + rp.r_max.x; x++) {
-                    if (Character.isUpperCase(Util.winat(y, x).getValue())) {
+                    if (Character.isUpperCase(Util.winat(new Coordinate(x, y)).getValue())) {
                         Monst.wake_monster(y, x);
                     }
                 }
@@ -53,9 +54,9 @@ public class Move {
         /*
          * Do a confused move (maybe)
          */
-        if (Global.player.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
+        if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
             nh = rndmove(Global.player);
-            if (nh.equals( Global.player._t_pos)) {
+            if (nh.equals(Global.player._t_pos)) {
                 Global.after = false;
                 Global.running = false;
                 Global.to_death = false;
@@ -79,17 +80,17 @@ public class Move {
             Global.running = false;
             return;
         }
-        if (Global.running && Global.player._t_pos.equals( nh)) {
+        if (Global.running && Global.player._t_pos.equals(nh)) {
             Global.after = Global.running = false;
         }
-        fl = (char) Util.flat(nh.y, nh.x);
-        ch = Util.winat(nh.y, nh.x);
+        fl = (char) Util.flat(nh);
+        ch = Util.winat(nh);
         if ((fl & Const.F_REAL) == 0 && ch == ObjectType.FLOOR) {
-            if (!Global.player.containsState(StateEnum.ISLEVIT)) {
-                Global.places.get((nh.x << 5) + nh.y).p_ch = ch = ObjectType.TRAP;
-                Global.places.get((nh.x << 5) + nh.y).p_flags |= Const.F_REAL;
+            if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
+                Util.getPlace(nh).p_ch = ch = ObjectType.TRAP;
+                Util.getPlace(nh).p_flags |= Const.F_REAL;
             }
-        } else if (Global.player.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
+        } else if (Human.instance.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
             IOUtil.msg("you are being held");
             return;
         }
@@ -99,7 +100,7 @@ public class Move {
             case Horizon:
                 hit_bound:
                 if (Global.passgo && Global.running && Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
-                        && !Global.player.containsState(StateEnum.ISBLIND)) {
+                        && !Human.instance.containsState(StateEnum.ISBLIND)) {
                     boolean b1, b2;
                     switch (Global.runch) {
                         case 'h':
@@ -142,7 +143,7 @@ public class Move {
                 break;
             case DOOR:
                 Global.running = false;
-                if ((Util.flat(Global.player._t_pos.y, Global.player._t_pos.x) & Const.F_PASS) != 0) {
+                if ((Util.flat(Global.player._t_pos) & Const.F_PASS) != 0) {
                     Rooms.enter_room(nh);
                 }
                 move_stuff(fl, nh);
@@ -171,7 +172,7 @@ public class Move {
                 /* FALLTHROUGH */
             default:
                 Global.running = false;
-                if (Character.isUpperCase(ch.getValue()) || Global.places.get((nh.x << 5) + nh.y).p_monst != null) {
+                if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
                     Fight.fight(nh, Global.cur_weapon, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
@@ -184,8 +185,7 @@ public class Move {
 
     static private void move_stuff(char fl, Coordinate nh) {
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
-        if ((fl & Const.F_PASS) != 0 &&
-                Global.places.get((Global.oldpos.x << 5) + Global.oldpos.y).p_ch == ObjectType.DOOR) {
+        if ((fl & Const.F_PASS) != 0 && Util.getPlace(Global.oldpos).p_ch == ObjectType.DOOR) {
             Rooms.leave_room(nh);
         }
         Global.player._t_pos = nh;
@@ -198,13 +198,13 @@ public class Move {
     static Coordinate rndmove(ThingImp who) {
         Coordinate ret = new Coordinate();  /* what we will be returning */
 
-        int y = ret.y = who._t_pos.y + Util.rnd(3) - 1;
-        int x = ret.x = who._t_pos.x + Util.rnd(3) - 1;
+        ret.y = who._t_pos.y + Util.rnd(3) - 1;
+        ret.x = who._t_pos.x + Util.rnd(3) - 1;
         /*
          * Now check to see if that's a legal move.  If not, don't move.
          * (I.e., bump into the wall or whatever)
          */
-        if (y == who._t_pos.y && x == who._t_pos.x) {
+        if (who._t_pos.equals(ret)) {
             return ret;
         }
         bad:
@@ -212,7 +212,7 @@ public class Move {
             if (!Chase.diag_ok(who._t_pos, ret)) {
                 break bad;
             } else {
-                ObjectType ch = Util.winat(y, x);
+                ObjectType ch = Util.winat(ret);
                 if (!IOUtil.step_ok(ch)) {
                     break bad;
                 }
@@ -220,7 +220,7 @@ public class Move {
                     ThingImp obj2 = null;
                     for (ThingImp obj : Global.lvl_obj) {
                         obj2 = obj;
-                        if (y == obj._o_pos.y && x == obj._o_pos.x) {
+                        if (obj._o_pos.equals(ret)) {
                             break;
                         }
                     }
@@ -251,9 +251,7 @@ public class Move {
      *	Decide whether to refresh at a passage turning or not
      */
     static void turnref() {
-        Place pp;
-
-        pp = Util.INDEX(Global.player._t_pos.y, Global.player._t_pos.x);
+        Place pp = Util.getPlace(Global.player._t_pos);
         if ((pp.p_flags & Const.F_SEEN) == 0) {
             if (Global.jump) {
                 // leaveok(stdscr, true);
@@ -273,12 +271,12 @@ public class Move {
         ThingImp arrow;
         ObjectType tr;
 
-        if (Global.player.containsState(StateEnum.ISLEVIT)) {
+        if (Human.instance.containsState(StateEnum.ISLEVIT)) {
             return Const.T_RUST;    /* anything that's not a door or teleport */
         }
         Global.running = false;
         Global.count = 0;
-        pp = Util.INDEX(tc.y, tc.x);
+        pp = Util.getPlace(tc);
         pp.p_ch = ObjectType.TRAP;
         tr = ObjectType.get((char) (pp.p_flags & Const.F_TMASK));
         pp.p_flags |= Const.F_SEEN;
@@ -330,13 +328,13 @@ public class Move {
                 break;
             case Const.T_SLEEP:
                 Global.no_command += Const.SLEEPTIME;
-                Global.player.removeState(StateEnum.ISRUN);
+                Human.instance.removeState(StateEnum.ISRUN);
                 IOUtil.msg("a strange white mist envelops you and you fall asleep");
                 break;
             case Const.T_ARROW:
                 if (Fight.swing(Global.player._t_stats.s_lvl - 1, Global.player._t_stats.s_arm, 1)) {
                     Global.player._t_stats.s_hpt -= Dice.roll(1, 6);
-                    if (Global.player._t_stats.s_hpt <= 0) {
+                    if (Human.instance.getHp() <= 0) {
                         IOUtil.msg("an arrow killed you");
                         Rip.death('a');
                     } else
@@ -363,7 +361,7 @@ public class Move {
                     IOUtil.msg("a small dart whizzes by your ear and vanishes");
                 } else {
                     Global.player._t_stats.s_hpt -= Dice.roll(1, 4);
-                    if (Global.player._t_stats.s_hpt <= 0) {
+                    if (Human.instance.getHp() <= 0) {
                         IOUtil.msg("a poisoned dart killed you");
                         Rip.death('d');
                     }

@@ -22,7 +22,7 @@ public class Passage {
      *  通路や秘密の通路の追加
      */
     static void putpass(Coordinate cp) {
-        Place pp = Util.INDEX(cp.y, cp.x);
+        Place pp = Util.getPlace(cp);
         pp.p_flags |= Const.F_PASS;
         if (Util.rnd(10) + 1 < Global.level && Util.rnd(40) == 0) {
             pp.p_flags &= ~Const.F_REAL;
@@ -223,12 +223,12 @@ public class Passage {
                 do {
                     startPosition.x = rpf.r_pos.x + Util.rnd(rpf.r_max.x - 2) + 1;
                     startPosition.y = rpf.r_pos.y + rpf.r_max.y - 1;
-                } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition.y, startPosition.x) & Const.F_PASS) == 0);
+                } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
                     endPosiiton.x = rpt.r_pos.x + Util.rnd(rpt.r_max.x - 2) + 1;
-                } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton.y, endPosiiton.x) & Const.F_PASS) == 0);
+                } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton) & Const.F_PASS) == 0);
             }
             distance = Math.abs(startPosition.y - endPosiiton.y) - 1;    /* distance to move */
             turn_delta.x = (startPosition.x < endPosiiton.x ? 1 : -1);
@@ -245,12 +245,12 @@ public class Passage {
                 do {
                     startPosition.x = rpf.r_pos.x + rpf.r_max.x - 1;
                     startPosition.y = rpf.r_pos.y + Util.rnd(rpf.r_max.y - 2) + 1;
-                } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition.y, startPosition.x) & Const.F_PASS) == 0);
+                } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
                     endPosiiton.y = rpt.r_pos.y + Util.rnd(rpt.r_max.y - 2) + 1;
-                } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton.y, endPosiiton.x) & Const.F_PASS) == 0);
+                } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton) & Const.F_PASS) == 0);
             }
             distance = Math.abs(startPosition.x - endPosiiton.x) - 1;
             turn_delta.x = 0;
@@ -327,7 +327,7 @@ public class Passage {
             return;
         }
 
-        pp = Util.INDEX(cp.y, cp.x);
+        pp = Util.getPlace(cp);
         if (Util.rnd(10) + 1 < Global.level && Util.rnd(5) == 0) {
             if (cp.y == rm.r_pos.y || cp.y == rm.r_pos.y + rm.r_max.y - 1) {
                 pp.p_ch = ObjectType.Horizon;
@@ -372,7 +372,7 @@ public class Passage {
         if (x >= Const.NUMCOLS || x < 0 || y >= Const.NUMLINES || y <= 0) {
             return;
         }
-        int fp = Util.flat(y, x);
+        int fp = Util.flat(new Coordinate(x, y));
         if ((fp & Const.F_PNUM) != 0) {
             return;
         }
@@ -384,7 +384,7 @@ public class Passage {
          * check to see if it is a door or secret door, i.e., a new exit,
          * or a numerable type of place
          */
-        char ch = Global.places.get(((x) << 5) + (y)).p_ch.getValue();
+        char ch = Util.INDEX(y,x).p_ch.getValue();
         if (ch == ObjectType.DOOR.getValue() ||
                 ((fp & Const.F_REAL) == 0 && (ch == ObjectType.Horizon.getValue() || ch == ObjectType.Vert.getValue()))) {
             Room rp = Global.passages[pnum];
