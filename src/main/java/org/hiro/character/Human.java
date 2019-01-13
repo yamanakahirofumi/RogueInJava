@@ -13,8 +13,11 @@ import java.util.Optional;
  * 腕が2本
  */
 public class Human implements Player {
+    public static Player instance = new Human("name");
+
     private String name;
     private int strength;
+    private int currentStrength;
     long exp;                /* Experience */
     int lvl;                /* level of mastery */
     int arm;                /* ArmorEnum class */
@@ -90,13 +93,34 @@ public class Human implements Player {
     }
 
     @Override
-    public int getStrength() {
-        return this.strength;
+    public int getCurrentStrength() {
+        if(this.currentStrength < 3){
+            return 3;
+        }else if(this.currentStrength > 31) {
+            return 31;
+        }
+
+        return this.currentStrength;
     }
 
     @Override
     public int getMaxHp() {
         return this.maxhp;
+    }
+
+    @Override
+    public int getHp(){
+        return this.hp;
+    }
+
+    @Override
+    public void addHp(int plus){
+        this.hp = this.hp + plus;
+    }
+
+    @Override
+    public void addExperience(long exp){
+        this.exp += exp;
     }
 
     @Override

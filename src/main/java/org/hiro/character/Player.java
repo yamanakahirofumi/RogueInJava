@@ -40,11 +40,18 @@ public interface Player {
     String getDungeon();
     void setDungeon(String name);
 
-    int getStrength();
+    // ステータス周り
+    int getCurrentStrength();
 
     int getMaxHp();
 
+    int getHp();
+
+    void addHp(int plus);
+
     int getFoodLeft();
+
+    void addExperience(long exp);
 
     void addState(StateEnum s);
 
