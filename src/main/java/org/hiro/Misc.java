@@ -37,7 +37,7 @@ public class Misc {
                 ObjectType.AMULET
         };
 
-        if (Global.level >= Const.AMULETLEVEL) {
+        if (Human.instance.getLevel() >= Const.AMULETLEVEL) {
             i = Util.rnd(thing_list.length);
         } else {
             i = Util.rnd(thing_list.length - 1);

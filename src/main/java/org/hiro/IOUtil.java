@@ -187,11 +187,12 @@ public class IOUtil {
          */
         int temp = (Global.cur_armor != null ? Global.cur_armor._o_arm : Global.player._t_stats.s_arm);
         if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
-                && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Global.level
+                && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Human.instance.getLevel()
                 && s_hungry == Global.hungry_state
                 && !Global.stat_msg
-        )
+        ) {
             return;
+        }
 
         s_arm = temp;
 
@@ -208,7 +209,7 @@ public class IOUtil {
         /*
          * Save current status
          */
-        s_lvl = Global.level;
+        s_lvl = Human.instance.getLevel();
         s_pur = Global.purse;
         s_hp = Human.instance.getHp();
         s_str = Human.instance.getCurrentStrength();
@@ -218,7 +219,7 @@ public class IOUtil {
         if (Global.stat_msg) {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    Global.level, Global.purse, hpwidth, s_hp, hpwidth,
+                    s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
                     Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);
@@ -226,7 +227,7 @@ public class IOUtil {
             Display.move(Const.STATLINE, 0);
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    Global.level, Global.purse, hpwidth, s_hp, hpwidth,
+                    s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
                     Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);

@@ -516,11 +516,11 @@ public class Command {
                                     Wizard.whatis(false, 0);
                                     break;
                                 case ('D' & 037):
-                                    Global.level++;
+                                    Human.instance.upstairs();
                                     New_Level.new_level();
                                     break;
                                 case ('A' & 037):
-                                    Global.level--;
+                                    Human.instance.downstairs();
                                     New_Level.new_level();
                                     break;
                                 case ('F' & 037):
@@ -749,7 +749,7 @@ public class Command {
         if (Util.getPlace(Global.player._t_pos).p_ch != ObjectType.STAIRS) {
             IOUtil.msg("I see no way down");
         } else {
-            Global.level++;
+            Human.instance.upstairs();
             Global.seenstairs = false;
             New_Level.new_level();
         }
@@ -765,8 +765,8 @@ public class Command {
         }
         if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.STAIRS) {
             if (Game.getInstance().isGoal()) {
-                Global.level--;
-                if (Global.level == 0) {
+                Human.instance.downstairs();
+                if (Human.instance.getLevel() == 0) {
                     Rip.total_winner();
                 }
                 New_Level.new_level();

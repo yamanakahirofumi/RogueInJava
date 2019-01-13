@@ -282,7 +282,7 @@ public class Move {
         pp.p_flags |= Const.F_SEEN;
         switch ((int) tr.getValue()) {
             case Const.T_DOOR:
-                Global.level++;
+                Human.instance.upstairs();
                 New_Level.new_level();
                 IOUtil.msg("you fell into a trap!");
                 break;

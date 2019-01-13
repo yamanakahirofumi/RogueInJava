@@ -21,8 +21,8 @@ public class New_Level {
     static void new_level() {
 
         Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
-        if (Global.level > Global.max_level) {
-            Global.max_level = Global.level;
+        if (Human.instance.getLevel() > Global.max_level) {
+            Global.max_level = Human.instance.getLevel();
         }
         /*
          * Clean things off from last level
@@ -52,8 +52,8 @@ public class New_Level {
         /*
          * Place the traps
          */
-        if (Util.rnd(10) < Global.level) {
-            Global.ntraps = Util.rnd(Global.level / 4) + 1;
+        if (Util.rnd(10) < Human.instance.getLevel()) {
+            Global.ntraps = Util.rnd(Human.instance.getLevel() / 4) + 1;
             if (Global.ntraps > Const.MAXTRAPS) {
                 Global.ntraps = Const.MAXTRAPS;
             }
@@ -109,7 +109,7 @@ public class New_Level {
          * go down into the dungeon.
          */
         Game game = Game.getInstance();
-        if (game.isGoal() && Global.level < Global.max_level) {
+        if (game.isGoal() && Human.instance.getLevel() < Global.max_level) {
             return;
         }
         /*
@@ -140,7 +140,7 @@ public class New_Level {
          * If he is really deep in the dungeon and he hasn't found the
          * amulet yet, put it somewhere on the ground
          */
-        if (Global.level >= Const.AMULETLEVEL && !game.isGoal()) {
+        if (Human.instance.getLevel() >= Const.AMULETLEVEL && !game.isGoal()) {
             obj = new ThingImp();
             Global.lvl_obj.add(obj);
             obj._o_hplus = 0;
@@ -197,7 +197,7 @@ public class New_Level {
         if (nm > spots) {
             nm = spots;
         }
-        Global.level++;
+        Human.instance.upstairs();
         while (nm-- != 0) {
             spots = 0;
             if (DrawRoom.find_floor(rp, mp, MAXTRIES != 0, true)) {
@@ -207,7 +207,7 @@ public class New_Level {
                 Monst.give_pack(tp);
             }
         }
-        Global.level--;
+        Human.instance.downstairs();
     }
 
 }

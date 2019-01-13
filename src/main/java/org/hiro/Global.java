@@ -11,8 +11,7 @@ import java.util.List;
 
 public class Global {
     static List<Room> rooms;
-    static int level;   /* What level she is on */ // 今いる階層
-    //    static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
+    // static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
     static List<Place> places;  // sizeは80 * 32
 //    static
     static Monster[] monsters;
@@ -123,7 +122,6 @@ public class Global {
     static ThingImp cur_ring[];
     @Deprecated
     static ThingImp player;
-    //static Human player;
     static ThingImp cur_weapon;
     static ThingImp cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */

@@ -32,6 +32,8 @@ public interface Player {
      */
     int getLevel();
     void setLevel(int level);
+    void upstairs();
+    void downstairs();
 
     /**
      * 現在のダンジョンを返す。

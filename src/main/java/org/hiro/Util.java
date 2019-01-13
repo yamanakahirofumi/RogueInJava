@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
@@ -31,7 +32,7 @@ public class Util {
     }
 
     static int GOLDCALC() {
-        return rnd(50 + 10 * Global.level) + 2;
+        return rnd(50 + 10 * Human.instance.getLevel()) + 2;
     }
 
     static int CCHAR(int x) {

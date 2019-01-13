@@ -36,7 +36,7 @@ public class Monst {
         int[] mons = (wander ? wand_mons : lvl_mons);
         int d;
         do {
-            d = Global.level + (Util.rnd(10) - 6);
+            d = Human.instance.getLevel() + (Util.rnd(10) - 6);
             if (d < 0) {
                 d = Util.rnd(5);
             }
@@ -55,7 +55,7 @@ public class Monst {
         Monster mp;
         int lev_add;
 
-        if ((lev_add = Global.level - Const.AMULETLEVEL) < 0) {
+        if ((lev_add = Human.instance.getLevel() - Const.AMULETLEVEL) < 0) {
             lev_add = 0;
         }
         Global.mlist.add(tp);
@@ -74,7 +74,7 @@ public class Monst {
         tp._t_stats.s_str = mp.m_stats.s_str;
         tp._t_stats.s_exp = mp.m_stats.s_exp + lev_add * 10 + exp_add(tp);
         tp.setState(mp.m_flags);  // TODO:o_flagとt_flag共有を考えないと
-        if (Global.level > 29) {
+        if (Human.instance.getLevel() > 29) {
             tp.addState(StateEnum.ISHASTE);
         }
         tp._t_turn = true;
@@ -112,7 +112,7 @@ public class Monst {
      */
 
     static void give_pack(ThingImp tp) {
-        if (Global.level >= Global.max_level
+        if (Human.instance.getLevel() >= Global.max_level
                 && Util.rnd(100) < Global.monsters[tp._t_type - 'A'].m_carry) {
             tp.addItem(new ThingImp());
         }

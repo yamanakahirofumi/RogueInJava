@@ -1,6 +1,7 @@
 package org.hiro;
 
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.things.ObjectType;
@@ -64,7 +65,7 @@ public class DrawRoom {
             /*
              * set room type
              */
-            if (Util.rnd(10) < Global.level - 1) {
+            if (Util.rnd(10) < Human.instance.getLevel() - 1) {
                 rp.addInfo(RoomInfoEnum.ISDARK);        /* dark room */
                 if (Util.rnd(15) == 0) {
                     rp.setInfo(RoomInfoEnum.ISMAZE);        /* maze room */
@@ -95,7 +96,7 @@ public class DrawRoom {
              * Put the gold in
              */
             Game game = Game.getInstance();
-            if (Util.rnd(2) == 0 && (!game.isGoal() || Global.level >= Global.max_level)) {
+            if (Util.rnd(2) == 0 && (!game.isGoal() || Human.instance.getLevel() >= Global.max_level)) {
                 ThingImp gold;
 
                 gold = new ThingImp();

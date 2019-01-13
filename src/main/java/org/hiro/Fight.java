@@ -199,7 +199,7 @@ public class Fight {
             case 'L': {
                 ThingImp gold;
 
-                if (WeaponMethod.fallpos(tp._t_pos, (Coordinate) tp.t_room.r_gold) && Global.level >= Global.max_level) {
+                if (WeaponMethod.fallpos(tp._t_pos, (Coordinate) tp.t_room.r_gold) && Human.instance.getLevel() >= Global.max_level) {
                     gold = new ThingImp();
                     gold._o_type = ObjectType.GOLD;
                     gold._o_arm = Util.GOLDCALC();

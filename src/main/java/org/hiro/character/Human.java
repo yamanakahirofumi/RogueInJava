@@ -73,6 +73,16 @@ public class Human implements Player {
     }
 
     @Override
+    public void upstairs(){
+        this.level ++;
+    }
+
+    @Override
+    public void downstairs(){
+        this.level --;
+    }
+
+    @Override
     public String getDungeon() {
         return this.dungeon;
     }

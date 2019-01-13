@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -24,7 +25,7 @@ public class Passage {
     static void putpass(Coordinate cp) {
         Place pp = Util.getPlace(cp);
         pp.p_flags |= Const.F_PASS;
-        if (Util.rnd(10) + 1 < Global.level && Util.rnd(40) == 0) {
+        if (Util.rnd(10) + 1 < Human.instance.getLevel() && Util.rnd(40) == 0) {
             pp.p_flags &= ~Const.F_REAL;
         } else {
             pp.p_ch = ObjectType.PASSAGE;
@@ -328,7 +329,7 @@ public class Passage {
         }
 
         pp = Util.getPlace(cp);
-        if (Util.rnd(10) + 1 < Global.level && Util.rnd(5) == 0) {
+        if (Util.rnd(10) + 1 < Human.instance.getLevel() && Util.rnd(5) == 0) {
             if (cp.y == rm.r_pos.y || cp.y == rm.r_pos.y + rm.r_max.y - 1) {
                 pp.p_ch = ObjectType.Horizon;
             } else {
