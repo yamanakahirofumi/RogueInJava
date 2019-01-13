@@ -1,43 +1,14 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
-import org.hiro.things.WeaponEnum;
+import org.hiro.things.Weapon;
 
 public class WeaponMethod {
-    /*
-     * init_weapon:
-     *	Set up the initial goodies for a Weapon
-     */
-
-    public static void init_weapon(ThingImp weap, int which) {
-        InitWeapon iwp;
-        //init_weaps iwp;
-
-        weap._o_type = ObjectType.WEAPON;
-        weap._o_which = which;
-        iwp = Global.init_dam.get(which);
-        weap._o_damage = iwp.iw_dam;
-        weap._o_hurldmg = iwp.iw_hrl;
-        weap._o_launch = iwp.iw_launch;
-        weap.set_o_flags(iwp.iw_flags);
-        weap._o_hplus = 0;
-        weap._o_dplus = 0;
-        if (which == WeaponEnum.DAGGER.getValue()) {
-            weap._o_count = Util.rnd(4) + 2;
-            weap._o_group = Global.group++;
-        } else if (weap.contains_o_flags(Const.ISMANY)) {
-            //		} else if ((weap._o_flags & Const.ISMANY) != 0) {
-            weap._o_count = Util.rnd(8) + 8;
-            weap._o_group = Global.group++;
-        } else {
-            weap._o_count = 1;
-            weap._o_group = 0;
-        }
-    }
-
     /*
      * num:
      *	Figure out the plus number for armor/weapons
@@ -89,13 +60,13 @@ public class WeaponMethod {
 
         if (fallpos(obj._o_pos, fpos)) {
             Place pp = Util.getPlace(fpos);
-            pp.p_ch = obj._o_type;
+            pp.p_ch = obj.getDisplay();
             obj._o_pos = fpos;
             if (Chase.isSee(fpos)) {
                 if (pp.p_monst != null) {
-                    pp.p_monst._t_oldch = obj._o_type.getValue();
+                    pp.p_monst._t_oldch = obj.getDisplay().getValue();
                 } else
-                    Display.mvaddch(fpos.y, fpos.x, obj._o_type.getValue());
+                    Display.mvaddch(fpos.y, fpos.x, obj.getDisplay().getValue());
             }
             Global.lvl_obj.add(obj);
             return;
@@ -180,7 +151,7 @@ public class WeaponMethod {
                  * If it alright.
                  */
                 if (Chase.isSee(obj._o_pos) && !Global.terse) {
-                    Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj._o_type.getValue());
+                    Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj.getDisplay().getValue());
                     Display.refresh();
                 }
                 if (!Global.jump) {
@@ -198,19 +169,19 @@ public class WeaponMethod {
      */
     static void wield() {
 
-        ThingImp oweapon = Global.cur_weapon;
-        if (!ThingMethod.dropcheck(Global.cur_weapon)) {
-            Global.cur_weapon = oweapon;
+        ThingImp oweapon = Human.instance.getWeapons().get(0);
+        if (!ThingMethod.dropcheck(Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null)) {
+            Human.instance.putOnWeapon((Weapon) oweapon);
             return;
         }
-        Global.cur_weapon = oweapon;
+        Human.instance.putOnWeapon((Weapon) oweapon);
         ThingImp obj;
         if ((obj = Pack.get_item("wield", ObjectType.WEAPON)) == null) {
             Global.after = false;
             return;
         }
 
-        if (obj._o_type == ObjectType.ARMOR) {
+        if (obj instanceof Armor) {
             IOUtil.msg("you can't wield armor");
             Global.after = false;
             return;
@@ -221,7 +192,7 @@ public class WeaponMethod {
         }
 
         String sp = ThingMethod.inv_name(obj, true);
-        Global.cur_weapon = obj;
+        Human.instance.putOnWeapon((Weapon) obj);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }

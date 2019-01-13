@@ -4,10 +4,12 @@ import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 
 import java.util.concurrent.TimeUnit;
@@ -62,7 +64,7 @@ public class Command {
             if (!((Global.running || Global.count != 0) && Global.jump)) {
                 Display.refresh();            /* Draw screen */
             }
-            Global.take = 0;
+            Global.take = ObjectType.Initial;
             Global.after = true;
             /*
              * Read command or continue run
@@ -193,7 +195,7 @@ public class Command {
                             if (levit_check()) {
                                 ;
                             } else {
-                                Pack.pick_up(obj2._o_type.getValue());
+                                Pack.pick_up();
                             }
                         } else {
                             if (!Global.terse) {
@@ -332,7 +334,7 @@ public class Command {
                         break;
                     case 'i':
                         Global.after = false;
-                        Pack.inventory(Global.player.getBaggage(), 0);
+                        Pack.inventory(Global.player.getBaggage(), ObjectType.Initial);
                         break;
                     case 'I':
                         Global.after = false;
@@ -478,7 +480,7 @@ public class Command {
                         }
                         break;
                     case ')':
-                        current(Global.cur_weapon, "wielding", null);
+                        current(Human.instance.getWeapons().size() == 0? null: Human.instance.getWeapons().get(0), "wielding", null);
                         break;
                     case ']':
                         current(Global.cur_armor, "wearing", null);
@@ -510,7 +512,7 @@ public class Command {
                                     IOUtil.msg("inpack = %d", Global.inpack);
                                     break;
                                 case ('G' & 037):
-                                    Pack.inventory(Global.lvl_obj, 0);
+                                    Pack.inventory(Global.lvl_obj, ObjectType.Initial);
                                     break;
                                 case ('W' & 037):
                                     Wizard.whatis(false, 0);
@@ -555,22 +557,14 @@ public class Command {
                                     /*
                                      * Give him a sword (+1,+1)
                                      */
-                                    obj = new ThingImp();
-                                    WeaponMethod.init_weapon(obj, WeaponEnum.TWOSWORD.getValue());
-                                    obj._o_hplus = 1;
+                                    obj = new Weapon(WeaponEnum.TWOSWORD,1);
                                     obj._o_dplus = 1;
                                     Pack.add_pack(obj, true);
-                                    Global.cur_weapon = obj;
+                                    Human.instance.putOnWeapon((Weapon) obj);
                                     /*
                                      * And his suit of armor
                                      */
-                                    obj = new ThingImp();
-                                    obj._o_type = ObjectType.ARMOR;
-                                    obj._o_which = ArmorEnum.PLATE_MAIL.getValue();
-                                    obj._o_arm = -5;
-                                    obj.add_o_flags(Const.ISKNOW);
-                                    obj._o_count = 1;
-                                    obj._o_group = 0;
+                                    obj = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
                                     Global.cur_armor = obj;
                                     Pack.add_pack(obj, true);
                                 }
@@ -596,8 +590,8 @@ public class Command {
             /*
              * If he ran into something to take, let him pick it up.
              */
-            if (Global.take != 0) {
-                Pack.pick_up(Global.take);
+            if (Global.take != ObjectType.Initial) {
+                Pack.pick_up();
             }
             if (!Global.running) {
                 Global.door_stop = false;

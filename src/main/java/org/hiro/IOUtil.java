@@ -188,9 +188,7 @@ public class IOUtil {
         int temp = (Global.cur_armor != null ? Global.cur_armor._o_arm : Global.player._t_stats.s_arm);
         if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
                 && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Human.instance.getLevel()
-                && s_hungry == Global.hungry_state
-                && !Global.stat_msg
-        ) {
+                && s_hungry == Global.hungry_state && !Global.stat_msg) {
             return;
         }
 

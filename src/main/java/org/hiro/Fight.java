@@ -4,9 +4,12 @@ import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
-import org.hiro.things.ObjectType;
+import org.hiro.things.Gold;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
+
+import java.util.List;
 
 public class Fight {
 
@@ -184,7 +187,6 @@ public class Fight {
      *	Called to put a monster to death
      */
     static void killed(ThingImp tp, boolean pr) {
-        String mname;
 
         Human.instance.addExperience(tp._t_stats.s_exp);
 
@@ -197,15 +199,10 @@ public class Fight {
                 Global.vf_hit = 0;
                 break;
             case 'L': {
-                ThingImp gold;
-
-                if (WeaponMethod.fallpos(tp._t_pos, (Coordinate) tp.t_room.r_gold) && Human.instance.getLevel() >= Global.max_level) {
-                    gold = new ThingImp();
-                    gold._o_type = ObjectType.GOLD;
-                    gold._o_arm = Util.GOLDCALC();
+                if (WeaponMethod.fallpos(tp._t_pos, tp.t_room.r_gold) && Human.instance.getLevel() >= Global.max_level) {
+                    Gold gold = new Gold(Human.instance.getLevel());
                     if (Monst.save(Const.VS_MAGIC)) {
-                        gold._o_arm += Util.GOLDCALC() + Util.GOLDCALC()
-                                + Util.GOLDCALC() + Util.GOLDCALC();
+                        gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
                     }
                     tp.addItem(gold);
                 }
@@ -214,7 +211,7 @@ public class Fight {
         /*
          * Get rid of the monster.
          */
-        mname = set_mname(tp);
+        String mname = set_mname(tp);
         remove_mon(tp._t_pos, tp, true);
         if (pr) {
             if (Global.has_hit) {
@@ -275,7 +272,7 @@ public class Fight {
         if (Global.to_death) {
             return;
         }
-        if (weap._o_type == ObjectType.WEAPON) {
+        if (weap instanceof Weapon) {
             IOUtil.addmsg("the %s misses ", Global.weap_info[weap._o_which].getName());
         } else {
             IOUtil.addmsg("you missed ");
@@ -295,7 +292,7 @@ public class Fight {
         if (Global.to_death) {
             return;
         }
-        if (weap._o_type == ObjectType.WEAPON) {
+        if (weap instanceof Weapon) {
             IOUtil.addmsg("the %s hits ", Global.weap_info[weap._o_which].getName());
         } else {
             IOUtil.addmsg("you hit ");
@@ -377,7 +374,8 @@ public class Fight {
         } else {
             hplus = (weap == null ? 0 : weap._o_hplus);
             dplus = (weap == null ? 0 : weap._o_dplus);
-            if (weap == Global.cur_weapon) {
+            List<Weapon> curWeapons = Human.instance.getWeapons();
+            if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
                 if (Util.ISRING(Const.LEFT, RingEnum.R_ADDDAM)) {
                     dplus += Global.cur_ring[Const.LEFT]._o_arm;
                 } else if (Util.ISRING(Const.LEFT, RingEnum.R_ADDHIT)) {
@@ -391,11 +389,11 @@ public class Fight {
             }
             cp = weap._o_damage;
             if (hurl) {
-                if (weap.contains_o_flags(Const.ISMISL) && Global.cur_weapon != null &&
-                        Global.cur_weapon._o_which == weap._o_launch) {
+                if (weap.contains_o_flags(Const.ISMISL) && curWeapons.size() > 0 &&
+                        curWeapons.get(0)._o_which == weap._o_launch) {
                     cp = weap._o_hurldmg;
-                    hplus += Global.cur_weapon._o_hplus;
-                    dplus += Global.cur_weapon._o_dplus;
+                    hplus += curWeapons.get(0)._o_hplus;
+                    dplus += curWeapons.get(0)._o_dplus;
                 } else if (weap._o_launch < 0) {
                     cp = weap._o_hurldmg;
                 }
@@ -576,7 +574,7 @@ public class Fight {
                                 fewer = Dice.roll(1, 10);
                             } else
                                 fewer = Dice.roll(1, 3);
-                            Global.player._t_stats.s_hpt -= fewer;
+                            Human.instance.deleteHp(fewer);
                             Global.player._t_stats.s_maxhp -= fewer;
                             if (Human.instance.getHp() <= 0) {
                                 Global.player._t_stats.s_hpt = 1;
@@ -627,10 +625,8 @@ public class Fight {
                          */
                         steal = null;
                         for (ThingImp obj : Global.player.getBaggage()) {
-                            if (obj != Global.cur_armor && obj != Global.cur_weapon
-                                    && obj != Global.cur_ring[Const.LEFT]
-                                    && obj != Global.cur_ring[Const.RIGHT]
-                                    && Potions.is_magic(obj) && Util.rnd(++nobj) == 0) {
+                            if (!Human.instance.isEquipped(obj)
+                                    &&obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
                             }
                         }
@@ -652,8 +648,8 @@ public class Fight {
                 Global.has_hit = false;
             }
             if (mp._t_type == 'F') {
-                Global.player._t_stats.s_hpt -= Global.vf_hit;
-                if (Human.instance.getMaxHp() <= 0) {
+                Human.instance.deleteHp(Global.vf_hit);
+                if (Human.instance.getHp() <= 0) {
                     Rip.death(mp._t_type);    /* Bye bye life ... */
                 }
             }

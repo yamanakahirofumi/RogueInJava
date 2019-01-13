@@ -40,7 +40,6 @@ public class ThingImp implements Thing {
     public int _t_reserved;
 
     // これでアクセスされるパターン２
-    public ObjectType _o_type;            /* What kind of object it is */
     public Coordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
@@ -139,6 +138,11 @@ public class ThingImp implements Thing {
     @Override
     public Optional<Thing> eat() {
         return Optional.of(this);
+    }
+
+    @Override
+    public int getWorth() {
+        return 0;
     }
 
     List<Obj_info> getTypes(String filename) {

@@ -191,6 +191,7 @@ public class Monst {
     /*
      * save:
      *	See if he saves against various nasty things
+     *  アイテムを落とすか確認する
      */
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {

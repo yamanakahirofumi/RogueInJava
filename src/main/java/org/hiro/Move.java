@@ -5,11 +5,13 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 
 /**
@@ -173,10 +175,10 @@ public class Move {
             default:
                 Global.running = false;
                 if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
-                    Fight.fight(nh, Global.cur_weapon, false);
+                    Fight.fight(nh, Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
-                        Global.take = ch.getValue();
+                        Global.take = ch;
                     }
                     move_stuff(fl, nh);
                 }
@@ -333,15 +335,14 @@ public class Move {
                 break;
             case Const.T_ARROW:
                 if (Fight.swing(Global.player._t_stats.s_lvl - 1, Global.player._t_stats.s_arm, 1)) {
-                    Global.player._t_stats.s_hpt -= Dice.roll(1, 6);
+                    Human.instance.deleteHp(Dice.roll(1, 6));
                     if (Human.instance.getHp() <= 0) {
                         IOUtil.msg("an arrow killed you");
                         Rip.death('a');
                     } else
                         IOUtil.msg("oh no! An arrow shot you");
                 } else {
-                    arrow = new ThingImp();
-                    WeaponMethod.init_weapon(arrow, WeaponEnum.ARROW.getValue());
+                    arrow = new Weapon(WeaponEnum.ARROW,0);
                     arrow._o_count = 1;
                     arrow._o_pos = Global.player._t_pos;
                     WeaponMethod.fall(arrow, false);
@@ -360,7 +361,7 @@ public class Move {
                 if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {
                     IOUtil.msg("a small dart whizzes by your ear and vanishes");
                 } else {
-                    Global.player._t_stats.s_hpt -= Dice.roll(1, 4);
+                    Human.instance.deleteHp(Dice.roll(1, 4));
                     if (Human.instance.getHp() <= 0) {
                         IOUtil.msg("a poisoned dart killed you");
                         Rip.death('d');
@@ -386,7 +387,7 @@ public class Move {
      *  錆びた鎧
      */
     static void rust_armor(ThingImp arm) {
-        if (arm == null || arm._o_type != ObjectType.ARMOR ||
+        if (arm == null || !(arm instanceof Armor) ||
                 arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
             return;
         }

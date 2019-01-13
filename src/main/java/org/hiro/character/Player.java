@@ -48,8 +48,8 @@ public interface Player {
     int getMaxHp();
 
     int getHp();
-
     void addHp(int plus);
+    void deleteHp(int damage);
 
     int getFoodLeft();
 
@@ -66,8 +66,10 @@ public interface Player {
     Optional<Thing> eat(Thing thing);
 
     /** 装備周り */
+    boolean isEquipped(Thing thing);
     List<Weapon> getWeapons();
-
+    boolean isEquippedWeapons(Thing thing);
     boolean putOnWeapon(Weapon w);
+    boolean removeWeapon(Thing thing);
 
 }

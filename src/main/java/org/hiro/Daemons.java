@@ -127,7 +127,7 @@ public class Daemons {
          */
         for (ThingImp tp : Global.lvl_obj) {
             if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, tp._o_type.getValue());
+                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, tp.getDisplay().getValue());
             }
         }
 

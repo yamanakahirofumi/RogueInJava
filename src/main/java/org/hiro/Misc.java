@@ -6,6 +6,7 @@ import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
@@ -415,9 +416,7 @@ public class Misc {
         if (obj == null) {
             return false;
         }
-        if (obj == Global.cur_armor || obj == Global.cur_weapon
-                || obj == Global.cur_ring[Const.LEFT]
-                || obj == Global.cur_ring[Const.RIGHT]) {
+        if (Human.instance.isEquipped(obj)) {
             if (!Global.terse) {
                 IOUtil.addmsg("That's already ");
             }
@@ -480,7 +479,7 @@ public class Misc {
         if ((obj = Pack.get_item("eat", ObjectType.FOOD)) == null) {
             return;
         }
-        if (obj._o_type != ObjectType.FOOD) {
+        if (!(obj instanceof Food)) {
             if (!Global.terse) {
                 IOUtil.msg("ugh, you would get ill if you ate that");
             } else {
@@ -495,9 +494,8 @@ public class Misc {
             Global.food_left = Const.STOMACHSIZE;
         }
         Global.hungry_state = 0;
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        }
+        // 装備している武器を食べる場合
+        Human.instance.removeWeapon(obj);
         if (obj._o_which == 1)
             IOUtil.msg("my, that was a yummy %s", Global.fruit);
         else if (Util.rnd(100) > 70) {

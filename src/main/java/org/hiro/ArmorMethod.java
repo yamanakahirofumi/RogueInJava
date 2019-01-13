@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
 
@@ -25,7 +26,7 @@ public class ArmorMethod {
             Global.after = false;
             return;
         }
-        if (obj._o_type != ObjectType.ARMOR) {
+        if (obj instanceof Armor) {
             IOUtil.msg("you can't wear that");
             return;
         }

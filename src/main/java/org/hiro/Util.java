@@ -2,8 +2,12 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
 import org.hiro.things.RingEnum;
+import org.hiro.things.Scroll;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 
 import java.util.Random;
@@ -85,8 +89,9 @@ public class Util {
         return (char) (c & 037);
     }
 
-    static boolean ISMULT(ObjectType type) {
-        return (type == ObjectType.POTION || type == ObjectType.SCROLL || type == ObjectType.FOOD);
+    // 違う判定がよいかも
+    static boolean ISMULT(Thing type) {
+        return (type instanceof Potion || type instanceof Scroll || type instanceof Food);
     }
 
 

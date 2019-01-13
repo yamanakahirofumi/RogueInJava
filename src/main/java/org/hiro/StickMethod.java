@@ -59,11 +59,10 @@ public class StickMethod {
     static void do_zap() {
         boolean MASTER = false;
         ThingImp obj;
-        ThingImp bolt = new ThingImp();
 
         if ((obj = Pack.get_item("zap with", ObjectType.STICK)) == null)
             return;
-        if (obj._o_type != ObjectType.STICK) {
+        if (obj instanceof Stick) {
             Global.after = false;
             IOUtil.msg("you can't zap with that!");
             return;
@@ -75,6 +74,7 @@ public class StickMethod {
         StickEnum st = StickEnum.get(obj._o_which);
         ThingImp tp;
         String name;
+
         switch (st) {
             case WS_LIGHT:
                 /*
@@ -182,13 +182,14 @@ public class StickMethod {
                 break;
             case WS_MISSILE:
                 Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
-                bolt._o_type = ObjectType.GOLD;
+                Gold bolt = new Gold(0);    // TODO: Missileクラスつくるべき. 一時的に見た目に合わせたクラスに
                 bolt._o_hurldmg = "1x4";
                 bolt._o_hplus = 100;
                 bolt._o_dplus = 1;
                 bolt.set_o_flags(Const.ISMISL);
-                if (Global.cur_weapon != null)
-                    bolt._o_launch = Global.cur_weapon._o_which;
+                if (Human.instance.getWeapons().size() > 0) {
+                    bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
+                }
                 WeaponMethod.do_motion(bolt, Global.delta.y, Global.delta.x);
                 if ((tp = Util.getPlace(bolt._o_pos).p_monst) != null
                         && !Monst.save_throw(Const.VS_MAGIC, tp)) {
@@ -298,13 +299,8 @@ public class StickMethod {
      */
     static void fire_bolt(Coordinate start, Coordinate dir, String name) {
         List<Coordinate> spotpos = new ArrayList<>();
-        ThingImp bolt = new ThingImp();
-
-        bolt._o_type = ObjectType.WEAPON;
-        bolt._o_which = WeaponEnum.FLAME.getValue();
-        bolt._o_hurldmg = "6x6";
-        bolt._o_hplus = 100;
-        bolt._o_dplus = 0;
+        Weapon bolt = new Weapon(WeaponEnum.FLAME,100);
+        bolt._o_hurldmg ="6x6";
         Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
         int dirch = 0;
         switch (dir.y + dir.x) {
@@ -375,7 +371,8 @@ public class StickMethod {
                             hit_hero = false;
                             changed = !changed;
                             if (!Monst.save(Const.VS_MAGIC)) {
-                                if ((Global.player._t_stats.s_hpt -= Dice.roll(6, 6)) <= 0) {
+                                Human.instance.deleteHp(Dice.roll(6, 6));
+                                if (Human.instance.getHp() <= 0) {
                                     if (Global.player._t_pos.equals(start)) {
                                         Rip.death('b');
                                     } else {
@@ -437,7 +434,8 @@ public class StickMethod {
                         hit_hero = false;
                         changed = !changed;
                         if (!Monst.save(Const.VS_MAGIC)) {
-                            if ((Global.player._t_stats.s_hpt -= Dice.roll(6, 6)) <= 0) {
+                            Human.instance.deleteHp(Dice.roll(6, 6));
+                            if (Human.instance.getHp()<= 0) {
                                 if (Global.player._t_pos.equals(start)) {
                                     Rip.death('b');
                                 } else {

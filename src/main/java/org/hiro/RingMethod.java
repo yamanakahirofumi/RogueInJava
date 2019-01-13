@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.things.ObjectType;
+import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
 
@@ -73,7 +74,7 @@ public class RingMethod {
         if (obj == null) {
             return;
         }
-        if (obj._o_type != ObjectType.RING) {
+        if (obj instanceof Ring) {
             if (!Global.terse) {
                 IOUtil.msg("it would be difficult to wrap that around a finger");
             } else {

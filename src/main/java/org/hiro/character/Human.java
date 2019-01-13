@@ -1,6 +1,8 @@
 package org.hiro.character;
 
 import org.hiro.map.AbstractCoordinate;
+import org.hiro.things.Armor;
+import org.hiro.things.Ring;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
@@ -21,20 +23,26 @@ public class Human implements Player {
     long exp;                /* Experience */
     int lvl;                /* level of mastery */
     int arm;                /* ArmorEnum class */
-    int hp;            /* Hit points */
+    private int hp;            /* Hit points */
     String dmg;            /* String describing damage done */
     private int maxhp;            /* Max hit points */
     private int foodLeft;
     private int stomachSize;
     HashSet<StateEnum> state;
-    /** 位置情報 */
+    /**
+     * 位置情報
+     */
     private AbstractCoordinate position;
     private int level;
     private String dungeon;
-    /** 装備周り */
+    /**
+     * 装備周り
+     */
     private Weapon weapon;
+    private Armor armor;
+    private Ring ring;
 
-    public Human(String  name){
+    public Human(String name) {
         this.name = name;
         this.stomachSize = 2000;
         this.state = new HashSet<>();
@@ -42,12 +50,12 @@ public class Human implements Player {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
     @Override
-    public void changeFloor(){
+    public void changeFloor() {
         this.state.remove(StateEnum.ISHELD);
 
     }
@@ -73,13 +81,13 @@ public class Human implements Player {
     }
 
     @Override
-    public void upstairs(){
-        this.level ++;
+    public void upstairs() {
+        this.level++;
     }
 
     @Override
-    public void downstairs(){
-        this.level --;
+    public void downstairs() {
+        this.level--;
     }
 
     @Override
@@ -94,9 +102,9 @@ public class Human implements Player {
 
     @Override
     public Optional<Thing> eat(Thing t) {
-        if(this.foodLeft + t.foodValue() > this.stomachSize){
+        if (this.foodLeft + t.foodValue() > this.stomachSize) {
             this.foodLeft = this.stomachSize;
-        }else{
+        } else {
             this.foodLeft += t.foodValue();
         }
         return t.eat();
@@ -104,9 +112,9 @@ public class Human implements Player {
 
     @Override
     public int getCurrentStrength() {
-        if(this.currentStrength < 3){
+        if (this.currentStrength < 3) {
             return 3;
-        }else if(this.currentStrength > 31) {
+        } else if (this.currentStrength > 31) {
             return 31;
         }
 
@@ -119,17 +127,22 @@ public class Human implements Player {
     }
 
     @Override
-    public int getHp(){
+    public int getHp() {
         return this.hp;
     }
 
     @Override
-    public void addHp(int plus){
+    public void deleteHp(int damage) {
+        this.hp -= damage;
+    }
+
+    @Override
+    public void addHp(int plus) {
         this.hp = this.hp + plus;
     }
 
     @Override
-    public void addExperience(long exp){
+    public void addExperience(long exp) {
         this.exp += exp;
     }
 
@@ -139,32 +152,51 @@ public class Human implements Player {
     }
 
     @Override
-    public void addState(StateEnum s){
+    public void addState(StateEnum s) {
         this.state.add(s);
     }
 
     @Override
-    public void removeState(StateEnum s){
+    public void removeState(StateEnum s) {
         this.state.remove(s);
     }
 
     @Override
-    public boolean containsState(StateEnum s){
-        return  this.state.contains(s);
+    public boolean containsState(StateEnum s) {
+        return this.state.contains(s);
     }
 
     @Override
-    public List<Weapon> getWeapons(){
-        if(this.weapon == null) {
+    public boolean isEquipped(Thing thing) {
+        return this.weapon == thing || this.armor == thing || this.ring == thing;
+    }
+
+    @Override
+    public List<Weapon> getWeapons() {
+        if (this.weapon == null) {
             return new ArrayList<>();
-        }else{
+        } else {
             return List.of(this.weapon);
         }
     }
 
     @Override
-    public boolean putOnWeapon(Weapon w){
+    public boolean isEquippedWeapons(Thing t) {
+        return this.weapon == t;
+    }
+
+    @Override
+    public boolean putOnWeapon(Weapon w) {
         this.weapon = w;
+        return true;
+    }
+
+    @Override
+    public boolean removeWeapon(Thing thing) {
+        if (!isEquippedWeapons(thing)) {
+            return false;
+        }
+        this.weapon = null;
         return true;
     }
 

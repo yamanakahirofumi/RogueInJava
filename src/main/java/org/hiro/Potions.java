@@ -4,6 +4,7 @@ import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
@@ -68,7 +69,7 @@ public class Potions {
         if (obj == null) {
             return;
         }
-        if (obj._o_type != ObjectType.POTION) {
+        if (!(obj instanceof Potion)) {
             if (!Global.terse) {
                 IOUtil.msg("yuk! Why would you want to drink that?");
             } else {
@@ -76,9 +77,7 @@ public class Potions {
             }
             return;
         }
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        }
+        Human.instance.removeWeapon(obj);
 
         /*
          * Calculate the effect it has on the poor guy.
@@ -136,7 +135,7 @@ public class Potions {
                 if (Global.lvl_obj.size() != 0) {
                     // wclear(hw);
                     for (ThingImp tp : Global.lvl_obj) {
-                        if (is_magic(tp)) {
+                        if (tp.isMagic()) {
                             show = true;
                             // wmove(hw, tp._o_pos.y, tp._o_pos.x);
                             // waddch(hw, ObjectType.MAGIC);
@@ -145,7 +144,7 @@ public class Potions {
                     }
                     for (ThingImp mp : Global.mlist) {
                         for (ThingImp tp : mp.getBaggage()) {
-                            if (is_magic(tp)) {
+                            if (tp.isMagic()) {
                                 show = true;
                                 // wmove(hw, mp._t_pos.y, mp._t_pos.x);
                                 // waddch(hw, ObjectType.MAGIC);
@@ -359,24 +358,8 @@ public class Potions {
         Misc.check_level();
     }
 
-    /*
-     * is_magic:
-     *	Returns true if an object radiates magic
-     */
     static boolean is_magic(ThingImp obj) {
-        switch (obj._o_type) {
-            case ARMOR:
-                return (obj.contains_o_flags(Const.ISPROT) || obj._o_arm != Global.a_class[obj._o_which]);
-            case WEAPON:
-                return (obj._o_hplus != 0 || obj._o_dplus != 0);
-            case POTION:
-            case SCROLL:
-            case STICK:
-            case RING:
-            case AMULET:
-                return true;
-        }
-        return false;
+        return obj.isMagic();
     }
 
     /*

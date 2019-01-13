@@ -4,6 +4,7 @@ package org.hiro;
 import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
+import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
 
@@ -97,16 +98,14 @@ public class DrawRoom {
              */
             Game game = Game.getInstance();
             if (Util.rnd(2) == 0 && (!game.isGoal() || Human.instance.getLevel() >= Global.max_level)) {
-                ThingImp gold;
+                Gold gold;
 
-                gold = new ThingImp();
-                gold._o_arm = rp.r_goldval = Util.GOLDCALC();
-                find_floor(rp,(Coordinate) rp.r_gold, false, false);
-                gold._o_pos = (Coordinate) rp.r_gold;
+                gold = new Gold(Human.instance.getLevel());
+                rp.r_goldval = gold.getGold();
+                find_floor(rp, rp.r_gold, false, false);
+                gold._o_pos =  rp.r_gold;
                 Util.getPlace(rp.r_gold).p_ch = ObjectType.GOLD;
-                gold.set_o_flags(Const.ISMANY);
-                gold._o_group = GOLDGRP;
-                gold._o_type = ObjectType.GOLD;
+
                 Global.lvl_obj.add(gold);
             }
             Coordinate mp = new Coordinate();

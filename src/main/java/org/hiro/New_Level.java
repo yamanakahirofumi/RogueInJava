@@ -4,6 +4,7 @@ import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
@@ -133,7 +134,7 @@ public class New_Level {
                  * Put it somewhere
                  */
                 DrawRoom.find_floor(null, obj._o_pos, false, false);
-                Util.getPlace(obj._o_pos).p_ch = obj._o_type;
+                Util.getPlace(obj._o_pos).p_ch = obj.getDisplay();
             }
         }
         /*
@@ -141,14 +142,8 @@ public class New_Level {
          * amulet yet, put it somewhere on the ground
          */
         if (Human.instance.getLevel() >= Const.AMULETLEVEL && !game.isGoal()) {
-            obj = new ThingImp();
+            obj = new Amulet();
             Global.lvl_obj.add(obj);
-            obj._o_hplus = 0;
-            obj._o_dplus = 0;
-            obj._o_damage = "0x0";
-            obj._o_hurldmg = "0x0";
-            obj._o_arm = 11;
-            obj._o_type = ObjectType.AMULET;
             /*
              * Put it somewhere
              */
@@ -183,7 +178,7 @@ public class New_Level {
             tp = new ThingImp();
             tp._o_pos = mp;
             Global.lvl_obj.add(tp);
-            Util.getPlace(mp).p_ch = tp._o_type;
+            Util.getPlace(mp).p_ch = tp.getDisplay();
         }
 
         /*

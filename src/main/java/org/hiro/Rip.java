@@ -2,7 +2,6 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.output.Display;
-import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
 
 import java.time.OffsetDateTime;
@@ -390,73 +389,11 @@ public class Rip {
         Display.mvaddstr(0, 0, "   Worth  Item\n");
 
         int oldpurse = Global.purse;
-        int worth = 0;
         for (ThingImp obj : Global.player.getBaggage()) {
-            Obj_info op;
-            switch (obj._o_type) {
-                case FOOD:
-                    worth = 2 * obj._o_count;
-                    break;
-                case WEAPON:
-                    worth = Global.weap_info[obj._o_which].getWorth();
-                    worth *= 3 * (obj._o_hplus + obj._o_dplus) + obj._o_count;
-                    obj.add_o_flags(Const.ISKNOW);
-                    break;
-                case ARMOR:
-                    worth = Global.arm_info[obj._o_which].getWorth();
-                    worth += (9 - obj._o_arm) * 100;
-                    worth += (10 * (Global.a_class[obj._o_which] - obj._o_arm));
-                    obj.add_o_flags(Const.ISKNOW);
-                    break;
-                case SCROLL:
-                    worth = Global.scr_info[obj._o_which].getWorth();
-                    worth *= obj._o_count;
-                    op = Global.scr_info[obj._o_which];
-                    if (!op.isKnown()) {
-                        worth /= 2;
-                    }
-                    op.know();
-                    break;
-                case POTION:
-                    worth = Global.pot_info[obj._o_which].getWorth();
-                    worth *= obj._o_count;
-                    op = Global.pot_info[obj._o_which];
-                    if (!op.isKnown()) {
-                        worth /= 2;
-                    }
-                    op.know();
-                    break;
-                case RING:
-                    op = Global.ring_info[obj._o_which];
-                    worth = op.getWorth();
-                    if (obj._o_which == RingEnum.R_ADDSTR.getValue() || obj._o_which == RingEnum.R_ADDDAM.getValue() ||
-                            obj._o_which == RingEnum.R_PROTECT.getValue() || obj._o_which == RingEnum.R_ADDHIT.getValue()) {
-                        if (obj._o_arm > 0) {
-                            worth += obj._o_arm * 100;
-                        } else {
-                            worth = 10;
-                        }
-                    }
-                    if (!obj.contains_o_flags(Const.ISKNOW))
-                        worth /= 2;
-                    obj.add_o_flags(Const.ISKNOW);
-                    op.know();
-                    break;
-                case STICK:
-                    op = Global.ws_info[obj._o_which];
-                    worth = op.getWorth();
-                    worth += 20 * obj._o_arm;
-                    if (!obj.contains_o_flags(Const.ISKNOW)) {
-                        worth /= 2;
-                    }
-                    obj.add_o_flags(Const.ISKNOW);
-                    op.know();
-                    break;
-                case AMULET:
-                    worth = 1000;
-            }
-            if (worth < 0)
+            int worth = obj.getWorth();
+            if (worth < 0) {
                 worth = 0;
+            }
             // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inv_name(obj, false));
             Global.purse += worth;
         }

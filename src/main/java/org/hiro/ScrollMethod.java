@@ -4,10 +4,13 @@ import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 
 public class ScrollMethod {
     /*
@@ -20,7 +23,7 @@ public class ScrollMethod {
         ThingImp obj = Pack.get_item("read", ObjectType.SCROLL);
         if (obj == null)
             return;
-        if (obj._o_type != ObjectType.SCROLL) {
+        if (obj instanceof Scroll) {
             if (!Global.terse) {
                 IOUtil.msg("there is nothing on it to read");
             } else {
@@ -31,9 +34,7 @@ public class ScrollMethod {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        }
+        Human.instance.removeWeapon(obj);
         /*
          * Get rid of the thing
          */
@@ -242,7 +243,7 @@ public class ScrollMethod {
                 boolean chb = false;
                 // Display.wclear(hw);
                 for (ThingImp obj2 : Global.lvl_obj) {
-                    if (obj2._o_type == ObjectType.FOOD) {
+                    if (obj2 instanceof Food) {
                         chb = true;
                         // Display.wmove(hw, obj2._o_pos.y, obj2._o_pos.x);
                         // Display.waddch(hw, ObjectType.FOOD);
@@ -267,17 +268,18 @@ public class ScrollMethod {
             }
             break;
             case S_ENCH:
-                if (Global.cur_weapon == null || Global.cur_weapon._o_type != ObjectType.WEAPON) {
+                if (Human.instance.getWeapons().size() < 1 || Human.instance.getWeapons().get(0) instanceof Weapon) {
                     IOUtil.msg("you feel a strange sense of loss");
                 } else {
-                    Global.cur_weapon.delete_o_flags(Const.ISCURSED);
+                    Weapon w = Human.instance.getWeapons().get(0);
+                    w.delete_o_flags(Const.ISCURSED);
                     if (Util.rnd(2) == 0) {
-                        Global.cur_weapon._o_hplus++;
+                        w._o_hplus++;
                     } else {
-                        Global.cur_weapon._o_dplus++;
+                        w._o_dplus++;
                     }
                     IOUtil.msg("your %s glows %s for a moment",
-                            Global.weap_info[Global.cur_weapon._o_which].getName(), Init.pick_color("blue"));
+                            Global.weap_info[w._o_which].getName(), Init.pick_color("blue"));
                 }
                 break;
             case S_SCARE:
@@ -289,7 +291,7 @@ public class ScrollMethod {
                 break;
             case S_REMOVE:
                 uncurse(Global.cur_armor);
-                uncurse(Global.cur_weapon);
+                uncurse(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null);
                 uncurse(Global.cur_ring[Const.LEFT]);
                 uncurse(Global.cur_ring[Const.RIGHT]);
                 IOUtil.msg(Misc.choose_str("you feel in touch with the Universal Onenes",
