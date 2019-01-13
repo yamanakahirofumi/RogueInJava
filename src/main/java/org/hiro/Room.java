@@ -56,7 +56,7 @@ public class Room {
 
 	public void setPlayer(Player p){
 		AbstractCoordinate coord = this.randomPosition();
-		p.setPostion(coord);
+		p.setPosition(coord);
 	}
 	public AbstractCoordinate randomPosition(){
         return factory.create().random(this.r_pos, this.r_max);

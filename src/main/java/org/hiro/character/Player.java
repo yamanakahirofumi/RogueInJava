@@ -21,9 +21,9 @@ public interface Player {
      *
      * @return 現在地
      */
-    AbstractCoordinate getPostion();
+    AbstractCoordinate getPosition();
 
-    void setPostion(AbstractCoordinate postion);
+    void setPosition(AbstractCoordinate position);
 
     /**
      * ダンジョン内の現在の階層数を返す

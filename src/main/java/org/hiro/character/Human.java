@@ -28,7 +28,7 @@ public class Human implements Player {
     private int stomachSize;
     HashSet<StateEnum> state;
     /** 位置情報 */
-    private AbstractCoordinate postion;
+    private AbstractCoordinate position;
     private int level;
     private String dungeon;
     /** 装備周り */
@@ -53,13 +53,13 @@ public class Human implements Player {
     }
 
     @Override
-    public AbstractCoordinate getPostion() {
-        return this.postion;
+    public AbstractCoordinate getPosition() {
+        return this.position;
     }
 
     @Override
-    public void setPostion(AbstractCoordinate postion) {
-        this.postion = postion;
+    public void setPosition(AbstractCoordinate position) {
+        this.position = position;
     }
 
     @Override
