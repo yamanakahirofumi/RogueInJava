@@ -1,10 +1,17 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
+import org.hiro.things.Ring;
+import org.hiro.things.Scroll;
+import org.hiro.things.Stick;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +40,9 @@ public class Wizard {
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap
          */
-        if (Global.player.containsState(StateEnum.ISHELD)) {
+        if (Human.instance.containsState(StateEnum.ISHELD)) {
 
-            Global.player.removeState(StateEnum.ISHELD);
+            Human.instance.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
             for (ThingImp mp : Global.mlist) {
                 if (mp._t_type == 'F')
@@ -53,13 +60,13 @@ public class Wizard {
      *	What a certin object is
      */
     static void whatis(boolean insist, int type) {
-        ThingImp obj;
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you don't have anything in your pack to identify");
             return;
         }
 
+        ThingImp obj;
         for (; ; ) {
             obj = Pack.get_item("identify", ObjectType.get((char) type));
             if (insist) {
@@ -67,8 +74,8 @@ public class Wizard {
                     return;
                 } else if (obj == null) {
                     IOUtil.msg("you must identify something");
-                } else if (type != 0 && obj._o_type.getValue() != type &&
-                        !(type == Const.R_OR_S && (obj._o_type == ObjectType.RING || obj._o_type == ObjectType.STICK))) {
+                } else if (type != 0 && obj.getDisplay().getValue() != type &&
+                        !(type == Const.R_OR_S && (obj instanceof Ring || obj instanceof Stick))) {
                     IOUtil.msg("you must identify a %s", type_name(type));
                 } else {
                     break;
@@ -82,22 +89,16 @@ public class Wizard {
             return;
         }
 
-        switch (obj._o_type) {
-            case SCROLL:
-                set_know(obj, Global.scr_info);
-                break;
-            case POTION:
-                set_know(obj, Global.pot_info);
-                break;
-            case STICK:
-                set_know(obj, Global.ws_info);
-                break;
-            case WEAPON:
-            case ARMOR:
-                obj.add_o_flags(Const.ISKNOW);
-                break;
-            case RING:
-                set_know(obj, Global.ring_info);
+        if (obj instanceof Scroll) {
+            set_know(obj, Global.scr_info);
+        } else if (obj instanceof Potion) {
+            set_know(obj, Global.pot_info);
+        } else if (obj instanceof Stick) {
+            set_know(obj, Global.ws_info);
+        } else if (obj instanceof Weapon || obj instanceof Armor) {
+            obj.add_o_flags(Const.ISKNOW);
+        } else if (obj instanceof Ring) {
+            set_know(obj, Global.ring_info);
         }
         IOUtil.msg(ThingMethod.inv_name(obj, false));
     }

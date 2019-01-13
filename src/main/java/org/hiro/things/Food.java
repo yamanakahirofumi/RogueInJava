@@ -5,13 +5,12 @@ import org.hiro.Util;
 
 import java.util.Optional;
 
-public class Food implements Thing {
+public class Food extends ThingImp {
 
-	private ObjectType _o_type;
-	private int _o_which;
+//	private ObjectType _o_type;
+//	private int _o_which;
 
 	Food(){
-		this._o_type = ObjectType.FOOD;
 		Global.no_food = 0;
 		if (Util.rnd(10) != 0) {
 			this._o_which = 0;
@@ -49,5 +48,15 @@ public class Food implements Thing {
 	@Override
 	public Optional<Thing> eat() {
 		return Optional.empty();
+	}
+
+	@Override
+	public int getWorth(){
+		return 2 * this._o_count;
+	}
+
+	@Override
+	public ObjectType getDisplay() {
+		return ObjectType.FOOD;
 	}
 }

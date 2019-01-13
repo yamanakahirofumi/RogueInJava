@@ -21,9 +21,9 @@ public interface Player {
      *
      * @return 現在地
      */
-    AbstractCoordinate getPostion();
+    AbstractCoordinate getPosition();
 
-    void setPostion(AbstractCoordinate postion);
+    void setPosition(AbstractCoordinate position);
 
     /**
      * ダンジョン内の現在の階層数を返す
@@ -32,6 +32,8 @@ public interface Player {
      */
     int getLevel();
     void setLevel(int level);
+    void upstairs();
+    void downstairs();
 
     /**
      * 現在のダンジョンを返す。
@@ -40,23 +42,34 @@ public interface Player {
     String getDungeon();
     void setDungeon(String name);
 
-    int getStrength();
+    // ステータス周り
+    int getCurrentStrength();
 
     int getMaxHp();
 
+    int getHp();
+    void addHp(int plus);
+    void deleteHp(int damage);
+
     int getFoodLeft();
+
+    void addExperience(long exp);
 
     void addState(StateEnum s);
 
     void removeState(StateEnum s);
+
+    boolean containsState(StateEnum s);
 
     void changeFloor();
 
     Optional<Thing> eat(Thing thing);
 
     /** 装備周り */
+    boolean isEquipped(Thing thing);
     List<Weapon> getWeapons();
-
+    boolean isEquippedWeapons(Thing thing);
     boolean putOnWeapon(Weapon w);
+    boolean removeWeapon(Thing thing);
 
 }

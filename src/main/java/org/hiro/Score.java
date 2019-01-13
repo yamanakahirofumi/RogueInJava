@@ -10,6 +10,6 @@ public class Score {
 	long sc_time;
 
 	public String getSc_name() {
-		return sc_name.toString();
+		return sc_name;
 	}
 }

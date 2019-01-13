@@ -1,8 +1,13 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
 import org.hiro.things.RingEnum;
+import org.hiro.things.Scroll;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 
 import java.util.Random;
@@ -18,16 +23,20 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
+    static Place getPlace(Coordinate c){
+        return Global.places.get((c.getX() << 5) + c.getY());
+    }
+
     static Place INDEX(int y, int x) {
         return Global.places.get((x << 5) + y);
     }
 
-    static int flat(int y, int x) {
-        return Global.places.get((x << 5) + y).p_flags;
+    static int flat(Coordinate c) {
+        return getPlace(c).p_flags;
     }
 
     static int GOLDCALC() {
-        return rnd(50 + 10 * Global.level) + 2;
+        return rnd(50 + 10 * Human.instance.getLevel()) + 2;
     }
 
     static int CCHAR(int x) {
@@ -48,11 +57,12 @@ public class Util {
      */
     @Deprecated
     static boolean on(ThingImp thing, int flag) {
-        return (thing._t_flags & flag) != 0;
+        // return (thing.containsState(flag);
+        throw new UnsupportedOperationException("使わないで");
     }
 
     /**
-     * Coordのequals()に変更
+     * Coordinateのequals()に変更
      */
     @Deprecated
     static boolean ce(Coordinate a, Coordinate b) {
@@ -66,12 +76,12 @@ public class Util {
 //		return Global.places.get((x << 5) + y).p_ch
 //	}
 
-    static ObjectType winat(int y, int x) {
-        if (Global.places.get((x << 5) + y).p_monst != null) {
-            return ObjectType.get((char) Global.places.get((x << 5) + y).p_monst._t_disguise);
+    static ObjectType winat(Coordinate coordinate) {
+        if (getPlace(coordinate).p_monst != null) {
+            return ObjectType.get((char) getPlace(coordinate).p_monst._t_disguise);
 
         } else {
-            return Global.places.get((x << 5) + y).p_ch;
+            return getPlace(coordinate).p_ch;
         }
     }
 
@@ -79,8 +89,9 @@ public class Util {
         return (char) (c & 037);
     }
 
-    static boolean ISMULT(ObjectType type) {
-        return (type == ObjectType.POTION || type == ObjectType.SCROLL || type == ObjectType.FOOD);
+    // 違う判定がよいかも
+    static boolean ISMULT(Thing type) {
+        return (type instanceof Potion || type instanceof Scroll || type instanceof Food);
     }
 
 

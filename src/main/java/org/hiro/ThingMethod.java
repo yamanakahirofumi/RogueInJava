@@ -1,6 +1,8 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.output.Display;
+import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
@@ -172,7 +174,7 @@ public class ThingMethod {
 
         pb = Global.prbuf;
         which = obj._o_which;
-        switch (obj._o_type) {
+        switch (obj.getDisplay()) {
             case POTION:
                 try {
                     Method m = ThingMethod.class.getMethod("nullstr", ThingImp.class);
@@ -277,7 +279,7 @@ public class ThingMethod {
             if (obj == Global.cur_armor) {
                 Global.prbuf = Global.prbuf + " (being worn)";
             }
-            if (obj == Global.cur_weapon) {
+            if (Human.instance.isEquippedWeapons(obj)) {
                 Global.prbuf = Global.prbuf + " (weapon in hand)";
             }
             if (obj == Global.cur_ring[Const.LEFT]) {
@@ -337,20 +339,18 @@ public class ThingMethod {
      *	Do special checks for dropping or unweilding|unwearing|unringing
      */
     static boolean dropcheck(ThingImp obj) {
-        if (obj == null)
+        if (obj == null) {
             return true;
-        if (obj != Global.cur_armor && obj != Global.cur_weapon
-                && obj != Global.cur_ring[Const.LEFT]
-                && obj != Global.cur_ring[Const.RIGHT]) {
+        }
+        if (!Human.instance.isEquipped(obj)){
             return true;
         }
         if (obj.contains_o_flags(Const.ISCURSED)) {
             IOUtil.msg("you can't.  It appears to be cursed");
             return false;
         }
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        } else if (obj == Global.cur_armor) {
+        Human.instance.removeWeapon(obj);
+        if (obj == Global.cur_armor) {
             ArmorMethod.waste_time();
             Global.cur_armor = null;
         } else {
@@ -376,7 +376,7 @@ public class ThingMethod {
      */
     static void drop() {
 
-        ObjectType ch = Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch;
+        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
             Global.after = false;
             IOUtil.msg("there is something there already");
@@ -389,15 +389,15 @@ public class ThingMethod {
         if (!dropcheck(obj)) {
             return;
         }
-        obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj._o_type));
+        obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj));
         /*
          * Link it into the level object list
          */
         Global.lvl_obj.add(obj);
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = obj._o_type;
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_flags |= Const.F_DROPPED;
+        Util.getPlace(Global.player._t_pos).p_ch = obj.getDisplay();
+        Util.getPlace(Global.player._t_pos).p_flags |= Const.F_DROPPED;
         obj._o_pos = Global.player._t_pos;
-        if (obj._o_type == ObjectType.AMULET) {
+        if (obj instanceof Amulet) {
             Game.getInstance().setGoal(false);
         }
         IOUtil.msg("dropped %s", inv_name(obj, true));

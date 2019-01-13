@@ -1,43 +1,14 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
-import org.hiro.things.WeaponEnum;
+import org.hiro.things.Weapon;
 
 public class WeaponMethod {
-    /*
-     * init_weapon:
-     *	Set up the initial goodies for a Weapon
-     */
-
-    public static void init_weapon(ThingImp weap, int which) {
-        InitWeapon iwp;
-        //init_weaps iwp;
-
-        weap._o_type = ObjectType.WEAPON;
-        weap._o_which = which;
-        iwp = Global.init_dam.get(which);
-        weap._o_damage = iwp.iw_dam;
-        weap._o_hurldmg = iwp.iw_hrl;
-        weap._o_launch = iwp.iw_launch;
-        weap.set_o_flags(iwp.iw_flags);
-        weap._o_hplus = 0;
-        weap._o_dplus = 0;
-        if (which == WeaponEnum.DAGGER.getValue()) {
-            weap._o_count = Util.rnd(4) + 2;
-            weap._o_group = Global.group++;
-        } else if (weap.contains_o_flags(Const.ISMANY)) {
-            //		} else if ((weap._o_flags & Const.ISMANY) != 0) {
-            weap._o_count = Util.rnd(8) + 8;
-            weap._o_group = Global.group++;
-        } else {
-            weap._o_count = 1;
-            weap._o_group = 0;
-        }
-    }
-
     /*
      * num:
      *	Figure out the plus number for armor/weapons
@@ -74,8 +45,8 @@ public class WeaponMethod {
          * AHA! Here it has hit something.  If it is a wall or a door,
          * or if it misses (combat) the monster, put it on the floor
          */
-        if (Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_monst == null ||
-                !hit_monster(obj._o_pos.y, obj._o_pos.x, obj)) {
+        if (Util.getPlace(obj._o_pos).p_monst == null ||
+                !hit_monster(obj._o_pos, obj)) {
             fall(obj, true);
         }
     }
@@ -88,14 +59,14 @@ public class WeaponMethod {
         Coordinate fpos = new Coordinate(); // 多分fallpos()で代入
 
         if (fallpos(obj._o_pos, fpos)) {
-            Place pp = Util.INDEX(fpos.y, fpos.x);
-            pp.p_ch = obj._o_type;
+            Place pp = Util.getPlace(fpos);
+            pp.p_ch = obj.getDisplay();
             obj._o_pos = fpos;
-            if (Chase.cansee(fpos.y, fpos.x)) {
+            if (Chase.isSee(fpos)) {
                 if (pp.p_monst != null) {
-                    pp.p_monst._t_oldch = obj._o_type.getValue();
+                    pp.p_monst._t_oldch = obj.getDisplay().getValue();
                 } else
-                    Display.mvaddch(fpos.y, fpos.x, obj._o_type.getValue());
+                    Display.mvaddch(fpos.y, fpos.x, obj.getDisplay().getValue());
             }
             Global.lvl_obj.add(obj);
             return;
@@ -123,11 +94,11 @@ public class WeaponMethod {
                  * put the object there, set it in the level list
                  * and re-draw the room if he can see it
                  */
-                if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                if (Global.player._t_pos.equals(new Coordinate(x, y))) {
                     continue;
                 }
                 ObjectType ch;
-                if (((ch = Global.places.get((x << 5) + y).p_ch) == ObjectType.FLOOR || ch == ObjectType.PASSAGE)
+                if (((ch = Util.INDEX(y, x).p_ch) == ObjectType.FLOOR || ch == ObjectType.PASSAGE)
                         && Util.rnd(++cnt) == 0) {
                     newpos.y = y;
                     newpos.x = x;
@@ -140,8 +111,7 @@ public class WeaponMethod {
      * hit_monster:
      *	Does the missile hit the monster?
      */
-    static boolean hit_monster(int y, int x, ThingImp obj) {
-        Coordinate mp = new Coordinate(x, y);
+    static boolean hit_monster(Coordinate mp, ThingImp obj) {
         return Fight.fight(mp, obj, true);
     }
 
@@ -161,8 +131,8 @@ public class WeaponMethod {
             /*
              * Erase the old one
              */
-            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.cansee(obj._o_pos.y, obj._o_pos.x) && !Global.terse) {
-                ch = Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch;
+            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.isSee(obj._o_pos) && !Global.terse) {
+                ch = Util.getPlace(obj._o_pos).p_ch;
                 if (ch == ObjectType.FLOOR && !Misc.show_floor())
                     ch = ObjectType.Blank;
                 Display.mvaddch(obj._o_pos.y, obj._o_pos.x, ch.getValue());
@@ -175,13 +145,13 @@ public class WeaponMethod {
              */
             obj._o_pos.y += ydelta;
             obj._o_pos.x += xdelta;
-            if (IOUtil.step_ok(ch = Util.winat(obj._o_pos.y, obj._o_pos.x)) && ch != ObjectType.DOOR) {
+            if (IOUtil.step_ok(ch = Util.winat(obj._o_pos)) && ch != ObjectType.DOOR) {
                 /*
                  * It hasn't hit anything yet, so display it
                  * If it alright.
                  */
-                if (Chase.cansee(obj._o_pos.y, obj._o_pos.x) && !Global.terse) {
-                    Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj._o_type.getValue());
+                if (Chase.isSee(obj._o_pos) && !Global.terse) {
+                    Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj.getDisplay().getValue());
                     Display.refresh();
                 }
                 if (!Global.jump) {
@@ -199,19 +169,19 @@ public class WeaponMethod {
      */
     static void wield() {
 
-        ThingImp oweapon = Global.cur_weapon;
-        if (!ThingMethod.dropcheck(Global.cur_weapon)) {
-            Global.cur_weapon = oweapon;
+        ThingImp oweapon = Human.instance.getWeapons().get(0);
+        if (!ThingMethod.dropcheck(Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null)) {
+            Human.instance.putOnWeapon((Weapon) oweapon);
             return;
         }
-        Global.cur_weapon = oweapon;
+        Human.instance.putOnWeapon((Weapon) oweapon);
         ThingImp obj;
         if ((obj = Pack.get_item("wield", ObjectType.WEAPON)) == null) {
             Global.after = false;
             return;
         }
 
-        if (obj._o_type == ObjectType.ARMOR) {
+        if (obj instanceof Armor) {
             IOUtil.msg("you can't wield armor");
             Global.after = false;
             return;
@@ -222,7 +192,7 @@ public class WeaponMethod {
         }
 
         String sp = ThingMethod.inv_name(obj, true);
-        Global.cur_weapon = obj;
+        Human.instance.putOnWeapon((Weapon) obj);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }

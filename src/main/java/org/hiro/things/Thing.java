@@ -14,4 +14,19 @@ public interface Thing {
     int foodValue();
 
     Optional<Thing> eat();
+
+    /**
+     * isMagic
+     *
+     * 旧is_magic:
+     *	Returns true if an object radiates magic
+     */
+    default boolean isMagic(){
+        return false;
+    }
+    int getWorth();
+
+    default ObjectType getDisplay(){
+        return  ObjectType.Initial;
+    }
 }

@@ -56,7 +56,7 @@ public class Room {
 
 	public void setPlayer(Player p){
 		AbstractCoordinate coord = this.randomPosition();
-		p.setPostion(coord);
+		p.setPosition(coord);
 	}
 	public AbstractCoordinate randomPosition(){
         return factory.create().random(this.r_pos, this.r_max);
@@ -85,6 +85,10 @@ public class Room {
 
 	public void clearInfo(){
 		this.info.clear();
+	}
+
+	public boolean isInMyRoom(Coordinate c){
+		return c.x <= r_pos.x + r_max.x && r_pos.x <= c.x && c.y <= r_pos.y + r_max.y && r_pos.y <= c.y;
 	}
 
 }

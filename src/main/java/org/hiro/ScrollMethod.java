@@ -1,12 +1,16 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 
 public class ScrollMethod {
     /*
@@ -19,7 +23,7 @@ public class ScrollMethod {
         ThingImp obj = Pack.get_item("read", ObjectType.SCROLL);
         if (obj == null)
             return;
-        if (obj._o_type != ObjectType.SCROLL) {
+        if (obj instanceof Scroll) {
             if (!Global.terse) {
                 IOUtil.msg("there is nothing on it to read");
             } else {
@@ -30,9 +34,7 @@ public class ScrollMethod {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        }
+        Human.instance.removeWeapon(obj);
         /*
          * Get rid of the thing
          */
@@ -45,7 +47,7 @@ public class ScrollMethod {
                 /*
                  * Scroll of monster confusion.  Give him that power.
                  */
-                Global.player.addState(StateEnum.CANHUH);
+                Human.instance.addState(StateEnum.CANHUH);
                 IOUtil.msg("your hands begin to glow %s", Init.pick_color("red"));
                 break;
             case S_ARMOR:
@@ -66,7 +68,7 @@ public class ScrollMethod {
                     if (x >= 0 && x < Const.NUMCOLS) {
                         for (int y = Global.player._t_pos.y - 2; y <= Global.player._t_pos.y + 2; y++) {
                             if (y >= 0 && y <= Const.NUMLINES - 1) {
-                                if ((obj = Global.places.get((x << 5) + y).p_monst) != null && obj.containsState(StateEnum.ISRUN)) {
+                                if ((obj = Util.INDEX(y, x).p_monst) != null && obj.containsState(StateEnum.ISRUN)) {
                                     obj.removeState(StateEnum.ISRUN);
                                     obj.addState(StateEnum.ISHELD);
                                     ch++;
@@ -95,7 +97,7 @@ public class ScrollMethod {
                  */
                 Global.scr_info[ScrollEnum.S_SLEEP.getValue()].know();
                 Global.no_command += Util.rnd(Const.SLEEPTIME) + 4;
-                Global.player.removeState(StateEnum.ISRUN);
+                Human.instance.removeState(StateEnum.ISRUN);
                 IOUtil.msg("you fall asleep");
                 break;
             case S_CREATE:
@@ -109,23 +111,23 @@ public class ScrollMethod {
                 ObjectType cho;
                 for (int y = Global.player._t_pos.y - 1; y <= Global.player._t_pos.y + 1; y++) {
                     for (int x = Global.player._t_pos.x - 1; x <= Global.player._t_pos.x + 1; x++) {
+                        Coordinate tmp = new Coordinate(x, y);
                         /*
                          * Don't put a monster in top of the player.
                          */
-                        if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                        if (Global.player._t_pos.equals(tmp)) {
                             continue;
                         }
                         /*
                          * Or anything else nasty
                          * Also avoid a xeroc which is disguised as scroll
                          */
-                        else if (Global.places.get((x << 5) + y).p_monst == null && IOUtil.step_ok(cho = Util.winat(y, x))) {
+                        else if (Util.getPlace(tmp).p_monst == null && IOUtil.step_ok(cho = Util.winat(tmp))) {
                             if (cho == ObjectType.SCROLL
-                                    && Misc.find_obj(y, x)._o_which == ScrollEnum.S_SCARE.getValue()) {
+                                    && Misc.find_obj(tmp)._o_which == ScrollEnum.S_SCARE.getValue()) {
                                 continue;
                             } else if (Util.rnd(++i) == 0) {
-                                mp.y = y;
-                                mp.x = x;
+                                mp = tmp;
                             }
                         }
                     }
@@ -225,10 +227,12 @@ public class ScrollMethod {
                                 break;
                         }
                         if (chp != ObjectType.Blank) {
-                            if ((obj = pp.p_monst) != null){
-                                obj._t_oldch = chp.getValue();}
-                            if (obj == null || !Global.player.containsState(StateEnum.SEEMONST)){
-                                Display.mvaddch(y, x, chp.getValue());}
+                            if ((obj = pp.p_monst) != null) {
+                                obj._t_oldch = chp.getValue();
+                            }
+                            if (obj == null || !Human.instance.containsState(StateEnum.SEEMONST)) {
+                                Display.mvaddch(y, x, chp.getValue());
+                            }
                         }
                     }
                 break;
@@ -239,7 +243,7 @@ public class ScrollMethod {
                 boolean chb = false;
                 // Display.wclear(hw);
                 for (ThingImp obj2 : Global.lvl_obj) {
-                    if (obj2._o_type == ObjectType.FOOD) {
+                    if (obj2 instanceof Food) {
                         chb = true;
                         // Display.wmove(hw, obj2._o_pos.y, obj2._o_pos.x);
                         // Display.waddch(hw, ObjectType.FOOD);
@@ -264,17 +268,18 @@ public class ScrollMethod {
             }
             break;
             case S_ENCH:
-                if (Global.cur_weapon == null || Global.cur_weapon._o_type != ObjectType.WEAPON) {
+                if (Human.instance.getWeapons().size() < 1 || Human.instance.getWeapons().get(0) instanceof Weapon) {
                     IOUtil.msg("you feel a strange sense of loss");
                 } else {
-                    Global.cur_weapon.delete_o_flags(Const.ISCURSED);
+                    Weapon w = Human.instance.getWeapons().get(0);
+                    w.delete_o_flags(Const.ISCURSED);
                     if (Util.rnd(2) == 0) {
-                        Global.cur_weapon._o_hplus++;
+                        w._o_hplus++;
                     } else {
-                        Global.cur_weapon._o_dplus++;
+                        w._o_dplus++;
                     }
                     IOUtil.msg("your %s glows %s for a moment",
-                            Global.weap_info[Global.cur_weapon._o_which].getName(), Init.pick_color("blue"));
+                            Global.weap_info[w._o_which].getName(), Init.pick_color("blue"));
                 }
                 break;
             case S_SCARE:
@@ -286,7 +291,7 @@ public class ScrollMethod {
                 break;
             case S_REMOVE:
                 uncurse(Global.cur_armor);
-                uncurse(Global.cur_weapon);
+                uncurse(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null);
                 uncurse(Global.cur_ring[Const.LEFT]);
                 uncurse(Global.cur_ring[Const.RIGHT]);
                 IOUtil.msg(Misc.choose_str("you feel in touch with the Universal Onenes",

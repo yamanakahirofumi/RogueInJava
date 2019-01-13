@@ -1,20 +1,26 @@
 package org.hiro.things;
 
 
+import org.hiro.Const;
 import org.hiro.Util;
 
 import java.util.Optional;
 
-public class Gold implements Thing {
+public class Gold extends ThingImp {
 
     int gold;
 
     public  Gold(int seed){
         this.gold = Util.rnd(50 + 10 * seed) + 2;
+        this.set_o_flags(Const.ISMANY);
+        this._o_group = 1;
     }
 
     public int getGold(){
         return this.gold;
+    }
+    public void addGold(int money) {
+        this.gold += money;
     }
 
     @Override
@@ -45,5 +51,10 @@ public class Gold implements Thing {
     @Override
     public Optional<Thing> eat() {
         return Optional.of(null);
+    }
+
+    @Override
+    public ObjectType getDisplay() {
+        return ObjectType.GOLD;
     }
 }

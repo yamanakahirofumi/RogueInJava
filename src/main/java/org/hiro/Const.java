@@ -31,10 +31,10 @@ public class Const {
     static int R_OR_S = -2;
 
 
-    public static int ISCURSED = 000001;        /* object is cursed */
-    static int ISKNOW = 0000002;        /* player knows details about the object */
+    public static int ISCURSED = 000001;        /* object is cursed */ // 呪い
+    public static int ISKNOW = 0000002;        /* player knows details about the object */
     static int ISMISL = 0000004;        /* object is a missile type */
-    static int ISMANY = 0000010;    /* object comes in groups */
+    public static int ISMANY = 0000010;    /* object comes in groups */
 
 
     /*

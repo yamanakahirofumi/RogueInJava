@@ -1,7 +1,7 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.output.Display;
-import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
 
 import java.time.OffsetDateTime;
@@ -154,15 +154,15 @@ public class Rip {
             }
             logmessage = OffsetDateTime.now() + " " + amount + " " + Global.whoami + " " + Global.player._t_stats.s_lvl + " ";
             if (flags == 0) /* dead */ {
-                ltemp = "killed by " + killname(monst, true) + " on level " + Global.level + "¥n";
+                ltemp = "killed by " + killname(monst, true) + " on level " + Human.instance.getLevel() + "¥n";
                 logmessage = logmessage + ltemp;
             } else if (flags == 1) /* quit */ {
                 Game game = Game.getInstance();
                 if (game.isGoal()) {
-                    ltemp = "quit on level " + Global.level + " [max " + Global.max_level
+                    ltemp = "quit on level " + Human.instance.getLevel() + " [max " + Global.max_level
                             + "] with the Amulet\n";
                 } else {
-                    ltemp = "quit on level " + Global.level + "¥n";
+                    ltemp = "quit on level " + Human.instance.getLevel() + "¥n";
                 }
                 logmessage = logmessage + ltemp;
             } else if (flags == 2) /* won */ {
@@ -172,7 +172,7 @@ public class Rip {
             } else if (flags == 3) /* killed with Amulet */ {
                 logmessage = logmessage + "killed by ";
                 logmessage = logmessage + killname(monst, true);
-                ltemp = " on level " + Global.level + " [max " + Global.max_level + "] with the Amulet\n";
+                ltemp = " on level " + Human.instance.getLevel() + " [max " + Global.max_level + "] with the Amulet\n";
                 logmessage = logmessage + ltemp;
             } else {
 //                fclose(Global.logfi);
@@ -285,7 +285,7 @@ public class Rip {
                 if (flags == 2) {
                     scp.sc_level = Global.max_level;
                 } else {
-                    scp.sc_level = Global.level;
+                    scp.sc_level = Human.instance.getLevel();
                 }
                 scp.sc_monster = monst;
                 scp.sc_uid = uid;
@@ -389,73 +389,11 @@ public class Rip {
         Display.mvaddstr(0, 0, "   Worth  Item\n");
 
         int oldpurse = Global.purse;
-        int worth = 0;
         for (ThingImp obj : Global.player.getBaggage()) {
-            Obj_info op;
-            switch (obj._o_type) {
-                case FOOD:
-                    worth = 2 * obj._o_count;
-                    break;
-                case WEAPON:
-                    worth = Global.weap_info[obj._o_which].getWorth();
-                    worth *= 3 * (obj._o_hplus + obj._o_dplus) + obj._o_count;
-                    obj.add_o_flags(Const.ISKNOW);
-                    break;
-                case ARMOR:
-                    worth = Global.arm_info[obj._o_which].getWorth();
-                    worth += (9 - obj._o_arm) * 100;
-                    worth += (10 * (Global.a_class[obj._o_which] - obj._o_arm));
-                    obj.add_o_flags(Const.ISKNOW);
-                    break;
-                case SCROLL:
-                    worth = Global.scr_info[obj._o_which].getWorth();
-                    worth *= obj._o_count;
-                    op = Global.scr_info[obj._o_which];
-                    if (!op.isKnown()) {
-                        worth /= 2;
-                    }
-                    op.know();
-                    break;
-                case POTION:
-                    worth = Global.pot_info[obj._o_which].getWorth();
-                    worth *= obj._o_count;
-                    op = Global.pot_info[obj._o_which];
-                    if (!op.isKnown()) {
-                        worth /= 2;
-                    }
-                    op.know();
-                    break;
-                case RING:
-                    op = Global.ring_info[obj._o_which];
-                    worth = op.getWorth();
-                    if (obj._o_which == RingEnum.R_ADDSTR.getValue() || obj._o_which == RingEnum.R_ADDDAM.getValue() ||
-                            obj._o_which == RingEnum.R_PROTECT.getValue() || obj._o_which == RingEnum.R_ADDHIT.getValue()) {
-                        if (obj._o_arm > 0) {
-                            worth += obj._o_arm * 100;
-                        } else {
-                            worth = 10;
-                        }
-                    }
-                    if (!obj.contains_o_flags(Const.ISKNOW))
-                        worth /= 2;
-                    obj.add_o_flags(Const.ISKNOW);
-                    op.know();
-                    break;
-                case STICK:
-                    op = Global.ws_info[obj._o_which];
-                    worth = op.getWorth();
-                    worth += 20 * obj._o_arm;
-                    if (!obj.contains_o_flags(Const.ISKNOW)) {
-                        worth /= 2;
-                    }
-                    obj.add_o_flags(Const.ISKNOW);
-                    op.know();
-                    break;
-                case AMULET:
-                    worth = 1000;
-            }
-            if (worth < 0)
+            int worth = obj.getWorth();
+            if (worth < 0) {
                 worth = 0;
+            }
             // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inv_name(obj, false));
             Global.purse += worth;
         }

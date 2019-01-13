@@ -1,11 +1,15 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
+import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 
 import java.util.concurrent.TimeUnit;
@@ -22,7 +26,7 @@ public class Command {
 
         boolean MASTER = false;
 
-        if (Global.player.containsState(StateEnum.ISHASTE)) {
+        if (Human.instance.containsState(StateEnum.ISHASTE)) {
             ntimes++;
         }
         /*
@@ -43,10 +47,10 @@ public class Command {
              * these are illegal things for the player to be, so if any are
              * set, someone's been poking in memeory
              */
-            if (Global.player.containsState(StateEnum.ISSLOW) || Global.player.containsState(StateEnum.ISGREED)
-                    || Global.player.containsState(StateEnum.ISINVIS)
-                    || Global.player.containsState(StateEnum.ISREGEN)
-                    || Global.player.containsState(StateEnum.ISTARGET)) {
+            if (Human.instance.containsState(StateEnum.ISSLOW) || Human.instance.containsState(StateEnum.ISGREED)
+                    || Human.instance.containsState(StateEnum.ISINVIS)
+                    || Human.instance.containsState(StateEnum.ISREGEN)
+                    || Human.instance.containsState(StateEnum.ISTARGET)) {
                 System.exit(1);
             }
 
@@ -60,7 +64,7 @@ public class Command {
             if (!((Global.running || Global.count != 0) && Global.jump)) {
                 Display.refresh();            /* Draw screen */
             }
-            Global.take = 0;
+            Global.take = ObjectType.Initial;
             Global.after = true;
             /*
              * Read command or continue run
@@ -181,7 +185,7 @@ public class Command {
                         int found = 0;
                         for (ThingImp obj : Global.lvl_obj) {
                             obj2 = obj;
-                            if (obj._o_pos.y == Global.player._t_pos.y && obj._o_pos.x == Global.player._t_pos.x) {
+                            if (Global.player._t_pos.equals(obj._o_pos)) {
                                 found = 1;
                                 break;
                             }
@@ -191,7 +195,7 @@ public class Command {
                             if (levit_check()) {
                                 ;
                             } else {
-                                Pack.pick_up(obj2._o_type.getValue());
+                                Pack.pick_up();
                             }
                         } else {
                             if (!Global.terse) {
@@ -264,7 +268,7 @@ public class Command {
                     case ('U' & 037):
                     case ('B' & 037):
                     case ('N' & 037): {
-                        if (!Global.player.containsState(StateEnum.ISBLIND)) {
+                        if (!Human.instance.containsState(StateEnum.ISBLIND)) {
                             Global.door_stop = true;
                             Global.firstmove = true;
                         }
@@ -287,8 +291,8 @@ public class Command {
                         }
                         Global.delta.y += Global.player._t_pos.y;
                         Global.delta.x += Global.player._t_pos.x;
-                        if (((mp = Global.places.get((Global.delta.x << 5) + Global.delta.y).p_monst) == null)
-                                || ((!Chase.see_monst(mp)) && !Global.player.containsState(StateEnum.SEEMONST))) {
+                        if (((mp = Util.getPlace(Global.delta).p_monst) == null)
+                                || ((!Chase.see_monst(mp)) && !Human.instance.containsState(StateEnum.SEEMONST))) {
                             if (!Global.terse) {
                                 IOUtil.addmsg("I see ");
                             }
@@ -330,7 +334,7 @@ public class Command {
                         break;
                     case 'i':
                         Global.after = false;
-                        Pack.inventory(Global.player.getBaggage(), 0);
+                        Pack.inventory(Global.player.getBaggage(), ObjectType.Initial);
                         break;
                     case 'I':
                         Global.after = false;
@@ -426,13 +430,13 @@ public class Command {
                         if (Misc.get_dir()) {
                             Global.delta.y += Global.player._t_pos.y;
                             Global.delta.x += Global.player._t_pos.x;
-                            int fp = Util.flat(Global.delta.y, Global.delta.x);
+                            int fp = Util.flat(Global.delta);
                             if (!Global.terse) {
                                 IOUtil.addmsg("You have found ");
                             }
-                            if (Global.places.get((Global.delta.x << 5) + Global.delta.y).p_ch != ObjectType.TRAP) {
+                            if (Util.getPlace(Global.delta).p_ch != ObjectType.TRAP) {
                                 IOUtil.msg("no trap there");
-                            } else if (Global.player.containsState(StateEnum.ISHALU)) {
+                            } else if (Human.instance.containsState(StateEnum.ISHALU)) {
                                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
                             } else {
                                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
@@ -476,7 +480,7 @@ public class Command {
                         }
                         break;
                     case ')':
-                        current(Global.cur_weapon, "wielding", null);
+                        current(Human.instance.getWeapons().size() == 0? null: Human.instance.getWeapons().get(0), "wielding", null);
                         break;
                     case ']':
                         current(Global.cur_armor, "wearing", null);
@@ -508,17 +512,17 @@ public class Command {
                                     IOUtil.msg("inpack = %d", Global.inpack);
                                     break;
                                 case ('G' & 037):
-                                    Pack.inventory(Global.lvl_obj, 0);
+                                    Pack.inventory(Global.lvl_obj, ObjectType.Initial);
                                     break;
                                 case ('W' & 037):
                                     Wizard.whatis(false, 0);
                                     break;
                                 case ('D' & 037):
-                                    Global.level++;
+                                    Human.instance.upstairs();
                                     New_Level.new_level();
                                     break;
                                 case ('A' & 037):
-                                    Global.level--;
+                                    Human.instance.downstairs();
                                     New_Level.new_level();
                                     break;
                                 case ('F' & 037):
@@ -534,7 +538,7 @@ public class Command {
                                     // add_pass();  // TODO: 後で
                                     break;
                                 case ('X' & 037):
-                                    Potions.turn_see(Global.player.containsState(StateEnum.SEEMONST));
+                                    Potions.turn_see(Human.instance.containsState(StateEnum.SEEMONST));
                                     break;
                                 case '~': {
                                     ThingImp item;
@@ -553,22 +557,14 @@ public class Command {
                                     /*
                                      * Give him a sword (+1,+1)
                                      */
-                                    obj = new ThingImp();
-                                    WeaponMethod.init_weapon(obj, WeaponEnum.TWOSWORD.getValue());
-                                    obj._o_hplus = 1;
+                                    obj = new Weapon(WeaponEnum.TWOSWORD,1);
                                     obj._o_dplus = 1;
                                     Pack.add_pack(obj, true);
-                                    Global.cur_weapon = obj;
+                                    Human.instance.putOnWeapon((Weapon) obj);
                                     /*
                                      * And his suit of armor
                                      */
-                                    obj = new ThingImp();
-                                    obj._o_type = ObjectType.ARMOR;
-                                    obj._o_which = ArmorEnum.PLATE_MAIL.getValue();
-                                    obj._o_arm = -5;
-                                    obj.add_o_flags(Const.ISKNOW);
-                                    obj._o_count = 1;
-                                    obj._o_group = 0;
+                                    obj = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
                                     Global.cur_armor = obj;
                                     Pack.add_pack(obj, true);
                                 }
@@ -594,8 +590,8 @@ public class Command {
             /*
              * If he ran into something to take, let him pick it up.
              */
-            if (Global.take != 0) {
-                Pack.pick_up(Global.take);
+            if (Global.take != ObjectType.Initial) {
+                Pack.pick_up();
             }
             if (!Global.running) {
                 Global.door_stop = false;
@@ -629,48 +625,49 @@ public class Command {
 
         int ey = Global.player._t_pos.y + 1;
         int ex = Global.player._t_pos.x + 1;
-        int probinc = (Global.player.containsState(StateEnum.ISHALU) ? 3 : 0);
-        probinc += (Global.player.containsState(StateEnum.ISBLIND) ? 2 : 0);
+        int probinc = (Human.instance.containsState(StateEnum.ISHALU) ? 3 : 0);
+        probinc += (Human.instance.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
         for (int y = Global.player._t_pos.y - 1; y <= ey; y++)
             for (int x = Global.player._t_pos.x - 1; x <= ex; x++) {
-                if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                Coordinate target = new Coordinate(x, y);
+                if (Global.player._t_pos.equals(target)) {
                     continue;
                 }
-                int fp = Util.flat(y, x);
+                int fp = Util.flat(target);
                 if ((fp & Const.F_REAL) == 0) {
-                    switch (Global.places.get((x << 5) + y).p_ch) {
+                    switch (Util.getPlace(target).p_ch) {
                         case Vert:
                         case Horizon:
                             if (Util.rnd(5 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.DOOR;
+                            Util.getPlace(target).p_ch = ObjectType.DOOR;
                             IOUtil.msg("a secret door");
-                            found = foundone(x, y);
+                            found = foundone(target);
                             break;
                         case FLOOR:
                             if (Util.rnd(2 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.TRAP;
+                            Util.getPlace(target).p_ch = ObjectType.TRAP;
                             if (!Global.terse) {
                                 IOUtil.addmsg("you found ");
                             }
-                            if (Global.player.containsState(StateEnum.ISHALU)) {
+                            if (Human.instance.containsState(StateEnum.ISHALU)) {
                                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
                             } else {
                                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
-                                Global.places.get((x << 5) + y).p_flags |= Const.F_SEEN;
+                                Util.getPlace(target).p_flags |= Const.F_SEEN;
                             }
-                            found = foundone(x, y);
+                            found = foundone(target);
                             break;
                         case Blank:
                             if (Util.rnd(3 + probinc) != 0) {
                                 break;
                             }
-                            Global.places.get((x << 5) + y).p_ch = ObjectType.PASSAGE;
-                            found = foundone(x, y);
+                            Util.getPlace(target).p_ch = ObjectType.PASSAGE;
+                            found = foundone(target);
                     }
                 }
             }
@@ -679,8 +676,8 @@ public class Command {
         }
     }
 
-    static private boolean foundone(int x, int y) {
-        Global.places.get((x << 5) + y).p_flags |= Const.F_REAL;
+    static private boolean foundone(Coordinate coordinate) {
+        Util.getPlace(coordinate).p_flags |= Const.F_REAL;
         Global.count = 0;
         Global.running = false;
         return true;
@@ -739,15 +736,14 @@ public class Command {
      * d_level:
      *	He wants to go down a level
      */
-    static void d_level()
-    {
-        if (levit_check()){
-            return;}
-        if (Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch != ObjectType.STAIRS){
-            IOUtil.msg("I see no way down");}
-        else
-        {
-            Global.level++;
+    static void d_level() {
+        if (levit_check()) {
+            return;
+        }
+        if (Util.getPlace(Global.player._t_pos).p_ch != ObjectType.STAIRS) {
+            IOUtil.msg("I see no way down");
+        } else {
+            Human.instance.upstairs();
             Global.seenstairs = false;
             New_Level.new_level();
         }
@@ -757,24 +753,24 @@ public class Command {
      * u_level:
      *	He wants to go up a level
      */
-    static void u_level()
-    {
-        if (levit_check()){
-            return;}
-        if (Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch == ObjectType.STAIRS){
-            if (Game.getInstance().isGoal())
-            {
-                Global.level--;
-                if (Global.level == 0) {
+    static void u_level() {
+        if (levit_check()) {
+            return;
+        }
+        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.STAIRS) {
+            if (Game.getInstance().isGoal()) {
+                Human.instance.downstairs();
+                if (Human.instance.getLevel() == 0) {
                     Rip.total_winner();
                 }
                 New_Level.new_level();
                 IOUtil.msg("you feel a wrenching sensation in your gut");
+            } else {
+                IOUtil.msg("your way is magically blocked");
             }
-            else{
-                IOUtil.msg("your way is magically blocked");}}
-        else{
-            IOUtil.msg("I see no way up");}
+        } else {
+            IOUtil.msg("I see no way up");
+        }
     }
 
     /*
@@ -782,9 +778,8 @@ public class Command {
      *	Check to see if she's levitating, and if she is, print an
      *	appropriate message.
      */
-    static boolean levit_check()
-    {
-        if (!Global.player.containsState(StateEnum.ISLEVIT)) {
+    static boolean levit_check() {
+        if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
             return false;
         }
         IOUtil.msg("You can't.  You're floating off the ground!");

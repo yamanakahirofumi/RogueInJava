@@ -11,7 +11,6 @@ import java.util.List;
 public class Armor extends ThingImp {
 	public Armor(){
 		super();
-		this._o_type = ObjectType.ARMOR;
 		this._o_which = ThingMethod.pick_one(getTypes(), ArmorEnum.getMaxValue());
 		this._o_arm = Global.a_class[this._o_which];
 		int r = Util.rnd(100);
@@ -23,6 +22,28 @@ public class Armor extends ThingImp {
 		}
 	}
 
+	public Armor(ArmorEnum armorEnum, int armor, int flg){
+		super();
+		this._o_which = armorEnum.getValue();
+		this._o_arm = armor;
+		this.add_o_flags(flg);
+	}
+
+
+	@Override
+	public boolean isMagic(){
+		return (this.contains_o_flags(Const.ISPROT) || this._o_arm != Global.a_class[this._o_which]);
+	}
+
+	@Override
+	public int getWorth(){
+		int worth = Global.arm_info[this._o_which].getWorth();
+		worth += (9 - this._o_arm) * 100;
+		worth += (10 * (Global.a_class[this._o_which] - this._o_arm));
+		this.add_o_flags(Const.ISKNOW);
+		return worth;
+	}
+
 	/**
 	 * @return
 	 */
@@ -31,4 +52,8 @@ public class Armor extends ThingImp {
 		return this.getTypes(filename);
 	}
 
+	@Override
+	public ObjectType getDisplay() {
+		return ObjectType.ARMOR;
+	}
 }

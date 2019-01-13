@@ -1,9 +1,15 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
+import org.hiro.things.Amulet;
+import org.hiro.things.Food;
+import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
+import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
 
@@ -49,7 +55,7 @@ public class Pack {
                 Global.n_objs = 1;        /* normal case: person types one char */
                 if (ch == '*') {
                     Global.mpos = 0;
-                    if (!inventory(Global.player.getBaggage(), type.getValue())) {
+                    if (!inventory(Global.player.getBaggage(), type)) {
                         Global.after = false;
                         return null;
                     }
@@ -89,15 +95,13 @@ public class Pack {
      *	List what is in the pack.  Return true if there is something of
      *	the given type.
      */
-    static boolean inventory(List<ThingImp> list, int type) {
+    static boolean inventory(List<ThingImp> list, ObjectType type) {
         boolean MASTER = false;
         String inv_temp;
 
         Global.n_objs = 0;
-        for (ThingImp th : list ) {
-            if (type != 0 && type != th._o_type.getValue() &&
-                    !(type == Const.CALLABLE && th._o_type != ObjectType.FOOD && th._o_type != ObjectType.AMULET) &&
-                    !(type == Const.R_OR_S && (th._o_type == ObjectType.RING || th._o_type == ObjectType.STICK))) {
+        for (ThingImp th : list) {
+            if (type != ObjectType.Initial && type != th.getDisplay() ) {
                 continue;
             }
             Global.n_objs++;
@@ -119,10 +123,10 @@ public class Pack {
         }
         if (Global.n_objs == 0) {
             if (Global.terse) {
-                IOUtil.msg(type == 0 ? "empty handed" :
+                IOUtil.msg(type == ObjectType.Initial ? "empty handed" :
                         "nothing appropriate");
             } else {
-                IOUtil.msg(type == 0 ? "you are empty handed" :
+                IOUtil.msg(type == ObjectType.Initial ? "you are empty handed" :
                         "you don't have anything appropriate");
             }
             return false;
@@ -166,7 +170,7 @@ public class Pack {
      *	into account
      */
     static ObjectType floor_at() {
-        ObjectType ch = Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch;
+        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch == ObjectType.FLOOR) {
             ch = floor_ch();
         }
@@ -196,19 +200,20 @@ public class Pack {
 
         boolean from_floor = false;
         if (obj == null) {
-            if ((obj = Misc.find_obj(Global.player._t_pos.y, Global.player._t_pos.x)) == null)
+            if ((obj = Misc.find_obj(Global.player._t_pos)) == null) {
                 return;
+            }
             from_floor = true;
         }
 
         /*
          * Check for and deal with scare monster scrolls
          */
-        if (obj._o_type == ObjectType.SCROLL && obj._o_which == ScrollEnum.S_SCARE.getValue())
+        if (obj instanceof Scroll && obj._o_which == ScrollEnum.S_SCARE.getValue())
             if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
                 Global.lvl_obj.remove(obj);
                 Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-                Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
                 update_mdest(obj);
                 discarded = true;
                 IOUtil.msg("the scroll turns to dust as you pick it up");
@@ -222,10 +227,10 @@ public class Pack {
         } else {
             ThingImp lp = null;
             for (ThingImp op : Global.player.getBaggage()) {
-                if (op._o_type != obj._o_type)
+                if (op.getClass() != obj.getClass()) {
                     lp = op;
-                else {
-                    while (op._o_type == obj._o_type && op._o_which != obj._o_which) {
+                } else {
+                    while (op.getClass() == obj.getClass() && op._o_which != obj._o_which) {
                         lp = op;
                         if (op._l_next == null) {
                             break;
@@ -233,9 +238,8 @@ public class Pack {
                             op = op._l_next;
                         }
                     }
-                    if (op._o_type == obj._o_type && op._o_which == obj._o_which) {
-                        if (op._o_type == ObjectType.POTION || op._o_type == ObjectType.SCROLL
-                                || op._o_type == ObjectType.FOOD) {
+                    if (op.getClass() == obj.getClass() && op._o_which == obj._o_which) {
+                        if (op instanceof Potion || op instanceof Scroll || op instanceof Food) {
                             if (!pack_room(from_floor, obj)) {
                                 return;
                             }
@@ -247,7 +251,7 @@ public class Pack {
                             // goto out;
                         } else if (obj._o_group != 0) {
                             lp = op;
-                            while (op._o_type == obj._o_type
+                            while (op.getClass() == obj.getClass()
                                     && op._o_which == obj._o_which
                                     && op._o_group != obj._o_group) {
                                 lp = op;
@@ -257,7 +261,7 @@ public class Pack {
                                     op = op._l_next;
                                 }
                             }
-                            if (op._o_type == obj._o_type
+                            if (op.getClass() == obj.getClass()
                                     && op._o_which == obj._o_which
                                     && op._o_group == obj._o_group) {
                                 op._o_count += obj._o_count;
@@ -281,9 +285,9 @@ public class Pack {
             }
 
             if (lp != null) {
-                if (!pack_room(from_floor, obj)){
-                    return;}
-                else {
+                if (!pack_room(from_floor, obj)) {
+                    return;
+                } else {
                     obj._o_packch = pack_char();
                     obj._l_next = lp._l_next;
                     obj._l_prev = lp;
@@ -305,7 +309,7 @@ public class Pack {
             update_mdest(obj);
         }
 
-        if (obj._o_type == ObjectType.AMULET) {
+        if (obj instanceof Amulet) {
             Game.getInstance().setGoal(true);
         }
         /*
@@ -327,7 +331,7 @@ public class Pack {
      */
     static void update_mdest(ThingImp obj) {
         for (ThingImp mp : Global.mlist) {
-            if (mp._t_dest == obj._o_pos) {
+            if (mp._t_dest.equals(obj._o_pos)) {
                 mp._t_dest = Global.player._t_pos;
             }
         }
@@ -357,9 +361,9 @@ public class Pack {
         }
 
         if (from_floor) {
-            Global.lvl_obj.remove( obj);
+            Global.lvl_obj.remove(obj);
             Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-            Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         }
 
         return true;
@@ -394,43 +398,23 @@ public class Pack {
      * pick_up:
      *	Add something to characters pack.
      */
-    static void pick_up(int ch) {
-        Boolean MASTER = false;
-
-        if (Global.player.containsState(StateEnum.ISLEVIT)) {
+    static void pick_up() {
+        if (Human.instance.containsState(StateEnum.ISLEVIT)) {
             return;
         }
 
-        ThingImp obj = Misc.find_obj(Global.player._t_pos.y, Global.player._t_pos.x);
+        ThingImp obj = Misc.find_obj(Global.player._t_pos);
         if (Global.move_on) {
             move_msg(obj);
         } else {
-            ObjectType ot = ObjectType.get((char) ch);
-            switch (ot) {
-                case GOLD:
-                    if (obj == null) {
-                        return;
-                    }
-                    money(obj._o_arm);
-                    Global.lvl_obj.remove(obj);
-                    update_mdest(obj);
-                    Global.lvl_obj.remove(obj);
-                    Global.player.t_room.r_goldval = 0;
-                    break;
-                default:
-                    if (MASTER) {
-                        // debug("Where did you pick a '%s' up???", Display.unctrl(ch));
-                    }
-                case ARMOR:
-                case POTION:
-                case FOOD:
-                case WEAPON:
-                case SCROLL:
-                case AMULET:
-                case RING:
-                case STICK:
-                    add_pack(null, false);
-                    break;
+            if (obj instanceof Gold) {
+                money(obj._o_arm);
+                Global.lvl_obj.remove(obj);
+                update_mdest(obj);
+                Global.lvl_obj.remove(obj);
+                Global.player.t_room.r_goldval = 0;
+            } else {
+                add_pack(null, false);
             }
         }
     }
@@ -442,7 +426,7 @@ public class Pack {
     static void money(int value) {
         Global.purse += value;
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
-        Global.places.get((Global.player._t_pos.x << 5) + Global.player._t_pos.y).p_ch =
+        Util.getPlace(Global.player._t_pos).p_ch =
                 Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         if (value > 0) {
             if (!Global.terse) {
@@ -457,20 +441,17 @@ public class Pack {
      * picky_inven:
      *	Allow player to inventory a single item
      */
-    static void picky_inven()
-    {
+    static void picky_inven() {
 
-        if (Global.player.getBaggageSize() == 0){
-            IOUtil.msg("you aren't carrying anything");}
-        else if (Global.player.getBaggageSize() == 1){
-            IOUtil.msg("a) %s", ThingMethod.inv_name(Global.player.getBaggage().get(0), false));}
-        else
-        {
+        if (Global.player.getBaggageSize() == 0) {
+            IOUtil.msg("you aren't carrying anything");
+        } else if (Global.player.getBaggageSize() == 1) {
+            IOUtil.msg("a) %s", ThingMethod.inv_name(Global.player.getBaggage().get(0), false));
+        } else {
             IOUtil.msg(Global.terse ? "item: " : "which item do you wish to inventory: ");
             int mch = IOUtil.readchar();
             Global.mpos = 0;
-            if (mch == Const.ESCAPE)
-            {
+            if (mch == Const.ESCAPE) {
                 IOUtil.msg("");
                 return;
             }

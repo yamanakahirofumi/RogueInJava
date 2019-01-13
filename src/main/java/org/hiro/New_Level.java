@@ -1,8 +1,10 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
@@ -19,9 +21,9 @@ public class New_Level {
 
     static void new_level() {
 
-        Global.player.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
-        if (Global.level > Global.max_level) {
-            Global.max_level = Global.level;
+        Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
+        if (Human.instance.getLevel() > Global.max_level) {
+            Global.max_level = Human.instance.getLevel();
         }
         /*
          * Clean things off from last level
@@ -51,8 +53,8 @@ public class New_Level {
         /*
          * Place the traps
          */
-        if (Util.rnd(10) < Global.level) {
-            Global.ntraps = Util.rnd(Global.level / 4) + 1;
+        if (Util.rnd(10) < Human.instance.getLevel()) {
+            Global.ntraps = Util.rnd(Human.instance.getLevel() / 4) + 1;
             if (Global.ntraps > Const.MAXTRAPS) {
                 Global.ntraps = Const.MAXTRAPS;
             }
@@ -66,10 +68,10 @@ public class New_Level {
                  */
                 do {
                     DrawRoom.find_floor(null, Global.stairs, false, false);
-                } while (Global.places.get((Global.stairs.x << 5) + Global.stairs.y).p_ch.getValue() != ObjectType.FLOOR.getValue() &&
-                        (Util.flat(Global.stairs.y, Global.stairs.x) & Const.F_REAL) != 0);
+                } while (Util.getPlace(Global.stairs).p_ch.getValue() != ObjectType.FLOOR.getValue() &&
+                        (Util.flat(Global.stairs) & Const.F_REAL) != 0);
 
-                int sp = Util.flat(Global.stairs.y, Global.stairs.x);
+                int sp = Util.flat(Global.stairs);
                 sp &= ~(Const.F_REAL | Const.F_TMASK);
                 sp |= Util.rnd(Const.NTRAPS);
             }
@@ -78,7 +80,7 @@ public class New_Level {
          * Place the staircase down.
          */
         DrawRoom.find_floor(null, Global.stairs, false, false);
-        Global.places.get((Global.stairs.x << 5) + Global.stairs.y).p_ch = ObjectType.STAIRS;
+        Util.getPlace(Global.stairs).p_ch = ObjectType.STAIRS;
         Global.seenstairs = false;
 
         for (ThingImp tp : Global.mlist) {
@@ -88,10 +90,10 @@ public class New_Level {
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);
         Rooms.enter_room(Global.player._t_pos);
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
-        if (Global.player.containsState(StateEnum.SEEMONST)) {
+        if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }
-        if (Global.player.containsState(StateEnum.ISHALU)) {
+        if (Human.instance.containsState(StateEnum.ISHALU)) {
             Daemons.visuals();
         }
     }
@@ -108,7 +110,7 @@ public class New_Level {
          * go down into the dungeon.
          */
         Game game = Game.getInstance();
-        if (game.isGoal() && Global.level < Global.max_level) {
+        if (game.isGoal() && Human.instance.getLevel() < Global.max_level) {
             return;
         }
         /*
@@ -132,27 +134,21 @@ public class New_Level {
                  * Put it somewhere
                  */
                 DrawRoom.find_floor(null, obj._o_pos, false, false);
-                Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch = obj._o_type;
+                Util.getPlace(obj._o_pos).p_ch = obj.getDisplay();
             }
         }
         /*
          * If he is really deep in the dungeon and he hasn't found the
          * amulet yet, put it somewhere on the ground
          */
-        if (Global.level >= Const.AMULETLEVEL && !game.isGoal()) {
-            obj = new ThingImp();
+        if (Human.instance.getLevel() >= Const.AMULETLEVEL && !game.isGoal()) {
+            obj = new Amulet();
             Global.lvl_obj.add(obj);
-            obj._o_hplus = 0;
-            obj._o_dplus = 0;
-            obj._o_damage = "0x0";
-            obj._o_hurldmg = "0x0";
-            obj._o_arm = 11;
-            obj._o_type = ObjectType.AMULET;
             /*
              * Put it somewhere
              */
             DrawRoom.find_floor(null, obj._o_pos, false, false);
-            Global.places.get((obj._o_pos.x << 5) + obj._o_pos.y).p_ch = ObjectType.AMULET;
+            Util.getPlace(obj._o_pos).p_ch = ObjectType.AMULET;
         }
     }
 
@@ -182,7 +178,7 @@ public class New_Level {
             tp = new ThingImp();
             tp._o_pos = mp;
             Global.lvl_obj.add(tp);
-            Global.places.get((mp.x << 5) + mp.y).p_ch = tp._o_type;
+            Util.getPlace(mp).p_ch = tp.getDisplay();
         }
 
         /*
@@ -196,7 +192,7 @@ public class New_Level {
         if (nm > spots) {
             nm = spots;
         }
-        Global.level++;
+        Human.instance.upstairs();
         while (nm-- != 0) {
             spots = 0;
             if (DrawRoom.find_floor(rp, mp, MAXTRIES != 0, true)) {
@@ -206,7 +202,7 @@ public class New_Level {
                 Monst.give_pack(tp);
             }
         }
-        Global.level--;
+        Human.instance.downstairs();
     }
 
 }

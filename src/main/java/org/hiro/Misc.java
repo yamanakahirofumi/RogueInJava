@@ -1,9 +1,12 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
+import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
@@ -35,7 +38,7 @@ public class Misc {
                 ObjectType.AMULET
         };
 
-        if (Global.level >= Const.AMULETLEVEL) {
+        if (Human.instance.getLevel() >= Const.AMULETLEVEL) {
             i = Util.rnd(thing_list.length);
         } else {
             i = Util.rnd(thing_list.length - 1);
@@ -106,7 +109,7 @@ public class Misc {
             sumhero = Global.player._t_pos.y + Global.player._t_pos.x;
             diffhero = Global.player._t_pos.y - Global.player._t_pos.x;
         }
-        Place pp = Util.INDEX(Global.player._t_pos.y, Global.player._t_pos.x);
+        Place pp = Util.getPlace(Global.player._t_pos);
         ObjectType pch = pp.p_ch;
         int pfl = pp.p_flags;
 
@@ -115,9 +118,11 @@ public class Misc {
                 if (x < 0 || x >= Const.NUMCOLS) {
                     continue;
                 }
-                if (!Global.player.containsState(StateEnum.ISBLIND)) {
-                    if (y == Global.player._t_pos.y && x == Global.player._t_pos.x)
+                Coordinate target = new Coordinate(x, y);
+                if (!Human.instance.containsState(StateEnum.ISBLIND)) {
+                    if (Global.player._t_pos.equals(target)) {
                         continue;
+                    }
                 }
 
                 pp = Util.INDEX(y, x);
@@ -135,16 +140,16 @@ public class Misc {
                 if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
                         ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
                     if (Global.player._t_pos.x != x && Global.player._t_pos.y != y &&
-                            !IOUtil.step_ok(Global.places.get((Global.player._t_pos.x << 5) + y).p_ch) &&
-                            !IOUtil.step_ok(Global.places.get((x << 5) + Global.player._t_pos.y).p_ch)) {
+                            !IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch) &&
+                            !IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y,x).p_ch)) {
                         continue;
                     }
                 }
 
                 ThingImp tp;
                 if ((tp = pp.p_monst) == null) {
-                    ch = trip_ch(y, x, ch);
-                } else if (Global.player.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
+                    ch = trip_ch(target, ch);
+                } else if (Human.instance.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
                     if (Global.door_stop && !Global.firstmove) {
                         Global.running = false;
                     }
@@ -153,13 +158,13 @@ public class Misc {
                     if (wakeup)
                         Monst.wake_monster(y, x);
                     if (Chase.see_monst(tp)) {
-                        if (Global.player.containsState(StateEnum.ISHALU))
+                        if (Human.instance.containsState(StateEnum.ISHALU))
                             ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
                         else
                             ch = ObjectType.get((char) tp._t_disguise);
                     }
                 }
-                if (Global.player.containsState(StateEnum.ISBLIND) && (y != Global.player._t_pos.y || x != Global.player._t_pos.x)) {
+                if (Human.instance.containsState(StateEnum.ISBLIND) && (!Global.player._t_pos.equals(target))) {
                     continue;
                 }
 
@@ -245,8 +250,8 @@ public class Misc {
      *	Return the character appropriate for this space, taking into
      *	account whether or not the player is tripping.
      */
-    static ObjectType trip_ch(int y, int x, ObjectType ch) {
-        if (Global.player.containsState(StateEnum.ISHALU) && Global.after)
+    static ObjectType trip_ch(Coordinate target, ObjectType ch) {
+        if (Human.instance.containsState(StateEnum.ISHALU) && Global.after)
             switch (ch) {
                 case FLOOR:
                 case Blank:
@@ -257,7 +262,7 @@ public class Misc {
                 case TRAP:
                     break;
                 default:
-                    if (y != Global.stairs.y || x != Global.stairs.x || !Global.seenstairs) {
+                    if (!Global.stairs.equals(target) || !Global.seenstairs) {
                         ch = rnd_thing();
                     }
                     break;
@@ -273,7 +278,7 @@ public class Misc {
 
         if (!(Global.see_floor && rp.containInfo(RoomInfoEnum.ISDARK)
                 && !rp.containInfo(RoomInfoEnum.ISGONE)
-                && !Global.player.containsState(StateEnum.ISBLIND))) {
+                && !Human.instance.containsState(StateEnum.ISBLIND))) {
             return;
         }
 
@@ -282,7 +287,8 @@ public class Misc {
         int sy = pos.y - 1;
         for (int x = pos.x - 1; x <= ex; x++) {
             for (int y = sy; y <= ey; y++) {
-                if (y == Global.player._t_pos.y && x == Global.player._t_pos.x) {
+                Coordinate tmp = new Coordinate(x, y);
+                if (Global.player._t_pos.equals(tmp)) {
                     continue;
                 }
                 Display.move(y, x);
@@ -302,14 +308,17 @@ public class Misc {
         if (amt == 0) {
             return;
         }
-        Global.player._t_stats.s_str = add_str(Global.player._t_stats.s_str, amt);
-        int comp = Global.player._t_stats.s_str;
-        if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR))
+        Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
+        int comp = Human.instance.getCurrentStrength();
+        if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
             comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
-        if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR))
+        }
+        if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
             comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
-        if (comp > Global.max_stats.s_str)
+        }
+        if (comp > Global.max_stats.s_str) {
             Global.max_stats.s_str = comp;
+        }
     }
 
     /*
@@ -331,7 +340,7 @@ public class Misc {
      *	player is tripping
      */
     static String choose_str(String ts, String ns) {
-        return (Global.player.containsState(StateEnum.ISHALU) ? ts : ns);
+        return (Human.instance.containsState(StateEnum.ISHALU) ? ts : ns);
     }
 
     /*
@@ -352,7 +361,7 @@ public class Misc {
         if (i > olevel) {
             int add = Dice.roll(i - olevel, 10);
             Global.player._t_stats.s_maxhp += add;
-            Global.player._t_stats.s_hpt += add;
+            Human.instance.addHp(add);
             IOUtil.msg("welcome to level %d", String.valueOf(i));
         }
     }
@@ -365,15 +374,15 @@ public class Misc {
         try {
             Method m = Daemons.class.getMethod("nohaste");
 
-            if (Global.player.containsState(StateEnum.ISHASTE)) {
+            if (Human.instance.containsState(StateEnum.ISHASTE)) {
                 Global.no_command += Util.rnd(8);
-                Global.player.removeState(StateEnum.ISRUN);
-                Global.player.removeState(StateEnum.ISHASTE);
+                Human.instance.removeState(StateEnum.ISRUN);
+                Human.instance.removeState(StateEnum.ISHASTE);
                 Daemon.extinguish(m);
                 IOUtil.msg("you faint from exhaustion");
                 return false;
             } else {
-                Global.player.addState(StateEnum.ISHASTE);
+                Human.instance.addState(StateEnum.ISHASTE);
                 if (potion) {
                     Daemon.fuse(m, 0, Util.rnd(4) + 4, Const.AFTER);
                 }
@@ -392,7 +401,7 @@ public class Misc {
     static boolean show_floor() {
         if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK)
                 && !Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
-                && !Global.player.containsState(StateEnum.ISBLIND)) {
+                && !Human.instance.containsState(StateEnum.ISBLIND)) {
             return Global.see_floor;
         } else {
             return true;
@@ -407,9 +416,7 @@ public class Misc {
         if (obj == null) {
             return false;
         }
-        if (obj == Global.cur_armor || obj == Global.cur_weapon
-                || obj == Global.cur_ring[Const.LEFT]
-                || obj == Global.cur_ring[Const.RIGHT]) {
+        if (Human.instance.isEquipped(obj)) {
             if (!Global.terse) {
                 IOUtil.addmsg("That's already ");
             }
@@ -433,15 +440,16 @@ public class Misc {
      * find_obj:
      *	Find the unclaimed object at y, x
      */
-    static ThingImp find_obj(int y, int x) {
+    static ThingImp find_obj(AbstractCoordinate coordinate) {
         for (ThingImp obj : Global.lvl_obj) {
-            if (obj._o_pos.y == y && obj._o_pos.x == x) {
+            if (obj._o_pos.equals(coordinate)) {
                 return obj;
             }
         }
         boolean MASTER = false;
         if (MASTER) {
-            Global.prbuf = "Non-object " + y + "," + x;
+            Global.prbuf = "Non-object " + coordinate.toString();
+            // Global.prbuf = "Non-object " + y + "," + x;
             IOUtil.msg(Global.prbuf);
         } else {
             /* NOTREACHED */
@@ -471,7 +479,7 @@ public class Misc {
         if ((obj = Pack.get_item("eat", ObjectType.FOOD)) == null) {
             return;
         }
-        if (obj._o_type != ObjectType.FOOD) {
+        if (!(obj instanceof Food)) {
             if (!Global.terse) {
                 IOUtil.msg("ugh, you would get ill if you ate that");
             } else {
@@ -486,13 +494,12 @@ public class Misc {
             Global.food_left = Const.STOMACHSIZE;
         }
         Global.hungry_state = 0;
-        if (obj == Global.cur_weapon) {
-            Global.cur_weapon = null;
-        }
+        // 装備している武器を食べる場合
+        Human.instance.removeWeapon(obj);
         if (obj._o_which == 1)
             IOUtil.msg("my, that was a yummy %s", Global.fruit);
         else if (Util.rnd(100) > 70) {
-            Global.player._t_stats.s_exp++;
+            Human.instance.addExperience(1);
             IOUtil.msg("%s, this food tastes awful", choose_str("bummer", "yuk"));
             check_level();
         } else {
@@ -582,7 +589,7 @@ public class Misc {
             last_delt.y = Global.delta.y;
             last_delt.x = Global.delta.x;
         }
-        if (Global.player.containsState(StateEnum.ISHUH) && Util.rnd(5) == 0) {
+        if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) == 0) {
             do {
                 Global.delta.y = Util.rnd(3) - 1;
                 Global.delta.x = Util.rnd(3) - 1;

@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.map.Coordinate;
+import org.hiro.things.ObjectType;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
@@ -11,16 +12,15 @@ import java.util.List;
 
 public class Global {
     static List<Room> rooms;
-    static int level;   /* What level she is on */ // 今いる階層
-    //    static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
+    // static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
     static List<Place> places;  // sizeは80 * 32
 //    static
     static Monster[] monsters;
     static int max_level;
     public static int no_food;  /* Number of levels without food */
-    static int group = 2;
+    public static int group = 2;
     static int ntraps;                /* Number of traps on this level */
-    static boolean seenstairs;
+    static boolean seenstairs;       /* Have seen the stairs (for lsd) */
     static boolean after;
     static boolean running;
     static boolean jump;
@@ -53,15 +53,15 @@ public class Global {
     static boolean q_comm;
     static int hungry_state;
     static boolean stat_msg;
-    static int inpack = 0;                /* Number of things in pack */
+    static int inpack = 0;                    /* Number of things in pack */
     static int vf_hit;
     static int lastscore;
     static int quiet;
     static boolean fight_flush;
-    static int take;
+    static ObjectType take;
     static boolean noscore;
     static boolean move_on;
-    static int max_hit;
+    static int max_hit;                       /* Max damage done to her in to_death */
     static int dir_ch;
     static int allscore;
     static int food_left = Const.HUNGERTIME;
@@ -121,9 +121,8 @@ public class Global {
     static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
     static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
     static ThingImp cur_ring[];
+    @Deprecated
     static ThingImp player;
-    //static Human player;
-    static ThingImp cur_weapon;
     static ThingImp cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
@@ -155,7 +154,7 @@ public class Global {
 //	}; //[MAXPASS]
 
 
-    static List<InitWeapon> init_dam;
+    public static List<InitWeapon> init_dam;
 //	{ "2x4",	"1x3",	NO_WEAPON,	0,		},	/* Mace */
 //	{ "3x4",	"1x2",	NO_WEAPON,	0,		},	/* Long sword */
 //	{ "1x1",	"1x1",	NO_WEAPON,	0,		},	/* Bow */

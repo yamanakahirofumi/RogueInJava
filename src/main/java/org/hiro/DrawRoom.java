@@ -1,8 +1,10 @@
 package org.hiro;
 
 
+import org.hiro.character.Human;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
+import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
 
@@ -64,7 +66,7 @@ public class DrawRoom {
             /*
              * set room type
              */
-            if (Util.rnd(10) < Global.level - 1) {
+            if (Util.rnd(10) < Human.instance.getLevel() - 1) {
                 rp.addInfo(RoomInfoEnum.ISDARK);        /* dark room */
                 if (Util.rnd(15) == 0) {
                     rp.setInfo(RoomInfoEnum.ISMAZE);        /* maze room */
@@ -95,17 +97,15 @@ public class DrawRoom {
              * Put the gold in
              */
             Game game = Game.getInstance();
-            if (Util.rnd(2) == 0 && (!game.isGoal() || Global.level >= Global.max_level)) {
-                ThingImp gold;
+            if (Util.rnd(2) == 0 && (!game.isGoal() || Human.instance.getLevel() >= Global.max_level)) {
+                Gold gold;
 
-                gold = new ThingImp();
-                gold._o_arm = rp.r_goldval = Util.GOLDCALC();
-                find_floor(rp,(Coordinate) rp.r_gold, false, false);
-                gold._o_pos = (Coordinate) rp.r_gold;
-                Util.INDEX(rp.r_gold.y, rp.r_gold.x).p_ch = ObjectType.GOLD;
-                gold.set_o_flags(Const.ISMANY);
-                gold._o_group = GOLDGRP;
-                gold._o_type = ObjectType.GOLD;
+                gold = new Gold(Human.instance.getLevel());
+                rp.r_goldval = gold.getGold();
+                find_floor(rp, rp.r_gold, false, false);
+                gold._o_pos =  rp.r_gold;
+                Util.getPlace(rp.r_gold).p_ch = ObjectType.GOLD;
+
                 Global.lvl_obj.add(gold);
             }
             Coordinate mp = new Coordinate();
@@ -219,7 +219,7 @@ public class DrawRoom {
                 if (newy < 0 || newy > Maxy || newx < 0 || newx > Maxx) {
                     continue;
                 }
-                if ((Util.flat(newy + Starty, newx + Startx) & Const.F_PASS) != 0) {
+                if ((Util.flat(new Coordinate(newx + Startx, newy + Starty)) & Const.F_PASS) != 0) {
                     continue;
                 }
                 if (Util.rnd(++cnt) == 0) {
@@ -296,8 +296,9 @@ public class DrawRoom {
     static private void horiz(Room rp, int starty) {
         int x;
 
-        for (x = rp.r_pos.x; x <= rp.r_pos.x + rp.r_max.x - 1; x++)
+        for (x = rp.r_pos.x; x <= rp.r_pos.x + rp.r_max.x - 1; x++) {
             Util.INDEX(starty, x).p_ch = ObjectType.Horizon;
+        }
     }
 
 
@@ -323,7 +324,7 @@ public class DrawRoom {
                 compchar = (rp.containInfo(RoomInfoEnum.ISMAZE) ? ObjectType.PASSAGE : ObjectType.FLOOR);
             }
             rnd_pos(rp, cp);
-            Place pp = Util.INDEX(cp.y, cp.x);
+            Place pp = Util.getPlace(cp);
             if (monst) {
                 // 足元に何もない　かつ 歩けるとこ
                 if (pp.p_monst == null && IOUtil.step_ok(pp.p_ch)) {
