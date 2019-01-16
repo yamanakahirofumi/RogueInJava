@@ -3,15 +3,17 @@ package org.hiro.things;
 import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.Obj_info;
-import org.hiro.StickMethod;
 import org.hiro.ThingMethod;
+import org.hiro.Util;
 
 import java.util.Arrays;
 
 public class Stick extends ThingImp {
+    private String _o_damage;
+
     Stick(){
         this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ws_info), StickEnum.getMaxValue());
-        StickMethod.fix_stick(this);
+        fix_stick();
 //				boolean MASTER = false;
 //				if (MASTER) {
 //					break;
@@ -20,6 +22,25 @@ public class Stick extends ThingImp {
 //					wait_for(stdscr, ' ');
 //				}
 
+    }
+
+    /*
+     * fix_stick:
+     *	Set up a new stick
+     */
+    private void fix_stick() {
+        if (Global.ws_type[this._o_which] == "staff") {
+            this._o_damage = "2x3";
+        } else {
+            this._o_damage = "1x1";
+        }
+        this._o_hurldmg = "1x1";
+
+        if (this._o_which == StickEnum.WS_LIGHT.getValue()) {
+            this._o_arm = Util.rnd(10) + 10;
+        } else {
+            this._o_arm = Util.rnd(5) + 3;
+        }
     }
 
     @Override

@@ -196,9 +196,9 @@ public class IOUtil {
 
         // getyx(stdscr, oy, ox);
         int hpwidth = 0;
-        if (s_hp != Global.player._t_stats.s_maxhp) {
-            temp = Global.player._t_stats.s_maxhp;
-            s_hp = Global.player._t_stats.s_maxhp;
+        if (s_hp != Human.instance.getMaxHp()) {
+            temp = Human.instance.getMaxHp();
+            s_hp = Human.instance.getMaxHp();
             for (hpwidth = 0; temp != 0; hpwidth++) {
                 temp /= 10;
             }
@@ -218,7 +218,7 @@ public class IOUtil {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
                     s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
-                    Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
+                    Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);
         } else {
@@ -226,7 +226,7 @@ public class IOUtil {
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
                     s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
-                    Global.player._t_stats.s_maxhp, s_str, Global.max_stats.s_str,
+                    Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[Global.hungry_state]);
         }

@@ -272,16 +272,16 @@ public class Chase {
     static int move_monst(ThingImp tp) {
         if (!tp.containsState(StateEnum.ISSLOW) || tp._t_turn) {
             if (do_chase(tp) == -1) {
-                return (-1);
+                return -1;
             }
         }
         if (tp.containsState(StateEnum.ISHASTE)) {
             if (do_chase(tp) == -1) {
-                return (-1);
+                return -1;
             }
         }
         tp._t_turn ^= true;
-        return (0);
+        return 0;
     }
 
     /*

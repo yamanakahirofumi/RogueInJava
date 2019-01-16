@@ -8,7 +8,6 @@ import org.hiro.things.Potion;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Scroll;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 
 import java.util.Random;
 
@@ -56,7 +55,7 @@ public class Util {
      * thing.containsState(StateEnum.flg)に変更
      */
     @Deprecated
-    static boolean on(ThingImp thing, int flag) {
+    static boolean on(Thing thing, int flag) {
         // return (thing.containsState(flag);
         throw new UnsupportedOperationException("使わないで");
     }

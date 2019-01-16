@@ -19,7 +19,7 @@ import java.util.Optional;
  * Structure for monsters and player
  * モンスターとプレイヤーの構造体
  */
-public class ThingImp implements Thing {
+public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
     public ThingImp _l_next, _l_prev; /* Next pointer in link */
@@ -30,7 +30,7 @@ public class ThingImp implements Thing {
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
     public Coordinate _t_dest;        /* Where it is running to */
     @Deprecated
-    public int _t_flags;            /* State word */ // Enumの配列が良さそう
+    private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
     public Stats _t_stats;        /* Physical description */  //
     public Room t_room;        /* Current room for thing */
@@ -44,8 +44,6 @@ public class ThingImp implements Thing {
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
     public int _o_packch;            /* What character it is in the pack */
-    public String _o_damage; // = new char[8];        /* Damage if used like sword */
-    public String _o_hurldmg; // = new char[8];        /* Damage if thrown */
     public int _o_count;            /* count for plural objects */
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
     public int _o_hplus;            /* Plusses to hit */
@@ -55,14 +53,15 @@ public class ThingImp implements Thing {
     public int _o_group;            /* group number for this object */  // もしかして要らない
     public char _o_label;            /* Label for object */
 
+    @Override
     public void addState(StateEnum se) {
         this.flags.add(se);
     }
-
+    @Override
     public void removeState(StateEnum se) {
         this.flags.remove(se);
     }
-
+    @Override
     public boolean containsState(StateEnum se) {
         return this.flags.contains(se);
     }
@@ -70,27 +69,29 @@ public class ThingImp implements Thing {
     public void setState(HashSet<StateEnum> flags) {
         this.flags = flags;
     }
-
+    @Override
     public void setState(int flags){
         // TODO: どうしようか
     }
 
+    @Override
     public void addItem(ThingImp th) {
         this.baggage.add(th);
     }
-
+    @Override
     public void removeItem(ThingImp th) {
         this.baggage.remove(th);
     }
 
+    @Override
     public List<ThingImp> getBaggage() {
         return this.baggage;
     }
-
+    @Override
     public int getBaggageSize() {
         return this.baggage.size();
     }
-
+    @Override
     public void setBaggage(List<ThingImp> list) {
         this.baggage = list;
     }
@@ -122,8 +123,6 @@ public class ThingImp implements Thing {
     public ThingImp() {
         this._o_hplus = 0;
         this._o_dplus = 0;
-        this._o_damage = "0x0";
-        this._o_hurldmg = "0x0";
         this._o_arm = 11;
         this._o_count = 1;
         this._o_group = 0;
@@ -168,5 +167,10 @@ public class ThingImp implements Thing {
         boolean oi_know = Boolean.valueOf(cols[4]);
         // TODO:
         return new Obj_info(oi_name, oi_prob, oi_worth, oi_guess, oi_know);
+    }
+
+    @Override
+    public boolean isGroup() {
+        return this._o_group != 0;
     }
 }

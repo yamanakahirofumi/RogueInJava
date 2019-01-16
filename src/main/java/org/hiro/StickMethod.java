@@ -15,24 +15,7 @@ import java.util.List;
  * while wandering around the dungeon.
  */
 public class StickMethod {
-    /*
-     * fix_stick:
-     *	Set up a new stick
-     */
-    public static void fix_stick(Stick cur) {
-        if (Global.ws_type[cur._o_which] == "staff") {
-            cur._o_damage = "2x3";
-        } else {
-            cur._o_damage = "1x1";
-        }
-        cur._o_hurldmg = "1x1";
 
-        if (cur._o_which == StickEnum.WS_LIGHT.getValue()) {
-            cur._o_arm = Util.rnd(10) + 10;
-        } else {
-            cur._o_arm = Util.rnd(5) + 3;
-        }
-    }
 
     /*
      * charge_str:
@@ -62,7 +45,7 @@ public class StickMethod {
 
         if ((obj = Pack.get_item("zap with", ObjectType.STICK)) == null)
             return;
-        if (obj instanceof Stick) {
+        if (!(obj instanceof Stick)) {
             Global.after = false;
             IOUtil.msg("you can't zap with that!");
             return;
@@ -182,11 +165,7 @@ public class StickMethod {
                 break;
             case WS_MISSILE:
                 Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
-                Gold bolt = new Gold(0);    // TODO: Missileクラスつくるべき. 一時的に見た目に合わせたクラスに
-                bolt._o_hurldmg = "1x4";
-                bolt._o_hplus = 100;
-                bolt._o_dplus = 1;
-                bolt.set_o_flags(Const.ISMISL);
+                Missile bolt = new Missile();    // TODO: Missileクラスつくるべき. 見た目を*にしたい
                 if (Human.instance.getWeapons().size() > 0) {
                     bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
                 }

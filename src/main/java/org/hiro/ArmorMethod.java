@@ -2,7 +2,7 @@ package org.hiro;
 
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 
 public class ArmorMethod {
 
@@ -11,9 +11,7 @@ public class ArmorMethod {
      *	The player wants to wear something, so let him/her put it on.
      */
     static void wear() {
-        ThingImp obj;
-        String sp;
-
+        Thing obj;
         if ((obj = Pack.get_item("wear", ObjectType.ARMOR)) == null) {
             return;
         }
@@ -26,18 +24,20 @@ public class ArmorMethod {
             Global.after = false;
             return;
         }
-        if (obj instanceof Armor) {
+        if (!(obj instanceof Armor)) {
             IOUtil.msg("you can't wear that");
             return;
         }
+
+        Armor armor = (Armor) obj;
         waste_time();
         obj.add_o_flags(Const.ISKNOW);
-        sp = ThingMethod.inv_name(obj, true);
-        Global.cur_armor = obj;
+        String sp = ThingMethod.inv_name(armor, true);
+        Global.cur_armor = armor;
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
-        // IOUtil.msg("wearing %s", sp);
+        IOUtil.msg("wearing %s", sp);
     }
 
     /*
@@ -56,7 +56,7 @@ public class ArmorMethod {
      *	Get the armor off of the players back
      */
     static void take_off() {
-        ThingImp obj;
+        Armor obj;
 
         if ((obj = Global.cur_armor) == null) {
             Global.after = false;

@@ -7,6 +7,7 @@ import org.hiro.things.ObjectType;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.RingEnum;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 
 import java.lang.reflect.Method;
@@ -62,7 +63,7 @@ public class Potions {
     static void quaff() {
         boolean MASTER = false;
 
-        ThingImp obj = Pack.get_item("quaff", ObjectType.POTION);
+        Thing obj = Pack.get_item("quaff", ObjectType.POTION);
         /*
          * Make certain that it is somethings that we want to drink
          */
@@ -77,14 +78,15 @@ public class Potions {
             }
             return;
         }
-        Human.instance.removeWeapon(obj);
+        Potion potion = (Potion) obj;
+        Human.instance.removeWeapon(potion);
 
         /*
          * Calculate the effect it has on the poor guy.
          */
         boolean trip = Human.instance.containsState(StateEnum.ISHALU);
-        Pack.leave_pack(obj, false, false);
-        PotionEnum p = PotionEnum.get(obj._o_which);
+        Pack.leave_pack(potion, false, false);
+        PotionEnum p = PotionEnum.get(potion._o_which);
         boolean show;
         switch (p) {
             case P_CONFUSE:
@@ -358,10 +360,6 @@ public class Potions {
         Misc.check_level();
     }
 
-    static boolean is_magic(ThingImp obj) {
-        return obj.isMagic();
-    }
-
     /*
      * A wrapper for turn_see(TRUE), intended to be a fuse.
      */
@@ -388,7 +386,6 @@ public class Potions {
      *	Return TRUE if the player has seen the stairs
      */
     static boolean seen_stairs() {
-        ThingImp tp;
 
         Display.move(Global.stairs.y, Global.stairs.x);
         if (Util.CCHAR(Display.inch()) == ObjectType.STAIRS.getValue()) {            /* it's on the map */
@@ -401,7 +398,8 @@ public class Potions {
         /*
          * if a monster is on the stairs, this gets hairy
          */
-        if ((tp = Util.getPlace(Global.stairs).p_monst) != null) {
+        ThingImp tp = Util.getPlace(Global.stairs).p_monst;
+        if (tp != null) {
             if (Chase.see_monst(tp) && tp.containsState(StateEnum.ISRUN)) {    /* if it's visible and awake */
                 return true;            /* it must have moved there */
             }

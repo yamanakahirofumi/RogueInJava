@@ -51,6 +51,8 @@ public interface Player {
     void addHp(int plus);
     void deleteHp(int damage);
 
+    int getStomachSize();
+
     int getFoodLeft();
 
     void addExperience(long exp);

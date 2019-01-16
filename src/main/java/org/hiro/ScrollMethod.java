@@ -5,6 +5,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Food;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
@@ -20,10 +21,10 @@ public class ScrollMethod {
     static void read_scroll() {
         boolean MASTER = false;
 
-        ThingImp obj = Pack.get_item("read", ObjectType.SCROLL);
+        Thing obj = Pack.get_item("read", ObjectType.SCROLL);
         if (obj == null)
             return;
-        if (obj instanceof Scroll) {
+        if (!(obj instanceof Scroll)) {
             if (!Global.terse) {
                 IOUtil.msg("there is nothing on it to read");
             } else {
@@ -31,17 +32,18 @@ public class ScrollMethod {
             }
             return;
         }
+        Scroll scroll = (Scroll)obj;
         /*
          * Calculate the effect it has on the poor guy.
          */
-        Human.instance.removeWeapon(obj);
+        Human.instance.removeWeapon(scroll);
         /*
          * Get rid of the thing
          */
-        Pack.leave_pack(obj, false, false);
-        ThingImp orig_obj = obj;
+        Pack.leave_pack(scroll, false, false);
+        Scroll orig_obj = scroll;
 
-        ScrollEnum s = ScrollEnum.get(obj._o_which);
+        ScrollEnum s = ScrollEnum.get(scroll._o_which);
         switch (s) {
             case S_CONFUSE:
                 /*
@@ -68,9 +70,10 @@ public class ScrollMethod {
                     if (x >= 0 && x < Const.NUMCOLS) {
                         for (int y = Global.player._t_pos.y - 2; y <= Global.player._t_pos.y + 2; y++) {
                             if (y >= 0 && y <= Const.NUMLINES - 1) {
-                                if ((obj = Util.INDEX(y, x).p_monst) != null && obj.containsState(StateEnum.ISRUN)) {
-                                    obj.removeState(StateEnum.ISRUN);
-                                    obj.addState(StateEnum.ISHELD);
+                                OriginalMonster obj2 = Util.INDEX(y, x).p_monst;
+                                if (obj2  != null && obj2.containsState(StateEnum.ISRUN)) {
+                                    obj2.removeState(StateEnum.ISRUN);
+                                    obj2.addState(StateEnum.ISHELD);
                                     ch++;
                                 }
                             }
@@ -132,11 +135,11 @@ public class ScrollMethod {
                         }
                     }
                 }
-                if (i == 0)
+                if (i == 0) {
                     IOUtil.msg("you hear a faint cry of anguish in the distance");
-                else {
-                    obj = new ThingImp();
-                    Monst.new_monster(obj, Monst.randmonster(false), mp);
+                } else {
+                    ThingImp obj2 = new ThingImp();
+                    Monst.new_monster(obj2, Monst.randmonster(false), mp);
                 }
                 break;
             case S_ID_POTION:
@@ -148,9 +151,9 @@ public class ScrollMethod {
                 /*
                  * Identify, let him figure something out
                  */
-                Global.scr_info[obj._o_which].know();
-                IOUtil.msg("this scroll is an %s scroll", Global.scr_info[obj._o_which].getName());
-                Wizard.whatis(true, id_type[obj._o_which]);
+                Global.scr_info[scroll._o_which].know();
+                IOUtil.msg("this scroll is an %s scroll", Global.scr_info[scroll._o_which].getName());
+                Wizard.whatis(true, id_type[scroll._o_which]);
             }
             break;
             case S_MAP:
@@ -227,10 +230,11 @@ public class ScrollMethod {
                                 break;
                         }
                         if (chp != ObjectType.Blank) {
-                            if ((obj = pp.p_monst) != null) {
-                                obj._t_oldch = chp.getValue();
+                            ThingImp monst = pp.p_monst;
+                            if (monst != null) {
+                                monst._t_oldch = chp.getValue();
                             }
-                            if (obj == null || !Human.instance.containsState(StateEnum.SEEMONST)) {
+                            if (monst == null || !Human.instance.containsState(StateEnum.SEEMONST)) {
                                 Display.mvaddch(y, x, chp.getValue());
                             }
                         }
@@ -242,7 +246,7 @@ public class ScrollMethod {
                  */
                 boolean chb = false;
                 // Display.wclear(hw);
-                for (ThingImp obj2 : Global.lvl_obj) {
+                for (Thing obj2 : Global.lvl_obj) {
                     if (obj2 instanceof Food) {
                         chb = true;
                         // Display.wmove(hw, obj2._o_pos.y, obj2._o_pos.x);

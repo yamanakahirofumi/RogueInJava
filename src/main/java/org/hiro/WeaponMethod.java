@@ -46,7 +46,7 @@ public class WeaponMethod {
          * or if it misses (combat) the monster, put it on the floor
          */
         if (Util.getPlace(obj._o_pos).p_monst == null ||
-                !hit_monster(obj._o_pos, obj)) {
+                !hit_monster(obj._o_pos, (Weapon) obj)) {
             fall(obj, true);
         }
     }
@@ -111,7 +111,7 @@ public class WeaponMethod {
      * hit_monster:
      *	Does the missile hit the monster?
      */
-    static boolean hit_monster(Coordinate mp, ThingImp obj) {
+    static boolean hit_monster(Coordinate mp, Weapon obj) {
         return Fight.fight(mp, obj, true);
     }
 
@@ -169,14 +169,14 @@ public class WeaponMethod {
      */
     static void wield() {
 
-        ThingImp oweapon = Human.instance.getWeapons().get(0);
+        Weapon oweapon = Human.instance.getWeapons().get(0);
         if (!ThingMethod.dropcheck(Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null)) {
             Human.instance.putOnWeapon((Weapon) oweapon);
             return;
         }
         Human.instance.putOnWeapon((Weapon) oweapon);
-        ThingImp obj;
-        if ((obj = Pack.get_item("wield", ObjectType.WEAPON)) == null) {
+        ThingImp obj = Pack.get_item("wield", ObjectType.WEAPON);
+        if (obj == null) {
             Global.after = false;
             return;
         }

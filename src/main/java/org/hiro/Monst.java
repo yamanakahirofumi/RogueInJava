@@ -94,14 +94,17 @@ public class Monst {
     static int exp_add(ThingImp tp) {
         int mod;
 
-        if (tp._t_stats.s_lvl == 1)
+        if (tp._t_stats.s_lvl == 1) {
             mod = tp._t_stats.s_maxhp / 8;
-        else
+        } else {
             mod = tp._t_stats.s_maxhp / 6;
-        if (tp._t_stats.s_lvl > 9)
+        }
+
+        if (tp._t_stats.s_lvl > 9) {
             mod *= 20;
-        else if (tp._t_stats.s_lvl > 6)
+        } else if (tp._t_stats.s_lvl > 6) {
             mod *= 4;
+        }
         return mod;
     }
 

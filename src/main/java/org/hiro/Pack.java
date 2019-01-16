@@ -146,7 +146,7 @@ public class Pack {
         if (obj._o_count > 1 && !all) {
             Global.last_pick = obj;
             obj._o_count--;
-            if (obj._o_group != 0) {
+            if (obj.isGroup()) {
                 Global.inpack++;
             }
             if (newobj) {
@@ -249,7 +249,7 @@ public class Pack {
                             discarded = true;
                             lp = null;
                             // goto out;
-                        } else if (obj._o_group != 0) {
+                        } else if (obj.isGroup()) {
                             lp = op;
                             while (op.getClass() == obj.getClass()
                                     && op._o_which == obj._o_which

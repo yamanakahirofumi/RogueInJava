@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hiro.mapper.InitWeaponMapper">
+    <select id="findById" resultMap="initWeapon">
+        SELECT damage, hurling_damage, launch, flags FROM init_weapons WHERE
+        id = #{id}
+    </select>
+
+    <resultMap id="initWeapon" type="org.hiro.InitWeapon">
+        <result property="iw_dam" column="damage"/>
+        <result property="iw_hrl" column="hurling_damage"/>
+        <result property="iw_launch" column="launch"/>
+        <result property="iw_flags" column="flags"/>
+    </resultMap>
+</mapper>

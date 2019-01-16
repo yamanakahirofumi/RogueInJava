@@ -55,7 +55,7 @@ public class Fight {
      * fight:
      *	The player attacks the monster.
      */
-    static boolean fight(Coordinate mp, ThingImp weap, boolean thrown) {
+    static boolean fight(Coordinate mp, Weapon weap, boolean thrown) {
         ThingImp tp;
         boolean did_hit = true;
         String mname;
@@ -345,7 +345,7 @@ public class Fight {
      * roll_em:
      *	Roll several attacks
      */
-    static boolean roll_em(ThingImp thatt, ThingImp thdef, ThingImp weap, boolean hurl) {
+    static boolean roll_em(ThingImp thatt, ThingImp thdef, Weapon weap, boolean hurl) {
         /*
          * adjustments to hit probabilities due to strength
          */
@@ -387,7 +387,7 @@ public class Fight {
                     hplus += Global.cur_ring[Const.RIGHT]._o_arm;
                 }
             }
-            cp = weap._o_damage;
+            cp = weap.getDamage();
             if (hurl) {
                 if (weap.contains_o_flags(Const.ISMISL) && curWeapons.size() > 0 &&
                         curWeapons.get(0)._o_which == weap._o_launch) {

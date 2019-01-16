@@ -33,7 +33,7 @@ public class Const {
 
     public static int ISCURSED = 000001;        /* object is cursed */ // 呪い
     public static int ISKNOW = 0000002;        /* player knows details about the object */
-    static int ISMISL = 0000004;        /* object is a missile type */
+    public static int ISMISL = 0000004;        /* object is a missile type */
     public static int ISMANY = 0000010;    /* object comes in groups */
 
 
@@ -113,6 +113,7 @@ public class Const {
     public static int HEALTIME = 30;
     public static int HUHDURATION = 20;
     public static int SEEDURATION = 850;
+    @Deprecated
     public static int HUNGERTIME = 1300;
     public static int MORETIME = 150;
     @Deprecated

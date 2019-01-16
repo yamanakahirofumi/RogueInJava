@@ -9,6 +9,9 @@ import org.hiro.Util;
 import java.util.Arrays;
 
 public class Weapon extends ThingImp {
+    private String power; // = new char[8];        /* Damage if used like sword */
+    public String _o_hurldmg; // = new char[8];        /* Damage if thrown */
+
     Weapon() {
         super();
         this._o_which = ThingMethod.pick_one(Arrays.asList(Global.weap_info), WeaponEnum.getMaxValue());
@@ -48,8 +51,9 @@ public class Weapon extends ThingImp {
      *	Set up the initial goodies for a Weapon
      */
     private void initWeapon() {
+
         InitWeapon iwp = Global.init_dam.get(this._o_which);
-        this._o_damage = iwp.iw_dam;
+        this.power = iwp.iw_dam;
         this._o_hurldmg = iwp.iw_hrl;
         this._o_launch = iwp.iw_launch;
         this.set_o_flags(iwp.iw_flags);
@@ -70,5 +74,9 @@ public class Weapon extends ThingImp {
     @Override
     public ObjectType getDisplay() {
         return ObjectType.WEAPON;
+    }
+
+    public String getDamage(){
+        return this.power;
     }
 }

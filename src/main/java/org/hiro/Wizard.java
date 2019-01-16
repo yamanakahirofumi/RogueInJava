@@ -108,8 +108,6 @@ public class Wizard {
      *	Set things up when we really know what a thing is
      */
     static void set_know(ThingImp obj, Obj_info[] info) {
-        String guess;
-
         info[obj._o_which].know();
         obj.add_o_flags(Const.ISKNOW);
     }

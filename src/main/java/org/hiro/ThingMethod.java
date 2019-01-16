@@ -301,8 +301,6 @@ public class ThingMethod {
      *	Give the proper name to a potion, stick, or ring
      */
     static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
-        char pb;
-
         if (op.isKnown() || op.isTemporaryNamed()) {
             if (obj._o_count == 1) {
                 Global.prbuf = "A " + type + " ";
@@ -382,8 +380,8 @@ public class ThingMethod {
             IOUtil.msg("there is something there already");
             return;
         }
-        ThingImp obj;
-        if ((obj = Pack.get_item("drop", ObjectType.Initial)) == null) {
+        ThingImp obj= Pack.get_item("drop", ObjectType.Initial);
+        if (obj == null) {
             return;
         }
         if (!dropcheck(obj)) {
