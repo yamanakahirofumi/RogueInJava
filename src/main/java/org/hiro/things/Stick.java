@@ -9,8 +9,8 @@ import org.hiro.Util;
 import java.util.Arrays;
 
 public class Stick extends ThingImp {
-    private String _o_damage;
-    private String _o_hurldmg;
+    private String power;
+    private String hurlPower;
 
     Stick(){
         this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ws_info), StickEnum.getMaxValue());
@@ -30,12 +30,12 @@ public class Stick extends ThingImp {
      *	Set up a new stick
      */
     private void fix_stick() {
-        if (Global.ws_type[this._o_which] == "staff") {
-            this._o_damage = "2x3";
+        if ("staff".equals(Global.ws_type[this._o_which])) {
+            this.power = "2x3";
         } else {
-            this._o_damage = "1x1";
+            this.power = "1x1";
         }
-        this._o_hurldmg = "1x1";
+        this.hurlPower = "1x1";
 
         if (this._o_which == StickEnum.WS_LIGHT.getValue()) {
             this._o_arm = Util.rnd(10) + 10;
