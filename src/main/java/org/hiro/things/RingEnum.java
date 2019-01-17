@@ -38,6 +38,6 @@ public enum RingEnum {
     }
 
     static public RingEnum get(int i){
-        return Arrays.asList(RingEnum.values()).stream().filter(o -> o.getValue() == i).findFirst().get();
+        return Arrays.stream(RingEnum.values()).filter(o -> o.getValue() == i).findFirst().get();
     }
 }
