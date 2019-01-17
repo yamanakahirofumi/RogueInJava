@@ -165,7 +165,7 @@ public class StickMethod {
                 break;
             case WS_MISSILE:
                 Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
-                Missile bolt = new Missile();    // TODO: Missileクラスつくるべき. 見た目を*にしたい
+                Missile bolt = new Missile();
                 if (Human.instance.getWeapons().size() > 0) {
                     bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
                 }
