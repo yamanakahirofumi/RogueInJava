@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 public class Stick extends ThingImp {
     private String _o_damage;
+    private String _o_hurldmg;
 
     Stick(){
         this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ws_info), StickEnum.getMaxValue());
