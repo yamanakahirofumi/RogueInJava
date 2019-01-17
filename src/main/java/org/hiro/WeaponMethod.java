@@ -14,9 +14,8 @@ public class WeaponMethod {
      *	Figure out the plus number for armor/weapons
      */
     static String num(int n1, int n2, ObjectType type) {
-        String numbuf;
 
-        numbuf = (n1 < 0 ? String.valueOf(n1) : "+" + n1);
+        String numbuf = (n1 < 0 ? String.valueOf(n1) : "+" + n1);
         if (type.getValue() == ObjectType.WEAPON.getValue()) {
             numbuf = numbuf + (n2 < 0 ? "," + n2 : ",+" + n2);
         }
@@ -28,12 +27,12 @@ public class WeaponMethod {
      *	Fire a missile in a given direction
      */
     static void missile(int ydelta, int xdelta) {
-        ThingImp obj;
+        ThingImp obj=Pack.get_item("throw", ObjectType.WEAPON);
 
         /*
          * Get which thing we are hurling
          */
-        if ((obj = Pack.get_item("throw", ObjectType.WEAPON)) == null) {
+        if (obj == null) {
             return;
         }
         if (!ThingMethod.dropcheck(obj) || Misc.is_current(obj)) {
