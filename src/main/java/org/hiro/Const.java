@@ -40,12 +40,12 @@ public class Const {
     /*
      * Maximum number of different things
      */
-    static int MAXTHINGS = 9;
+    // static int MAXTHINGS = 9;
     static int MAXOBJ = 9;
     static int MAXPACK = 23;
     static int MAXTRAPS = 10;
     static int AMULETLEVEL = 26;
-    public static int NUMTHINGS = 7;    /* number of types of things */
+    // public static int NUMTHINGS = 7;    /* number of types of things */
     static int MAXPASS = 13;    /* upper limit on number of passages */
     static int STATLINE = (NUMLINES - 1);
     static int BORE_LEVEL = 50;
