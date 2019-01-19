@@ -1,6 +1,7 @@
 package org.hiro.character;
 
 import org.hiro.map.AbstractCoordinate;
+import org.hiro.things.Armor;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
@@ -73,5 +74,10 @@ public interface Player {
     boolean isEquippedWeapons(Thing thing);
     boolean putOnWeapon(Weapon w);
     boolean removeWeapon(Thing thing);
+    boolean isEquippedArmor();
+    boolean isEquippedArmor(Thing  thing);
+    Armor getArmor();
+    boolean putOnArmor(Armor armor);
+    boolean removeArmor();
 
 }

@@ -15,7 +15,7 @@ public class RemoveCurse extends Scroll {
 
     @Override
     public void read() {
-        uncurse(Global.cur_armor);
+        uncurse(Human.instance.getArmor());
         uncurse(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null);
         uncurse(Global.cur_ring[Const.LEFT]);
         uncurse(Global.cur_ring[Const.RIGHT]);

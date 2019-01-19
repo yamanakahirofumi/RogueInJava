@@ -226,4 +226,30 @@ public class Human implements Player {
         return true;
     }
 
+    @Override
+    public boolean isEquippedArmor() {
+        return this.armor != null;
+    }
+
+    @Override
+    public boolean isEquippedArmor(Thing thing) {
+        return this.armor == thing;
+    }
+
+    @Override
+    public Armor getArmor(){
+        return this.armor;
+    }
+
+    @Override
+    public boolean putOnArmor(Armor armor) {
+        this.armor = armor;
+        return true;
+    }
+
+    @Override
+    public boolean removeArmor() {
+        this.armor = null;
+        return true;
+    }
 }

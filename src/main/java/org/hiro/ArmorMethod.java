@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Thing;
@@ -15,7 +16,7 @@ public class ArmorMethod {
         if ((obj = Pack.get_item("wear", ObjectType.ARMOR)) == null) {
             return;
         }
-        if (Global.cur_armor != null) {
+        if (Human.instance.isEquippedArmor()) {
             IOUtil.addmsg("you are already wearing some");
             if (!Global.terse) {
                 IOUtil.addmsg(".  You'll have to take it off first");
@@ -33,7 +34,7 @@ public class ArmorMethod {
         waste_time();
         obj.add_o_flags(Const.ISKNOW);
         String sp = ThingMethod.inv_name(armor, true);
-        Global.cur_armor = armor;
+        Human.instance.putOnArmor(armor);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
@@ -56,9 +57,7 @@ public class ArmorMethod {
      *	Get the armor off of the players back
      */
     static void take_off() {
-        Armor obj;
-
-        if ((obj = Global.cur_armor) == null) {
+        if (!Human.instance.isEquippedArmor()) {
             Global.after = false;
             if (Global.terse) {
                 IOUtil.msg("not wearing armor");
@@ -67,10 +66,11 @@ public class ArmorMethod {
             }
             return;
         }
-        if (!ThingMethod.dropcheck(Global.cur_armor)) {
+        if (!ThingMethod.isDrop(Human.instance.getArmor())) {
             return;
         }
-        Global.cur_armor = null;
+        Armor obj = Human.instance.getArmor();
+        Human.instance.removeArmor();
         if (Global.terse) {
             IOUtil.addmsg("was");
         } else {

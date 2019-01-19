@@ -370,7 +370,7 @@ public class Move {
                 break;
             case Const.T_RUST:
                 IOUtil.msg("a gush of water hits you on the head");
-                rust_armor(Global.cur_armor);
+                rust_armor(Human.instance.getArmor());
         }
         Mach_dep.flush_type();
         return tr.getValue();

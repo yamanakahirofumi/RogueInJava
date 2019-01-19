@@ -482,7 +482,7 @@ public class Command {
                         current(Human.instance.getWeapons().size() == 0 ? null : Human.instance.getWeapons().get(0), "wielding", null);
                         break;
                     case ']':
-                        current(Global.cur_armor, "wearing", null);
+                        current(Human.instance.getArmor(), "wearing", null);
                         break;
                     case '=':
                         current(Global.cur_ring[Const.LEFT], "wearing",
@@ -564,7 +564,7 @@ public class Command {
                                      * And his suit of armor
                                      */
                                     Armor armor = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
-                                    Global.cur_armor = armor;
+                                    Human.instance.putOnArmor(armor);
                                     Pack.add_pack(armor, true);
                                 }
                                 break;

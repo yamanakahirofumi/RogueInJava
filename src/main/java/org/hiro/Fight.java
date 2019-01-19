@@ -407,8 +407,9 @@ public class Fight {
             hplus += 4;
         int def_arm = def.s_arm;
         if (def == Global.player._t_stats) {
-            if (Global.cur_armor != null)
-                def_arm = Global.cur_armor._o_arm;
+            if (Human.instance.isEquippedArmor()) {
+                def_arm = Human.instance.getArmor()._o_arm;
+            }
             if (Util.ISRING(Const.LEFT, RingEnum.Protection))
                 def_arm -= Global.cur_ring[Const.LEFT]._o_arm;
             if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
@@ -514,7 +515,7 @@ public class Fight {
                         /*
                          * If an aquator hits, you can lose armor class.
                          */
-                        Move.rust_armor(Global.cur_armor);
+                        Move.rust_armor(Human.instance.getArmor());
                         break;
                     case 'I':
                         /*

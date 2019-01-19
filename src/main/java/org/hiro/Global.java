@@ -1,7 +1,6 @@
 package org.hiro;
 
 import org.hiro.map.Coordinate;
-import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Ring;
@@ -125,7 +124,6 @@ public class Global {
     public static Ring cur_ring[];
     @Deprecated
     public static ThingImp player;
-    public static Armor cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
 

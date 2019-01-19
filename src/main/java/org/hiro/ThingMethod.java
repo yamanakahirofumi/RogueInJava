@@ -276,7 +276,7 @@ public class ThingMethod {
                 }
         }
         if (Global.inv_describe) {
-            if (obj == Global.cur_armor) {
+            if (Human.instance.isEquippedArmor(obj)) {
                 Global.prbuf = Global.prbuf + " (being worn)";
             }
             if (Human.instance.isEquippedWeapons(obj)) {
@@ -348,9 +348,9 @@ public class ThingMethod {
             return false;
         }
         Human.instance.removeWeapon(obj);
-        if (obj == Global.cur_armor) {
+        if (Human.instance.isEquippedArmor(obj)) {
             ArmorMethod.waste_time();
-            Global.cur_armor = null;
+            Human.instance.removeArmor();
         } else {
             Global.cur_ring[obj == Global.cur_ring[Const.LEFT] ? Const.LEFT : Const.RIGHT] = null;
             if (obj._o_which == RingEnum.R_ADDSTR.getValue()) {
