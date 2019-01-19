@@ -198,9 +198,9 @@ public class Monst {
      */
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {
-            if (Util.ISRING(Const.LEFT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.LEFT, RingEnum.Protection))
                 which -= Global.cur_ring[Const.LEFT]._o_arm;
-            if (Util.ISRING(Const.RIGHT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
                 which -= Global.cur_ring[Const.RIGHT]._o_arm;
         }
         return save_throw(which, Global.player);

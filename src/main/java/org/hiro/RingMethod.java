@@ -19,7 +19,7 @@ public class RingMethod {
             return "";
         }
         switch (RingEnum.valueOf(String.valueOf(obj._o_which))) {
-            case R_PROTECT:
+            case Protection:
             case R_ADDSTR:
             case R_ADDDAM:
             case R_ADDHIT:
@@ -43,7 +43,7 @@ public class RingMethod {
         }
         int eat;
         int[] uses = {
-                1,    /* R_PROTECT */         1,    /* R_ADDSTR */
+                1,    /* Protection */         1,    /* R_ADDSTR */
                 1,    /* R_SUSTSTR */        -3,    /* R_SEARCH */
                 -5,    /* R_SEEINVIS */     0,    /* R_NOP */
                 0,    /* R_AGGR */        -3,    /* R_ADDHIT */

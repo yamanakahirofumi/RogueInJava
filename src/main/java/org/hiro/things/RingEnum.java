@@ -7,7 +7,12 @@ import java.util.Arrays;
  */
 public enum RingEnum {
 
-    R_PROTECT(0),
+    /**
+     * Protection
+     *
+     * R_PROTECT
+     */
+    Protection(0),
     R_ADDSTR(1),
     R_SUSTSTR(2),
     R_SEARCH(3),
