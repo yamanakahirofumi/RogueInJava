@@ -10,7 +10,7 @@ public class Dungeon {
     int maxColumnSize;  // 階層の最大列数
     int maxLineSize;    // 階層の最大行数
     int maxRoomSize;    // 部屋の最大数
-    List<Floor> Floors;
+    List<Floor> floors;
 
     public Dungeon(String name){
         this.name = name;
@@ -26,7 +26,7 @@ public class Dungeon {
     public void setPlayer(Player p){
         p.setDungeon(this.name);
         Floor f = new Floor(1,maxRoomSize,new TwoDimensionsCoordinateFactory());
-        Floors.add(f);
+        floors.add(f);
         f.setPlayer(p);
     }
 
