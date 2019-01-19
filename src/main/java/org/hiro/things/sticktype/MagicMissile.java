@@ -25,7 +25,7 @@ public class MagicMissile extends Stick {
             bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
         }
         ThingImp tp = Util.getPlace(bolt._o_pos).p_monst;
-        WeaponMethod.do_motion(bolt, Global.delta.y, Global.delta.x);
+        WeaponMethod.do_motion(bolt, Global.delta);
         if (tp != null && !Monst.save_throw(Const.VS_MAGIC, tp)) {
             WeaponMethod.hit_monster(bolt._o_pos, bolt);
         } else if (Global.terse) {

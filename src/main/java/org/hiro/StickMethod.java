@@ -94,8 +94,7 @@ public class StickMethod {
                 c1 = spotPosition.get(i);
             }
 
-            pos.y += dir.y;
-            pos.x += dir.x;
+            pos = dir.add(pos);
             c1 = pos;
             ObjectType ch = Util.winat(pos);
             ThingImp tp;
@@ -154,7 +153,7 @@ public class StickMethod {
                                 IOUtil.msg("the %s whizzes by you", name);
                             }
                         }
-                        Display.mvaddch(pos.y, pos.x, (char) dirch);
+                        Display.mvaddch(pos, (char) dirch);
                         Display.refresh();
                     }
                     /* FALLTHROUGH */
@@ -217,13 +216,13 @@ public class StickMethod {
                             IOUtil.msg("the %s whizzes by you", name);
                         }
                     }
-                    Display.mvaddch(pos.y, pos.x, (char) dirch);
+                    Display.mvaddch(pos, (char) dirch);
                     Display.refresh();
             }
         }
         for (int j = 0; j < i; j++) {
             Coordinate c2 = spotPosition.get(j);
-            Display.mvaddch(c2.y, c2.x, Util.getPlace(c2).p_ch.getValue());
+            Display.mvaddch(c2, Util.getPlace(c2).p_ch.getValue());
         }
     }
 

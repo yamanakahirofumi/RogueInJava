@@ -333,10 +333,10 @@ public class ThingMethod {
     }
 
     /*
-     * dropcheck:
+     * isDrop:
      *	Do special checks for dropping or unweilding|unwearing|unringing
      */
-    static boolean dropcheck(ThingImp obj) {
+    static boolean isDrop(ThingImp obj) {
         if (obj == null) {
             return true;
         }
@@ -384,7 +384,7 @@ public class ThingMethod {
         if (obj == null) {
             return;
         }
-        if (!dropcheck(obj)) {
+        if (!isDrop(obj)) {
             return;
         }
         obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj));

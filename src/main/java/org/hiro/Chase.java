@@ -29,7 +29,7 @@ public class Chase {
         }
         for (int i = 0; i < Const.MAXROOMS; i++) {
             Room rp = Global.rooms.get(i);
-            if(rp.isInMyRoom(cp)){
+            if (rp.isInMyRoom(cp)) {
                 return rp;
             }
         }
@@ -184,7 +184,7 @@ public class Chase {
     public static void relocate(ThingImp th, Coordinate new_loc) {
 
         if (!new_loc.equals(th._t_pos)) {
-            Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
+            Display.mvaddch(th._t_pos, (char) th._t_oldch);
             th.t_room = roomin(new_loc);
             set_oldch(th, new_loc);
             Room oroom = th.t_room;
@@ -196,7 +196,7 @@ public class Chase {
             th._t_pos = new_loc;
             Util.getPlace(new_loc).p_monst = th;
         }
-        Display.move(new_loc.y, new_loc.x);
+        Display.move(new_loc);
         if (see_monst(th)) {
             Display.addch((char) th._t_disguise);
         } else if (Human.instance.containsState(StateEnum.SEEMONST)) {
@@ -217,7 +217,7 @@ public class Chase {
         }
 
         int sch = tp._t_oldch;
-        tp._t_oldch = Util.CCHAR(Display.mvinch(cp.y, cp.x));
+        tp._t_oldch = Util.CCHAR(Display.mvinch(cp));
         if (!Human.instance.containsState(StateEnum.ISBLIND)) {
             if ((sch == ObjectType.FLOOR.getValue() || tp._t_oldch == ObjectType.FLOOR.getValue()) &&
                     tp.t_room.containInfo(RoomInfoEnum.ISDARK)) {
@@ -340,8 +340,8 @@ public class Chase {
                         || Math.abs(th._t_pos.y - Global.player._t_pos.y) == Math.abs(th._t_pos.x - Global.player._t_pos.x))
                         && dist_cp(th._t_pos, Global.player._t_pos) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
                         && !th.containsState(StateEnum.ISCANC) && Util.rnd(DRAGONSHOT) == 0) {
-                    Global.delta.y = Misc.sign(Global.player._t_pos.y - th._t_pos.y);
-                    Global.delta.x = Misc.sign(Global.player._t_pos.x - th._t_pos.x);
+                    Global.delta = new Coordinate(Misc.sign(Global.player._t_pos.x - th._t_pos.x),
+                            Misc.sign(Global.player._t_pos.y - th._t_pos.y));
                     if (Global.has_hit) {
                         IOUtil.endmsg();
                     }

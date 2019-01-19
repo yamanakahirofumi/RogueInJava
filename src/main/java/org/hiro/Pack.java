@@ -212,7 +212,7 @@ public class Pack {
         if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue())
             if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
                 Global.lvl_obj.remove(obj);
-                Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
+                Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
                 Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
                 update_mdest(obj);
                 discarded = true;
@@ -362,7 +362,7 @@ public class Pack {
 
         if (from_floor) {
             Global.lvl_obj.remove(obj);
-            Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
+            Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
             Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         }
 
@@ -425,7 +425,7 @@ public class Pack {
      */
     static void money(int value) {
         Global.purse += value;
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
+        Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
         Util.getPlace(Global.player._t_pos).p_ch =
                 Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         if (value > 0) {

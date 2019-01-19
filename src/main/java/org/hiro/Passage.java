@@ -218,12 +218,11 @@ public class Passage {
             rpt = Global.rooms.get(rmt);            /* room pointer of dest */
             direction.x = 0;
             direction.y = 1;                /* direction of move */
-            startPosition = new Coordinate(rpf.r_pos.x, rpf.r_pos.y);            /* start of move */
-            endPosiiton = new Coordinate(rpt.r_pos.x, rpt.r_pos.y);            /* end of move */
+            startPosition = new Coordinate(rpf.r_pos);            /* start of move */
+            endPosiiton = new Coordinate(rpt.r_pos);            /* end of move */
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {    /* if not gone pick door pos */
                 do {
-                    startPosition.x = rpf.r_pos.x + Util.rnd(rpf.r_max.x - 2) + 1;
-                    startPosition.y = rpf.r_pos.y + rpf.r_max.y - 1;
+                    startPosition = rpf.r_pos.add(new Coordinate(Util.rnd(rpf.r_max.x - 2) + 1, rpf.r_max.y - 1));
                 } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
@@ -240,12 +239,11 @@ public class Passage {
             rpt = Global.rooms.get(rmt);
             direction.x = 1;
             direction.y = 0;
-            startPosition = new Coordinate(rpf.r_pos.x, rpf.r_pos.y);
-            endPosiiton = new Coordinate(rpt.r_pos.x, rpt.r_pos.y);
+            startPosition = new Coordinate(rpf.r_pos);
+            endPosiiton = new Coordinate(rpt.r_pos);
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
-                    startPosition.x = rpf.r_pos.x + rpf.r_max.x - 1;
-                    startPosition.y = rpf.r_pos.y + Util.rnd(rpf.r_max.y - 2) + 1;
+                    startPosition = rpf.r_pos.add(new Coordinate(rpf.r_max.x - 1,Util.rnd(rpf.r_max.y - 2) + 1 ));
                 } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
@@ -284,21 +282,19 @@ public class Passage {
         /*
          * Get ready to move...
          */
-        Coordinate curr = new Coordinate(startPosition.x, startPosition.y);
+        Coordinate curr = new Coordinate(startPosition);
         while (distance > 0) {
             /*
              * Move to new position
              */
-            curr.x += direction.x;
-            curr.y += direction.y;
+            curr = direction.add(curr);
             /*
              * Check if we are at the turn place, if so do the turn
              */
             if (distance == turn_spot)
                 while (turn_distance-- > 0) {
                     putpass(curr);
-                    curr.x += turn_delta.x;
-                    curr.y += turn_delta.y;
+                    curr = turn_delta.add(curr);
                 }
             /*
              * Continue digging along
@@ -306,9 +302,8 @@ public class Passage {
             putpass(curr);
             distance--;
         }
-        curr.x += direction.x;
-        curr.y += direction.y;
-        if (curr.x != endPosiiton.x || curr.y != endPosiiton.y) {
+        curr = direction.add(curr);
+        if (!curr.equals(endPosiiton)) {
             //   msg("warning, connectivity problem on this level");
         }
     }

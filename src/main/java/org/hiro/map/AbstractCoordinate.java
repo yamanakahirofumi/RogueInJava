@@ -6,5 +6,6 @@ package org.hiro.map;
  */
 public interface AbstractCoordinate {
     public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size);
+    public AbstractCoordinate add(AbstractCoordinate co0rdinate);
 
 }

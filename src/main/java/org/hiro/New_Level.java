@@ -89,7 +89,7 @@ public class New_Level {
 
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);
         Rooms.enter_room(Global.player._t_pos);
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
+        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
         if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }

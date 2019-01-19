@@ -157,7 +157,7 @@ public class RingMethod {
             IOUtil.msg("not wearing such a ring");
             return;
         }
-        if (ThingMethod.dropcheck(obj))
+        if (ThingMethod.isDrop(obj))
             IOUtil.msg("was wearing %s(%c)", ThingMethod.inv_name(obj, true), obj._o_packch);
     }
 

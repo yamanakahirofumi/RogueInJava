@@ -18,12 +18,9 @@ public class TeleportAway extends Stick {
 
     @Override
     public void shake() {
-        Coordinate tmp = new Coordinate();
-        tmp.y = Global.player._t_pos.y;
-        tmp.x = Global.player._t_pos.x;
+        Coordinate tmp = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp))) {
-            tmp.y += Global.delta.y;
-            tmp.x += Global.delta.x;
+            tmp = Global.delta.add(tmp);
         }
         ThingImp tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {

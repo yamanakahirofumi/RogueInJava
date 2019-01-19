@@ -66,8 +66,7 @@ public class Move {
             }
         } else {
             over:
-            nh.y = Global.player._t_pos.y + dy;
-            nh.x = Global.player._t_pos.x + dx;
+            nh = Global.player._t_pos.add(new Coordinate(dx,dy));
         }
 
         /*
@@ -175,7 +174,7 @@ public class Move {
             default:
                 Global.running = false;
                 if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
-                    Fight.fight(nh, Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null, false);
+                    Fight.fight(nh, Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
                         Global.take = ch;
@@ -186,7 +185,7 @@ public class Move {
     }
 
     static private void move_stuff(char fl, Coordinate nh) {
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
+        Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         if ((fl & Const.F_PASS) != 0 && Util.getPlace(Global.oldpos).p_ch == ObjectType.DOOR) {
             Rooms.leave_room(nh);
         }
@@ -198,10 +197,8 @@ public class Move {
      *	Move in a random direction if the monster/person is confused
      */
     static Coordinate rndmove(ThingImp who) {
-        Coordinate ret = new Coordinate();  /* what we will be returning */
+        Coordinate ret = who._t_pos.add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
 
-        ret.y = who._t_pos.y + Util.rnd(3) - 1;
-        ret.x = who._t_pos.x + Util.rnd(3) - 1;
         /*
          * Now check to see if that's a legal move.  If not, don't move.
          * (I.e., bump into the wall or whatever)
@@ -342,7 +339,7 @@ public class Move {
                     } else
                         IOUtil.msg("oh no! An arrow shot you");
                 } else {
-                    arrow = new Weapon(WeaponEnum.ARROW,0);
+                    arrow = new Weapon(WeaponEnum.ARROW, 0);
                     arrow._o_count = 1;
                     arrow._o_pos = Global.player._t_pos;
                     WeaponMethod.fall(arrow, false);
@@ -355,7 +352,7 @@ public class Move {
                  * down for us, so we have to do it ourself
                  */
                 Wizard.teleport();
-                Display.mvaddch(tc.y, tc.x, ObjectType.TRAP.getValue());
+                Display.mvaddch(tc, ObjectType.TRAP.getValue());
                 break;
             case Const.T_DART:
                 if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {

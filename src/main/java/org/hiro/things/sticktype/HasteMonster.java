@@ -16,12 +16,9 @@ public class HasteMonster extends Stick {
 
     @Override
     public void shake() {
-        Coordinate tmp2 = new Coordinate();
-        tmp2.y = Global.player._t_pos.y;
-        tmp2.x = Global.player._t_pos.x;
+        Coordinate tmp2 = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp2))) {
-            tmp2.y += Global.delta.y;
-            tmp2.x += Global.delta.x;
+            tmp2 = Global.delta.add(tmp2);
         }
         ThingImp tp = Util.getPlace(tmp2).p_monst;
         if (tp != null) {
@@ -30,8 +27,7 @@ public class HasteMonster extends Stick {
             } else {
                 tp.addState(StateEnum.ISHASTE);
             }
-            Global.delta.y = tmp2.y;
-            Global.delta.x = tmp2.x;
+            Global.delta = new Coordinate(tmp2);
             Chase.runto(Global.delta);
         }
         this.use();

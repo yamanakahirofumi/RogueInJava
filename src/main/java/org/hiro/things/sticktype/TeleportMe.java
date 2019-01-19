@@ -17,12 +17,9 @@ public class TeleportMe extends Stick {
 
     @Override
     public void shake() {
-        Coordinate tmp = new Coordinate();
-        tmp.y = Global.player._t_pos.y;
-        tmp.x = Global.player._t_pos.x;
+        Coordinate tmp = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp))) {
-            tmp.y += Global.delta.y;
-            tmp.x += Global.delta.x;
+            tmp = tmp.add(Global.delta);
         }
         ThingImp tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
@@ -30,10 +27,7 @@ public class TeleportMe extends Stick {
             if (monster == 'F') {
                 Human.instance.removeState(StateEnum.ISHELD);
             }
-            Coordinate new_pos = new Coordinate();
-
-            new_pos.y = Global.player._t_pos.y + Global.delta.y;
-            new_pos.x = Global.player._t_pos.x + Global.delta.x;
+            Coordinate new_pos = Global.player._t_pos.add(Global.delta);
             tp._t_dest = Global.player._t_pos;
             tp.addState(StateEnum.ISRUN);
             Chase.relocate(tp, new_pos);

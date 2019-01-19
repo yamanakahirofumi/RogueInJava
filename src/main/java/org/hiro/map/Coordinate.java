@@ -18,6 +18,11 @@ public class Coordinate implements AbstractCoordinate {
         this.y = y;
     }
 
+    public Coordinate(Coordinate c){
+        this.x = c.x;
+        this.y = c.y;
+    }
+
     public int getX() {
         return x;
     }
@@ -31,6 +36,16 @@ public class Coordinate implements AbstractCoordinate {
         return null;
     }
 
+    @Override
+    public Coordinate add(AbstractCoordinate coordinate) {
+        if (coordinate instanceof Coordinate){
+            throw new RuntimeException("型制限");
+        }
+        Coordinate c = (Coordinate) coordinate;
+        return new Coordinate(this.x + c.getX(), this.y + c.getY());
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Coordinate) {
             Coordinate c = (Coordinate) obj;

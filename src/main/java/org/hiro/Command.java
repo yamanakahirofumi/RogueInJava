@@ -60,7 +60,7 @@ public class Command {
             }
             IOUtil.status();
             Global.lastscore = Global.purse;
-            Display.move(Global.player._t_pos.y, Global.player._t_pos.x);
+            Display.move(Global.player._t_pos);
             if (!((Global.running || Global.count != 0) && Global.jump)) {
                 Display.refresh();            /* Draw screen */
             }
@@ -289,8 +289,7 @@ public class Command {
                             Global.after = false;
                             break;
                         }
-                        Global.delta.y += Global.player._t_pos.y;
-                        Global.delta.x += Global.player._t_pos.x;
+                        Global.delta = Global.player._t_pos.add(Global.delta);
                         if (((mp = Util.getPlace(Global.delta).p_monst) == null)
                                 || ((!Chase.see_monst(mp)) && !Human.instance.containsState(StateEnum.SEEMONST))) {
                             if (!Global.terse) {
@@ -310,7 +309,7 @@ public class Command {
                         if (!Misc.get_dir()) {
                             Global.after = false;
                         } else {
-                            WeaponMethod.missile(Global.delta.y, Global.delta.x);
+                            WeaponMethod.missile(Global.delta);
                         }
                         break;
                     case 'a':
@@ -429,8 +428,7 @@ public class Command {
                     case '^':
                         Global.after = false;
                         if (Misc.get_dir()) {
-                            Global.delta.y += Global.player._t_pos.y;
-                            Global.delta.x += Global.player._t_pos.x;
+                            Global.delta = Global.player._t_pos.add(Global.delta);
                             int fp = Util.flat(Global.delta);
                             if (!Global.terse) {
                                 IOUtil.addmsg("You have found ");
@@ -481,7 +479,7 @@ public class Command {
                         }
                         break;
                     case ')':
-                        current(Human.instance.getWeapons().size() == 0? null: Human.instance.getWeapons().get(0), "wielding", null);
+                        current(Human.instance.getWeapons().size() == 0 ? null : Human.instance.getWeapons().get(0), "wielding", null);
                         break;
                     case ']':
                         current(Global.cur_armor, "wearing", null);
@@ -558,7 +556,7 @@ public class Command {
                                     /*
                                      * Give him a sword (+1,+1)
                                      */
-                                    obj = new Weapon(WeaponEnum.TWOSWORD,1);
+                                    obj = new Weapon(WeaponEnum.TWOSWORD, 1);
                                     obj._o_dplus = 1;
                                     Pack.add_pack(obj, true);
                                     Human.instance.putOnWeapon((Weapon) obj);

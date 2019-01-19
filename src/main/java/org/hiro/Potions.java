@@ -27,7 +27,7 @@ public class Potions {
 
         int add_new = 0;
         for (ThingImp mp : Global.mlist) {
-            Display.move(mp._t_pos.y, mp._t_pos.x);
+            Display.move(mp._t_pos);
             boolean can_see = Chase.see_monst(mp);
             if (turn_off) {
                 if (!can_see) {
@@ -376,7 +376,7 @@ public class Potions {
         for (ThingImp mp : Global.mlist) {
             if (mp.containsState(StateEnum.ISINVIS) && Chase.see_monst(mp)
                     && !Human.instance.containsState(StateEnum.ISHALU)) {
-                Display.mvaddch(mp._t_pos.y, mp._t_pos.x, (char) mp._t_disguise);
+                Display.mvaddch(mp._t_pos, (char) mp._t_disguise);
             }
         }
     }
@@ -387,7 +387,7 @@ public class Potions {
      */
     static boolean seen_stairs() {
 
-        Display.move(Global.stairs.y, Global.stairs.x);
+        Display.move(Global.stairs);
         if (Util.CCHAR(Display.inch()) == ObjectType.STAIRS.getValue()) {            /* it's on the map */
             return true;
         }

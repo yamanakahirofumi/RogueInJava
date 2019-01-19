@@ -25,7 +25,7 @@ public class Fight {
         if (!Chase.see_monst(tp) && !Human.instance.containsState(StateEnum.SEEMONST))
             return (Global.terse ? "it" : "something");
         else if (Human.instance.containsState(StateEnum.ISHALU)) {
-            Display.move(tp._t_pos.y, tp._t_pos.x);
+            Display.move(tp._t_pos);
             ch = (char) Util.CCHAR(Display.inch());
             if (!Character.isUpperCase(ch)) {
                 ch = (char) Util.rnd(26);
@@ -86,7 +86,7 @@ public class Fight {
             tp._t_disguise = 'X';
             if (Human.instance.containsState(StateEnum.ISHALU)) {
                 ch = (char) (Util.rnd(26) + 'A');
-                Display.mvaddch(tp._t_pos.y, tp._t_pos.x, ch);
+                Display.mvaddch(tp._t_pos, ch);
             }
             // msg(Misc.choose_str("heavy!  That's a nasty critter!",
             //        "wait!  That's a xeroc!"));
@@ -253,7 +253,7 @@ public class Fight {
             }
         }
         Util.getPlace(mp).p_monst = null;
-        Display.mvaddch(mp.y, mp.x, (char) tp._t_oldch);
+        Display.mvaddch(mp, (char) tp._t_oldch);
         Global.mlist.remove(tp);
         if (tp.containsState(StateEnum.ISTARGET)) {
             Global.kamikaze = false;
@@ -482,7 +482,7 @@ public class Fight {
         if (mp._t_type == 'X' && mp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
             mp._t_disguise = 'X';
             if (Human.instance.containsState(StateEnum.ISHALU)) {
-                Display.mvaddch(mp._t_pos.y, mp._t_pos.x, (char) (Util.rnd(26) + 'A'));
+                Display.mvaddch(mp._t_pos, (char) (Util.rnd(26) + 'A'));
             }
         }
         mname = set_mname(mp);

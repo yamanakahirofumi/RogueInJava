@@ -25,7 +25,7 @@ public class Daemons {
          */
         for (ThingImp tp : Global.lvl_obj) {
             if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, Misc.rnd_thing().getValue());
+                Display.mvaddch(tp._o_pos, Misc.rnd_thing().getValue());
             }
         }
 
@@ -33,7 +33,7 @@ public class Daemons {
          * change the stairs
          */
         if (!Global.seenstairs && Chase.isSee(Global.stairs)) {
-            Display.mvaddch(Global.stairs.y, Global.stairs.x, Misc.rnd_thing().getValue());
+            Display.mvaddch(Global.stairs, Misc.rnd_thing().getValue());
         }
 
         /*
@@ -41,7 +41,7 @@ public class Daemons {
          */
         boolean seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos.y, tp._t_pos.x);
+            Display.move(tp._t_pos);
             if (Chase.see_monst(tp)) {
                 if (tp._t_type == 'X' && tp._t_disguise != 'X') {
                     Display.addch(Misc.rnd_thing().getValue());
@@ -63,7 +63,7 @@ public class Daemons {
     static void unsee() {
         for (ThingImp th : Global.mlist) {
             if (th.containsState(StateEnum.ISINVIS) && Chase.see_monst(th)) {
-                Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
+                Display.mvaddch(th._t_pos, (char) th._t_oldch);
             }
         }
         Human.instance.removeState(StateEnum.CANSEE);
@@ -127,7 +127,7 @@ public class Daemons {
          */
         for (ThingImp tp : Global.lvl_obj) {
             if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, tp.getDisplay().getValue());
+                Display.mvaddch(tp._o_pos, tp.getDisplay().getValue());
             }
         }
 
@@ -136,7 +136,7 @@ public class Daemons {
          */
         seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos.y, tp._t_pos.x);
+            Display.move(tp._t_pos);
             if (Chase.isSee(tp._t_pos)) {
                 if (!tp.containsState(StateEnum.ISINVIS) || Human.instance.containsState(StateEnum.CANSEE))
                     Display.addch((char) tp._t_disguise);
