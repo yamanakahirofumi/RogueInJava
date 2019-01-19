@@ -8,6 +8,6 @@ import org.hiro.things.ThingImp;
  */
 public class Place {
     public ObjectType p_ch;
-    int p_flags;  // charかも
+    public int p_flags;  // charかも
     public ThingImp p_monst;
 }

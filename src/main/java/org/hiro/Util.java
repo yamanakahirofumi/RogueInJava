@@ -26,7 +26,7 @@ public class Util {
         return Global.places.get((c.getX() << 5) + c.getY());
     }
 
-    static Place INDEX(int y, int x) {
+    public static Place INDEX(int y, int x) {
         return Global.places.get((x << 5) + y);
     }
 

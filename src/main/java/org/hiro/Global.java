@@ -15,7 +15,7 @@ import java.util.List;
 public class Global {
     static List<Room> rooms;
     // static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
-    static List<Place> places;  // sizeは80 * 32
+    public static List<Place> places;  // sizeは80 * 32
 //    static
     static Monster[] monsters;
     static int max_level;
@@ -34,7 +34,7 @@ public class Global {
     static int runch;
     static boolean passgo = false;  /* Follow passages */ // 通路の角で止まらない
     static int count;  /* Number of times to repeat command */
-    static int no_command;
+    public static int no_command;
     static int purse;
     static boolean tombstone;
     static int numscores;
@@ -120,12 +120,12 @@ public class Global {
 
     static String fruit = "slime-mold";  /* Favorite fruit */
 
-    static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
+    public static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
     public static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
-    static Ring cur_ring[];
+    public static Ring cur_ring[];
     @Deprecated
     public static ThingImp player;
-    static Armor cur_armor;
+    public static Armor cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
 

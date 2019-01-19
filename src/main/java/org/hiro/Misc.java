@@ -339,7 +339,7 @@ public class Misc {
      *	Choose the first or second string depending on whether it the
      *	player is tripping
      */
-    static String choose_str(String ts, String ns) {
+    public static String choose_str(String ts, String ns) {
         return (Human.instance.containsState(StateEnum.ISHALU) ? ts : ns);
     }
 
@@ -430,7 +430,7 @@ public class Misc {
      * aggravate:
      *	Aggravate all the monsters on this level
      */
-    static void aggravate() {
+    public static void aggravate() {
         for (ThingImp mp : Global.mlist) {
             Chase.runto(mp._t_pos);
         }
@@ -440,7 +440,7 @@ public class Misc {
      * find_obj:
      *	Find the unclaimed object at y, x
      */
-    static ThingImp find_obj(AbstractCoordinate coordinate) {
+    public static ThingImp find_obj(AbstractCoordinate coordinate) {
         for (ThingImp obj : Global.lvl_obj) {
             if (obj._o_pos.equals(coordinate)) {
                 return obj;

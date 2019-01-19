@@ -226,7 +226,7 @@ public class Move {
                             break;
                         }
                     }
-                    if (obj2 != null && obj2._o_which == ScrollEnum.S_SCARE.getValue()) {
+                    if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
                         break bad;
                     }
                 }

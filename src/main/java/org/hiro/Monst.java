@@ -19,7 +19,7 @@ public class Monst {
      *	Pick a monster to show up.  The lower the level,
      *	the meaner the monster.
      */
-    static int randmonster(boolean wander) {
+    public static int randmonster(boolean wander) {
         /*
          * ListMethod of monsters in rough order of vorpalness
          */

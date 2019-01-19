@@ -7,24 +7,114 @@ import java.util.Arrays;
  */
 public enum ScrollEnum {
 
-	S_CONFUSE(0),
-	S_MAP(1),
-	S_HOLD(2),
-	S_SLEEP(3),
-	S_ARMOR(4),
-	S_ID_POTION(5),
-	S_ID_SCROLL(6),
-	S_ID_WEAPON(7),
-	S_ID_ARMOR(8),
-	S_ID_R_OR_S(9),
-	S_SCARE(10),
-	S_FDET(11),
-	S_TELEP(12),
-	S_ENCH(13),
-	S_CREATE(14),
-	S_REMOVE(15),
-	S_AGGR(16),
-	S_PROTECT(17);
+	/**
+	 * Confuse
+     *
+     * 旧S_CONFUSE
+	 */
+	Confuse(0),
+    /**
+     * MagicMap
+     *
+     * 旧S_MAP
+     */
+	MapScroll(1),
+    /**
+     * Hold Monster
+     *
+     * 旧S_HOLD
+     */
+	HoldMonster(2),
+    /**
+     * Sleep
+     *
+     * 旧S_SLEEP
+     */
+	Sleep(3),
+    /**
+     *　Enchant Armor
+     *
+     * 旧S_ARMOR
+     */
+    EnchantArmor(4),
+    /**
+     * Identify Potion
+     *
+     * 旧S_ID_POTION
+     */
+    IdentifyPotion(5),
+    /**
+     * Identify Scroll
+     *
+     * 旧S_ID_SCROLL
+     */
+    IdentifyScroll(6),
+    /**
+     * Identify Weapon
+     *
+     * 旧S_ID_WEAPON
+     */
+    IdentifyWeapon(7),
+    /**
+     * Identify Armor
+     *
+     * 旧S_ID_ARMOR
+     */
+    IdentifyArmor(8),
+    /**
+     * Identify Ring or Stick
+     *
+     * 旧S_ID_R_OR_S
+     */
+    IdentifyRingOrStick(9),
+    /**
+     * Scare
+     *
+     * 旧S_SCARE
+     */
+	Scare(10),
+    /**
+     * Food Detection
+     *
+     * 旧S_FDET
+     */
+	FoodDetection(11),
+    /**
+     * Teleportation
+     *
+     * 旧S_TELEP
+     */
+    Teleportation(12),
+    /**
+     * Enchant Weapon
+     *
+     * 旧S_ENCH
+     */
+    EnchantWeapon(13),
+    /**
+     * Create Monster
+     *
+     * 旧S_CREATE
+     */
+    CreateMonster(14),
+    /**
+     * Remove Curse
+     *
+     * 旧S_REMOVE
+     */
+    RemoveCurse(15),
+    /**
+     * Wake up Monster
+     *
+     * 旧S_AGGR
+     */
+	WakeUpMonster(16),
+    /**
+     * Protect Armor
+     *
+     * 旧S_PROTECT
+     */
+    ProtectArmor(17);
 //	MAXSCROLLS(18);
 
 	private int value;

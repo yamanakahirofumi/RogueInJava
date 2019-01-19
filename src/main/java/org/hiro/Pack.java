@@ -209,7 +209,7 @@ public class Pack {
         /*
          * Check for and deal with scare monster scrolls
          */
-        if (obj instanceof Scroll && obj._o_which == ScrollEnum.S_SCARE.getValue())
+        if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue())
             if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
                 Global.lvl_obj.remove(obj);
                 Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());

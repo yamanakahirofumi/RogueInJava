@@ -240,7 +240,7 @@ public class IOUtil {
      * show_win:
      *	Function used to display a window and wait before returning
      */
-    static void show_win(String message) {
+    public static void show_win(String message) {
         // WINDOW win;
 
 //        win = hw;

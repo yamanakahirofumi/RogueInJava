@@ -83,7 +83,7 @@ public class Chase {
             return Global.player._t_pos;
         }
         for (ThingImp obj : Global.lvl_obj) {
-            if (obj instanceof Scroll && obj._o_which == ScrollEnum.S_SCARE.getValue()) {
+            if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue()) {
                 continue;
             }
             if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
@@ -472,7 +472,7 @@ public class Chase {
                                     break;
                                 }
                             }
-                            if (obj2 != null && obj2._o_which == ScrollEnum.S_SCARE.getValue()) {
+                            if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
                                 continue;
                             }
                         }
