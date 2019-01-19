@@ -347,7 +347,8 @@ public class Command {
                         ScrollMethod.read_scroll();
                         break;
                     case 'e':
-                        Misc.eat();
+                        ThingImp food = Pack.get_item("eat", ObjectType.FOOD);
+                        Misc.eat(food);
                         break;
                     case 'w':
                         WeaponMethod.wield();
@@ -564,9 +565,9 @@ public class Command {
                                     /*
                                      * And his suit of armor
                                      */
-                                    obj = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
-                                    Global.cur_armor = obj;
-                                    Pack.add_pack(obj, true);
+                                    Armor armor = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
+                                    Global.cur_armor = armor;
+                                    Pack.add_pack(armor, true);
                                 }
                                 break;
                                 case '*':

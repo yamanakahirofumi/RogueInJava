@@ -1,7 +1,10 @@
 package org.hiro.character;
 
+import org.hiro.Misc;
+import org.hiro.Util;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Armor;
+import org.hiro.things.Food;
 import org.hiro.things.Ring;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
@@ -28,7 +31,9 @@ public class Human implements Player {
     private int maxhp;            /* Max hit points */
     private int foodLeft;
     private int stomachSize;
-    HashSet<StateEnum> state;
+    private int hugerTime;
+    private int hungryState;
+    private HashSet<StateEnum> state;
     /**
      * 位置情報
      */
@@ -47,6 +52,7 @@ public class Human implements Player {
         this.stomachSize = 2000;
         this.state = new HashSet<>();
         this.weapon = null;
+        this.hugerTime = 1300;
     }
 
     @Override
@@ -102,11 +108,25 @@ public class Human implements Player {
 
     @Override
     public Optional<Thing> eat(Thing t) {
-        if (this.foodLeft + t.foodValue() > this.stomachSize) {
-            this.foodLeft = this.stomachSize;
-        } else {
-            this.foodLeft += t.foodValue();
+        if(!(t instanceof Food)){
+            return Optional.of(t);
         }
+
+        if (this.foodLeft < 0) {
+            this.foodLeft = 0;
+        }
+
+        if ((this.foodLeft += this.hugerTime - 200 + Util.rnd(400)) > this.stomachSize) {
+            this.foodLeft = this.stomachSize;
+        }
+        this.hungryState = 0;
+        // 装備している武器を食べる場合
+        this.removeWeapon(t);
+        if (Util.rnd(100) > 70) {
+            this.addExperience(1);
+        }
+
+        // Pack.leave_pack(t, false, false);
         return t.eat();
     }
 
@@ -144,11 +164,17 @@ public class Human implements Player {
     @Override
     public void addExperience(long exp) {
         this.exp += exp;
+        Misc.check_level();
     }
 
     @Override
     public int getFoodLeft() {
         return 0;
+    }
+
+    @Override
+    public int getStomachSize(){
+        return this.stomachSize;
     }
 
     @Override

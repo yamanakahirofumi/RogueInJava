@@ -13,7 +13,7 @@ public class Rooms {
      * enter_room:
      *	Code that is executed whenver you appear in a room
      */
-    static void enter_room(Coordinate cp) {
+    public static void enter_room(Coordinate cp) {
 
         Room rp = Global.player.t_room = Chase.roomin(cp);
         Move.door_open(rp);

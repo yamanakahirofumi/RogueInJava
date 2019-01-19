@@ -1,8 +1,10 @@
 package org.hiro;
 
 import org.hiro.map.Coordinate;
+import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.PotionEnum;
+import org.hiro.things.Ring;
 import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
 
@@ -13,7 +15,7 @@ import java.util.List;
 public class Global {
     static List<Room> rooms;
     // static boolean amulet = false;      /* He found the amulet */  // Game.goalに移行
-    static List<Place> places;  // sizeは80 * 32
+    public static List<Place> places;  // sizeは80 * 32
 //    static
     static Monster[] monsters;
     static int max_level;
@@ -32,7 +34,7 @@ public class Global {
     static int runch;
     static boolean passgo = false;  /* Follow passages */ // 通路の角で止まらない
     static int count;  /* Number of times to repeat command */
-    static int no_command;
+    public static int no_command;
     static int purse;
     static boolean tombstone;
     static int numscores;
@@ -79,8 +81,8 @@ public class Global {
     static File logfi;
     static File scoreboard;
 
-    static Coordinate stairs;
-    static Coordinate delta;
+    static Coordinate stairs;  /* Location of staircase */
+    public static Coordinate delta;
     static Coordinate oldpos;
 
     static Room oldrp;
@@ -107,7 +109,7 @@ public class Global {
     };
     static boolean wizard;
 
-    static String[] ws_type;
+    public static String[] ws_type;
 
     static char[] p_colors = new char[PotionEnum.getMaxValue()];        /* Colors of the potions */
     static char[] r_stones;
@@ -118,12 +120,12 @@ public class Global {
 
     static String fruit = "slime-mold";  /* Favorite fruit */
 
-    static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
-    static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
-    static ThingImp cur_ring[];
+    public static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
+    public static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
+    public static Ring cur_ring[];
     @Deprecated
-    static ThingImp player;
-    static ThingImp cur_armor;
+    public static ThingImp player;
+    public static Armor cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
 
@@ -137,7 +139,7 @@ public class Global {
 
     public static Delayed_action[] d_list = new Delayed_action[Const.MAXDAEMONS];
 
-    static Room[] passages = new Room[Const.MAXPASS];    /* One for each passage */
+    public static Room[] passages = new Room[Const.MAXPASS];    /* One for each passage */
 //	{
 //		{ {0, 0}, {0, 0}, {0, 0}, 0, Const.ISGONE|Const.ISDARK, 0, {{0,0}} },
 //		{ {0, 0}, {0, 0}, {0, 0}, 0, Const.ISGONE|Const.ISDARK, 0, {{0,0}} },
@@ -155,17 +157,17 @@ public class Global {
 
 
     public static List<InitWeapon> init_dam;
-//	{ "2x4",	"1x3",	NO_WEAPON,	0,		},	/* Mace */
-//	{ "3x4",	"1x2",	NO_WEAPON,	0,		},	/* Long sword */
-//	{ "1x1",	"1x1",	NO_WEAPON,	0,		},	/* Bow */
+//	{ "2x4",	"1x3",	-1,	0,		},	/* Mace */
+//	{ "3x4",	"1x2",	-1,	0,		},	/* Long sword */
+//	{ "1x1",	"1x1",	-1,	0,		},	/* Bow */
 //	{ "1x1",	"2x3",	BOW,		ISMANY|ISMISL,	},	/* Arrow */
-//	{ "1x6",	"1x4",	NO_WEAPON,	ISMISL|ISMISL,	},	/* Dagger */
-//	{ "4x4",	"1x2",	NO_WEAPON,	0,		},	/* 2h sword */
-//	{ "1x1",	"1x3",	NO_WEAPON,	ISMANY|ISMISL,	},	/* Dart */
-//	{ "1x2",	"2x4",	NO_WEAPON,	ISMANY|ISMISL,	},	/* Shuriken */
-//	{ "2x3",	"1x6",	NO_WEAPON,	ISMISL,		},	/* Spear */
+//	{ "1x6",	"1x4",	-1,	ISMISL|ISMISL,	},	/* Dagger */
+//	{ "4x4",	"1x2",	-1,	0,		},	/* 2h sword */
+//	{ "1x1",	"1x3",	-1,	ISMANY|ISMISL,	},	/* Dart */
+//	{ "1x2",	"2x4",	-1,	ISMANY|ISMISL,	},	/* Shuriken */
+//	{ "2x3",	"1x6",	-1,	ISMISL,		},	/* Spear */
 
-    static boolean terse = false;  /* True if we should be short */
+    public static boolean terse = false;  /* True if we should be short */
     static String file_name;
 
     static boolean VDSUSP;

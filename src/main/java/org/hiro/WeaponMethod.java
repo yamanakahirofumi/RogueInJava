@@ -14,9 +14,8 @@ public class WeaponMethod {
      *	Figure out the plus number for armor/weapons
      */
     static String num(int n1, int n2, ObjectType type) {
-        String numbuf;
 
-        numbuf = (n1 < 0 ? String.valueOf(n1) : "+" + n1);
+        String numbuf = (n1 < 0 ? String.valueOf(n1) : "+" + n1);
         if (type.getValue() == ObjectType.WEAPON.getValue()) {
             numbuf = numbuf + (n2 < 0 ? "," + n2 : ",+" + n2);
         }
@@ -28,12 +27,12 @@ public class WeaponMethod {
      *	Fire a missile in a given direction
      */
     static void missile(int ydelta, int xdelta) {
-        ThingImp obj;
+        ThingImp obj=Pack.get_item("throw", ObjectType.WEAPON);
 
         /*
          * Get which thing we are hurling
          */
-        if ((obj = Pack.get_item("throw", ObjectType.WEAPON)) == null) {
+        if (obj == null) {
             return;
         }
         if (!ThingMethod.dropcheck(obj) || Misc.is_current(obj)) {
@@ -46,7 +45,7 @@ public class WeaponMethod {
          * or if it misses (combat) the monster, put it on the floor
          */
         if (Util.getPlace(obj._o_pos).p_monst == null ||
-                !hit_monster(obj._o_pos, obj)) {
+                !hit_monster(obj._o_pos, (Weapon) obj)) {
             fall(obj, true);
         }
     }
@@ -111,7 +110,7 @@ public class WeaponMethod {
      * hit_monster:
      *	Does the missile hit the monster?
      */
-    static boolean hit_monster(Coordinate mp, ThingImp obj) {
+    public static boolean hit_monster(Coordinate mp, Weapon obj) {
         return Fight.fight(mp, obj, true);
     }
 
@@ -120,7 +119,7 @@ public class WeaponMethod {
      *	Do the actual motion on the screen done by an object traveling
      *	across the room
      */
-    static void do_motion(ThingImp obj, int ydelta, int xdelta) {
+    public static void do_motion(ThingImp obj, int ydelta, int xdelta) {
         ObjectType ch;
 
         /*
@@ -169,14 +168,14 @@ public class WeaponMethod {
      */
     static void wield() {
 
-        ThingImp oweapon = Human.instance.getWeapons().get(0);
+        Weapon oweapon = Human.instance.getWeapons().get(0);
         if (!ThingMethod.dropcheck(Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null)) {
             Human.instance.putOnWeapon((Weapon) oweapon);
             return;
         }
         Human.instance.putOnWeapon((Weapon) oweapon);
-        ThingImp obj;
-        if ((obj = Pack.get_item("wield", ObjectType.WEAPON)) == null) {
+        ThingImp obj = Pack.get_item("wield", ObjectType.WEAPON);
+        if (obj == null) {
             Global.after = false;
             return;
         }

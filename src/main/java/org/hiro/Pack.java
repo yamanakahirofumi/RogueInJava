@@ -146,7 +146,7 @@ public class Pack {
         if (obj._o_count > 1 && !all) {
             Global.last_pick = obj;
             obj._o_count--;
-            if (obj._o_group != 0) {
+            if (obj.isGroup()) {
                 Global.inpack++;
             }
             if (newobj) {
@@ -209,7 +209,7 @@ public class Pack {
         /*
          * Check for and deal with scare monster scrolls
          */
-        if (obj instanceof Scroll && obj._o_which == ScrollEnum.S_SCARE.getValue())
+        if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue())
             if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
                 Global.lvl_obj.remove(obj);
                 Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, floor_ch().getValue());
@@ -249,7 +249,7 @@ public class Pack {
                             discarded = true;
                             lp = null;
                             // goto out;
-                        } else if (obj._o_group != 0) {
+                        } else if (obj.isGroup()) {
                             lp = op;
                             while (op.getClass() == obj.getClass()
                                     && op._o_which == obj._o_which

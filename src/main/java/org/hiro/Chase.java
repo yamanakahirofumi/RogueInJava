@@ -48,7 +48,7 @@ public class Chase {
      * runto:
      *	Set a monster running after the hero.
      */
-    static void runto(Coordinate runner) {
+    public static void runto(Coordinate runner) {
         ThingImp tp;
 
         /*
@@ -83,7 +83,7 @@ public class Chase {
             return Global.player._t_pos;
         }
         for (ThingImp obj : Global.lvl_obj) {
-            if (obj instanceof Scroll && obj._o_which == ScrollEnum.S_SCARE.getValue()) {
+            if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue()) {
                 continue;
             }
             if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
@@ -106,7 +106,7 @@ public class Chase {
      *	Return true if the hero can see the monster
      *  true: 主人公がモンスターを見える場合
      */
-    static boolean see_monst(ThingImp mp) {
+    public static boolean see_monst(ThingImp mp) {
         if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return false;
         }
@@ -142,7 +142,7 @@ public class Chase {
      * 昔はcan_see()
      *	Returns true if the hero can see a certain coordinate.
      */
-    static boolean isSee(Coordinate c) {
+    public static boolean isSee(Coordinate c) {
         if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return false;
         }
@@ -181,7 +181,7 @@ public class Chase {
      *	Make the monster's new location be the specified one, updating
      *	all the relevant state.
      */
-    static void relocate(ThingImp th, Coordinate new_loc) {
+    public static void relocate(ThingImp th, Coordinate new_loc) {
 
         if (!new_loc.equals(th._t_pos)) {
             Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
@@ -272,16 +272,16 @@ public class Chase {
     static int move_monst(ThingImp tp) {
         if (!tp.containsState(StateEnum.ISSLOW) || tp._t_turn) {
             if (do_chase(tp) == -1) {
-                return (-1);
+                return -1;
             }
         }
         if (tp.containsState(StateEnum.ISHASTE)) {
             if (do_chase(tp) == -1) {
-                return (-1);
+                return -1;
             }
         }
         tp._t_turn ^= true;
-        return (0);
+        return 0;
     }
 
     /*
@@ -472,7 +472,7 @@ public class Chase {
                                     break;
                                 }
                             }
-                            if (obj2 != null && obj2._o_which == ScrollEnum.S_SCARE.getValue()) {
+                            if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
                                 continue;
                             }
                         }

@@ -3,6 +3,7 @@ package org.hiro;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 
 public class RingMethod {
@@ -18,7 +19,7 @@ public class RingMethod {
             return "";
         }
         switch (RingEnum.valueOf(String.valueOf(obj._o_which))) {
-            case R_PROTECT:
+            case Protection:
             case R_ADDSTR:
             case R_ADDDAM:
             case R_ADDHIT:
@@ -42,7 +43,7 @@ public class RingMethod {
         }
         int eat;
         int[] uses = {
-                1,    /* R_PROTECT */         1,    /* R_ADDSTR */
+                1,    /* Protection */         1,    /* R_ADDSTR */
                 1,    /* R_SUSTSTR */        -3,    /* R_SEARCH */
                 -5,    /* R_SEEINVIS */     0,    /* R_NOP */
                 0,    /* R_AGGR */        -3,    /* R_ADDHIT */
@@ -64,8 +65,7 @@ public class RingMethod {
      *	Put a ring on a hand
      */
     static void ring_on() {
-        ThingImp obj;
-        int ring;
+        Thing obj;
 
         obj = Pack.get_item("put on", ObjectType.RING);
         /*
@@ -74,7 +74,7 @@ public class RingMethod {
         if (obj == null) {
             return;
         }
-        if (obj instanceof Ring) {
+        if (!(obj instanceof Ring)) {
             if (!Global.terse) {
                 IOUtil.msg("it would be difficult to wrap that around a finger");
             } else {
@@ -82,14 +82,16 @@ public class RingMethod {
             }
             return;
         }
+        Ring ringObject = (Ring) obj;
 
         /*
          * find out which hand to put it on
          */
-        if (Misc.is_current(obj)) {
+        if (Misc.is_current(ringObject)) {
             return;
         }
 
+        int ring;
         if (Global.cur_ring[Const.LEFT] == null && Global.cur_ring[Const.RIGHT] == null) {
             if ((ring = gethand()) < 0)
                 return;
@@ -105,15 +107,15 @@ public class RingMethod {
             }
             return;
         }
-        Global.cur_ring[ring] = obj;
+        Global.cur_ring[ring] = ringObject;
 
         /*
          * Calculate the effect it has on the poor guy.
          */
-        RingEnum r = RingEnum.get(obj._o_which);
+        RingEnum r = RingEnum.get(ringObject._o_which);
         switch (r) {
             case R_ADDSTR:
-                Misc.chg_str(obj._o_arm);
+                Misc.chg_str(ringObject._o_arm);
                 break;
             case R_SEEINVIS:
                 Potions.invis_on();
@@ -126,7 +128,7 @@ public class RingMethod {
         if (!Global.terse) {
             IOUtil.addmsg("you are now wearing ");
         }
-        IOUtil.msg("%s (%c)", ThingMethod.inv_name(obj, true), obj._o_packch);
+        IOUtil.msg("%s (%c)", ThingMethod.inv_name(ringObject, true), ringObject._o_packch);
     }
 
     /*
@@ -135,7 +137,6 @@ public class RingMethod {
      */
     static void ring_off() {
         int ring;
-        ThingImp obj;
 
         if (Global.cur_ring[Const.LEFT] == null && Global.cur_ring[Const.RIGHT] == null) {
             if (Global.terse) {
@@ -151,7 +152,7 @@ public class RingMethod {
         else if ((ring = gethand()) < 0)
             return;
         Global.mpos = 0;
-        obj = Global.cur_ring[ring];
+        Ring obj = Global.cur_ring[ring];
         if (obj == null) {
             IOUtil.msg("not wearing such a ring");
             return;

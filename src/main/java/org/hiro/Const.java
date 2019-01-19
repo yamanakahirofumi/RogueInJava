@@ -12,15 +12,15 @@ public class Const {
      * 移行組
      */
     final public static int MAXROOMS = 9;
-    final static int NUMCOLS = 80;
-    final static int NUMLINES = 24;
+    public final static int NUMCOLS = 80;
+    public final static int NUMLINES = 24;
 
-    final static int F_PASS = 0x80;        /* is a passageway */
-    static int F_SEEN = 0x40;        /* have seen this spot before */
+    public final static int F_PASS = 0x80;        /* is a passageway */
+    public static int F_SEEN = 0x40;        /* have seen this spot before */
     static int F_DROPPED = 0x20;        /* object was dropped here */
     static int F_LOCKED = 0x20;        /* door is locked */
-    static int F_REAL = 0x10;        /* what you see is what you get */
-    static int F_PNUM = 0x0f;        /* passage number mask */
+    public static int F_REAL = 0x10;        /* what you see is what you get */
+    public static int F_PNUM = 0x0f;        /* passage number mask */
     static int F_TMASK = 0x07;        /* trap number mask */
 
 
@@ -28,12 +28,12 @@ public class Const {
 
 
     static int CALLABLE = -1;
-    static int R_OR_S = -2;
+    public static int R_OR_S = -2;
 
 
     public static int ISCURSED = 000001;        /* object is cursed */ // 呪い
     public static int ISKNOW = 0000002;        /* player knows details about the object */
-    static int ISMISL = 0000004;        /* object is a missile type */
+    public static int ISMISL = 0000004;        /* object is a missile type */
     public static int ISMANY = 0000010;    /* object comes in groups */
 
 
@@ -51,8 +51,8 @@ public class Const {
     static int BORE_LEVEL = 50;
 
 
-    static int LEFT = 0;
-    static int RIGHT = 1;
+    public static int LEFT = 0;
+    public static int RIGHT = 1;
 
 
     static int MAXSTR = 1024;    /* maximum length of strings */
@@ -113,6 +113,7 @@ public class Const {
     public static int HEALTIME = 30;
     public static int HUHDURATION = 20;
     public static int SEEDURATION = 850;
+    @Deprecated
     public static int HUNGERTIME = 1300;
     public static int MORETIME = 150;
     @Deprecated

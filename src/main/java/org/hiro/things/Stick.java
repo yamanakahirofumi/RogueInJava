@@ -3,15 +3,17 @@ package org.hiro.things;
 import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.Obj_info;
-import org.hiro.StickMethod;
-import org.hiro.ThingMethod;
-
-import java.util.Arrays;
+import org.hiro.Util;
 
 public class Stick extends ThingImp {
-    Stick(){
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ws_info), StickEnum.getMaxValue());
-        StickMethod.fix_stick(this);
+    private String power;
+    private String hurlPower;
+    private int times;
+
+    public Stick(){
+        this._o_which = StickEnum.NoEffect.getValue();
+        this.times = Util.rnd(5) + 3;
+        fix_stick();
 //				boolean MASTER = false;
 //				if (MASTER) {
 //					break;
@@ -20,6 +22,19 @@ public class Stick extends ThingImp {
 //					wait_for(stdscr, ' ');
 //				}
 
+    }
+
+    /*
+     * fix_stick:
+     *	Set up a new stick
+     */
+    private void fix_stick() {
+        if ("staff".equals(Global.ws_type[this._o_which])) {
+            this.power = "2x3";
+        } else {
+            this.power = "1x1";
+        }
+        this.hurlPower = "1x1";
     }
 
     @Override
@@ -31,7 +46,7 @@ public class Stick extends ThingImp {
     public int getWorth(){
         Obj_info op = Global.ws_info[this._o_which];
         int worth = op.getWorth();
-        worth += 20 * this._o_arm;
+        worth += 20 * this.times;
         if (!this.contains_o_flags(Const.ISKNOW)) {
             worth /= 2;
         }
@@ -43,5 +58,13 @@ public class Stick extends ThingImp {
     @Override
     public ObjectType getDisplay() {
         return ObjectType.STICK;
+    }
+
+    public void shake(){
+        this.use();
+    }
+
+    public void use(){
+        this.times--;
     }
 }

@@ -226,7 +226,7 @@ public class Move {
                             break;
                         }
                     }
-                    if (obj2 != null && obj2._o_which == ScrollEnum.S_SCARE.getValue()) {
+                    if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
                         break bad;
                     }
                 }
@@ -387,7 +387,7 @@ public class Move {
      *  錆びた鎧
      */
     static void rust_armor(ThingImp arm) {
-        if (arm == null || !(arm instanceof Armor) ||
+        if (!(arm instanceof Armor) ||
                 arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
             return;
         }

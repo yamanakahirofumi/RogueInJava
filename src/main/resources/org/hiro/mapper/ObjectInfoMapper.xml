@@ -6,7 +6,7 @@
     </select>
     <select id="findByType" resultMap="objectinfoInit">
         SELECT name, probability, worth FROM objectinfo WHERE
-        o.type_id = #{typeId}
+        type_id = #{typeId}
     </select>
     <select id="findByTypeByPlayer" resultMap="objectinfo">
         SELECT name, probability, worth,

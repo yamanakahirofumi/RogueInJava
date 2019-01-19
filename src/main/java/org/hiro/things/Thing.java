@@ -29,4 +29,6 @@ public interface Thing {
     default ObjectType getDisplay(){
         return  ObjectType.Initial;
     }
+
+    boolean isGroup();
 }

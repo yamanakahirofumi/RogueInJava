@@ -5,39 +5,39 @@ package org.hiro.map;
  * 座標
  */
 public class Coordinate implements AbstractCoordinate {
-	public int x;
-	public int y;
+    public int x;
+    public int y;
 
-	public Coordinate(){
-		super();
-	}
+    public Coordinate() {
+        super();
+    }
 
-	public Coordinate(int x, int y){
-		super();
-		this.x = x;
-		this.y = y;
-	}
+    public Coordinate(int x, int y) {
+        super();
+        this.x = x;
+        this.y = y;
+    }
 
-	public int getX() {
-		return x;
-	}
+    public int getX() {
+        return x;
+    }
 
-	public int getY(){
-		return y;
-	}
+    public int getY() {
+        return y;
+    }
 
-	@Override
-	public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size) {
-		return null;
-	}
+    @Override
+    public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size) {
+        return null;
+    }
 
-	public boolean equals(Object obj) {
-		if(obj instanceof Coordinate){
-			Coordinate c = (Coordinate) obj;
-			return this.x == c.x && this.y ==c.y;
-		}else {
-			return false;
-		}
-	}
+    public boolean equals(Object obj) {
+        if (obj instanceof Coordinate) {
+            Coordinate c = (Coordinate) obj;
+            return this.x == c.x && this.y == c.y;
+        } else {
+            return false;
+        }
+    }
 
 }

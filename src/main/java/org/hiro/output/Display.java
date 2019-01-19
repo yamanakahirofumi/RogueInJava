@@ -1,5 +1,7 @@
 package org.hiro.output;
 
+import org.hiro.map.AbstractCoordinate;
+
 public class Display {
 
     static public int LINES;
@@ -55,6 +57,10 @@ public class Display {
     }
 
     static public void mvaddch(int y, int x, char c) {
+    }
+
+    static public void mvaddch(AbstractCoordinate coordinate, char c){
+
     }
 
     static public void mvaddstr(int y, int x, String str) {

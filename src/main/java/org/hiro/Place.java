@@ -7,7 +7,7 @@ import org.hiro.things.ThingImp;
  * describe a place on the level map
  */
 public class Place {
-    ObjectType p_ch;
-    int p_flags;  // charかも
-    ThingImp p_monst;
+    public ObjectType p_ch;
+    public int p_flags;  // charかも
+    public ThingImp p_monst;
 }

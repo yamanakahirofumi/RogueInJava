@@ -55,7 +55,7 @@ public class Fight {
      * fight:
      *	The player attacks the monster.
      */
-    static boolean fight(Coordinate mp, ThingImp weap, boolean thrown) {
+    static boolean fight(Coordinate mp, Weapon weap, boolean thrown) {
         ThingImp tp;
         boolean did_hit = true;
         String mname;
@@ -186,7 +186,7 @@ public class Fight {
      * killed:
      *	Called to put a monster to death
      */
-    static void killed(ThingImp tp, boolean pr) {
+    public static void killed(ThingImp tp, boolean pr) {
 
         Human.instance.addExperience(tp._t_stats.s_exp);
 
@@ -345,7 +345,7 @@ public class Fight {
      * roll_em:
      *	Roll several attacks
      */
-    static boolean roll_em(ThingImp thatt, ThingImp thdef, ThingImp weap, boolean hurl) {
+    static boolean roll_em(ThingImp thatt, ThingImp thdef, Weapon weap, boolean hurl) {
         /*
          * adjustments to hit probabilities due to strength
          */
@@ -372,8 +372,8 @@ public class Fight {
             dplus = 0;
             hplus = 0;
         } else {
-            hplus = (weap == null ? 0 : weap._o_hplus);
-            dplus = (weap == null ? 0 : weap._o_dplus);
+            hplus = weap._o_hplus;
+            dplus = weap._o_dplus;
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
                 if (Util.ISRING(Const.LEFT, RingEnum.R_ADDDAM)) {
@@ -387,7 +387,7 @@ public class Fight {
                     hplus += Global.cur_ring[Const.RIGHT]._o_arm;
                 }
             }
-            cp = weap._o_damage;
+            cp = weap.getDamage();
             if (hurl) {
                 if (weap.contains_o_flags(Const.ISMISL) && curWeapons.size() > 0 &&
                         curWeapons.get(0)._o_which == weap._o_launch) {
@@ -409,9 +409,9 @@ public class Fight {
         if (def == Global.player._t_stats) {
             if (Global.cur_armor != null)
                 def_arm = Global.cur_armor._o_arm;
-            if (Util.ISRING(Const.LEFT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.LEFT, RingEnum.Protection))
                 def_arm -= Global.cur_ring[Const.LEFT]._o_arm;
-            if (Util.ISRING(Const.RIGHT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
                 def_arm -= Global.cur_ring[Const.RIGHT]._o_arm;
         }
         boolean MASTER = false;

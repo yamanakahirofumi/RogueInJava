@@ -22,7 +22,7 @@ public class Wizard {
      * telport:
      *	Bamf the hero someplace else
      */
-    static void teleport() {
+    public static void teleport() {
         Coordinate c = new Coordinate();
 
         Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
@@ -59,7 +59,7 @@ public class Wizard {
      * whatis:
      *	What a certin object is
      */
-    static void whatis(boolean insist, int type) {
+    public static void whatis(boolean insist, int type) {
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you don't have anything in your pack to identify");
@@ -108,8 +108,6 @@ public class Wizard {
      *	Set things up when we really know what a thing is
      */
     static void set_know(ThingImp obj, Obj_info[] info) {
-        String guess;
-
         info[obj._o_which].know();
         obj.add_o_flags(Const.ISKNOW);
     }

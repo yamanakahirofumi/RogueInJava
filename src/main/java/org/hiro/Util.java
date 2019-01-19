@@ -8,7 +8,6 @@ import org.hiro.things.Potion;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Scroll;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 
 import java.util.Random;
 
@@ -23,15 +22,15 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
-    static Place getPlace(Coordinate c){
+    public static Place getPlace(Coordinate c){
         return Global.places.get((c.getX() << 5) + c.getY());
     }
 
-    static Place INDEX(int y, int x) {
+    public static Place INDEX(int y, int x) {
         return Global.places.get((x << 5) + y);
     }
 
-    static int flat(Coordinate c) {
+    public static int flat(Coordinate c) {
         return getPlace(c).p_flags;
     }
 
@@ -56,7 +55,7 @@ public class Util {
      * thing.containsState(StateEnum.flg)に変更
      */
     @Deprecated
-    static boolean on(ThingImp thing, int flag) {
+    static boolean on(Thing thing, int flag) {
         // return (thing.containsState(flag);
         throw new UnsupportedOperationException("使わないで");
     }
@@ -76,7 +75,7 @@ public class Util {
 //		return Global.places.get((x << 5) + y).p_ch
 //	}
 
-    static ObjectType winat(Coordinate coordinate) {
+    public static ObjectType winat(Coordinate coordinate) {
         if (getPlace(coordinate).p_monst != null) {
             return ObjectType.get((char) getPlace(coordinate).p_monst._t_disguise);
 

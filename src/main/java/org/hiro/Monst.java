@@ -19,7 +19,7 @@ public class Monst {
      *	Pick a monster to show up.  The lower the level,
      *	the meaner the monster.
      */
-    static int randmonster(boolean wander) {
+    public static int randmonster(boolean wander) {
         /*
          * ListMethod of monsters in rough order of vorpalness
          */
@@ -51,7 +51,7 @@ public class Monst {
      * new_monster:
      *	Pick a new monster and add it to the list
      */
-    static void new_monster(ThingImp tp, int type, Coordinate cp) {
+    public static void new_monster(ThingImp tp, int type, Coordinate cp) {
         Monster mp;
         int lev_add;
 
@@ -94,14 +94,17 @@ public class Monst {
     static int exp_add(ThingImp tp) {
         int mod;
 
-        if (tp._t_stats.s_lvl == 1)
+        if (tp._t_stats.s_lvl == 1) {
             mod = tp._t_stats.s_maxhp / 8;
-        else
+        } else {
             mod = tp._t_stats.s_maxhp / 6;
-        if (tp._t_stats.s_lvl > 9)
+        }
+
+        if (tp._t_stats.s_lvl > 9) {
             mod *= 20;
-        else if (tp._t_stats.s_lvl > 6)
+        } else if (tp._t_stats.s_lvl > 6) {
             mod *= 4;
+        }
         return mod;
     }
 
@@ -195,9 +198,9 @@ public class Monst {
      */
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {
-            if (Util.ISRING(Const.LEFT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.LEFT, RingEnum.Protection))
                 which -= Global.cur_ring[Const.LEFT]._o_arm;
-            if (Util.ISRING(Const.RIGHT, RingEnum.R_PROTECT))
+            if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
                 which -= Global.cur_ring[Const.RIGHT]._o_arm;
         }
         return save_throw(which, Global.player);
@@ -208,7 +211,7 @@ public class Monst {
      * save_throw:
      *	See if a creature save against something
      */
-    static boolean save_throw(int which, ThingImp tp) {
+    public static boolean save_throw(int which, ThingImp tp) {
         int need;
 
         need = 14 + which - tp._t_stats.s_lvl / 2;
