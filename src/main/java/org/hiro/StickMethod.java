@@ -63,7 +63,7 @@ public class StickMethod {
      *	Fire a bolt in a given direction from a specific starting place
      */
     public static void fire_bolt(Coordinate start, Coordinate dir, String name) {
-        List<Coordinate> spotpos = new ArrayList<>();
+        List<Coordinate> spotPosition = new ArrayList<>();
         Weapon bolt = new Weapon(WeaponEnum.FLAME, 100);
         bolt._o_hurldmg = "6x6";
         Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
@@ -87,11 +87,11 @@ public class StickMethod {
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
             Coordinate c1;
-            if (spotpos.size() <= i) {
+            if (spotPosition.size() <= i) {
                 c1 = new Coordinate();
-                spotpos.add(c1);
+                spotPosition.add(c1);
             } else {
-                c1 = spotpos.get(i);
+                c1 = spotPosition.get(i);
             }
 
             pos.y += dir.y;
@@ -222,7 +222,7 @@ public class StickMethod {
             }
         }
         for (int j = 0; j < i; j++) {
-            Coordinate c2 = spotpos.get(j);
+            Coordinate c2 = spotPosition.get(j);
             Display.mvaddch(c2.y, c2.x, Util.getPlace(c2).p_ch.getValue());
         }
     }
