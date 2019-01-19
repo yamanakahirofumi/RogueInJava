@@ -10,7 +10,7 @@ public class Potion extends ThingImp {
 
     Potion() {
         super();
-        this._o_which = ThingMethod.pick_one(getTypes(), PotionEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(getTypes());
     }
 
     @Override

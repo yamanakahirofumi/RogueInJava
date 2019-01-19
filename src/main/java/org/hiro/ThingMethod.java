@@ -28,16 +28,16 @@ public class ThingMethod {
      * pick_one:
      *	Pick an item out of a list of nitems possible objects
      */
-    public static int pick_one(List<Obj_info> info, int nitems) {
+    public static int pick_one(List<Obj_info> info) {
 
         int rnd = Util.rnd(100);
         int j;
-        for (j = 0; j < nitems; j++) {
+        for (j = 0; j < info.size(); j++) {
             if (rnd < info.get(j).getProbability()) {
                 break;
             }
         }
-        if (j == nitems) {
+        if (j == info.size()) {
             boolean MASTER = false;
             if (MASTER) {
                 if (Global.wizard) {

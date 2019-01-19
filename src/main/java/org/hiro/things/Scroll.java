@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class Scroll extends ThingImp {
     public Scroll() {
         super();
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.scr_info), ScrollEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.scr_info));
     }
 
     @Override

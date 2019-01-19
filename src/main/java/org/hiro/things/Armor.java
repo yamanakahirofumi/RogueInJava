@@ -11,7 +11,7 @@ import java.util.List;
 public class Armor extends ThingImp {
 	public Armor(){
 		super();
-		this._o_which = ThingMethod.pick_one(getTypes(), ArmorEnum.getMaxValue());
+		this._o_which = ThingMethod.pick_one(getTypes());
 		this._o_arm = Global.a_class[this._o_which];
 		int r = Util.rnd(100);
 		if (r < 20) {

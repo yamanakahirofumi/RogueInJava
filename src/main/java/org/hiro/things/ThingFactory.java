@@ -1,6 +1,5 @@
 package org.hiro.things;
 
-import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.ThingMethod;
 import org.hiro.things.scrolltype.Confuse;
@@ -39,7 +38,7 @@ import java.util.Arrays;
 
 public class ThingFactory {
     public static Thing create() {
-        switch (Global.no_food > 3 ? 2 : ThingMethod.pick_one(Arrays.asList(Global.things), Const.NUMTHINGS)) {
+        switch (Global.no_food > 3 ? 2 : ThingMethod.pick_one(Arrays.asList(Global.things))) {
             case 0:
                 return new Potion();
             case 1:
@@ -60,7 +59,7 @@ public class ThingFactory {
     }
 
     private static Scroll createScroll() {
-        ScrollEnum s = ScrollEnum.get(ThingMethod.pick_one(Arrays.asList(Global.scr_info), ScrollEnum.getMaxValue()));
+        ScrollEnum s = ScrollEnum.get(ThingMethod.pick_one(Arrays.asList(Global.scr_info)));
         switch (s) {
             case Confuse:
                 return new Confuse();
@@ -104,7 +103,7 @@ public class ThingFactory {
     }
 
     private static Stick createStick() {
-        StickEnum s = StickEnum.get(ThingMethod.pick_one(Arrays.asList(Global.ws_info), StickEnum.getMaxValue()));
+        StickEnum s = StickEnum.get(ThingMethod.pick_one(Arrays.asList(Global.ws_info)));
         switch (s) {
             case LightUp:
                 return new LightUp();

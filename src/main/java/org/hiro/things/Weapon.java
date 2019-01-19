@@ -14,7 +14,7 @@ public class Weapon extends ThingImp {
 
     Weapon() {
         super();
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.weap_info), WeaponEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.weap_info));
         initWeapon();
         int r = Util.rnd(100);
         if (r < 10) {

@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class Ring extends ThingImp {
     Ring() {
         super();
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ring_info), RingEnum.getMaxValue()); // TODO
+        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.ring_info)); // TODO
         if (this._o_which == RingEnum.R_ADDSTR.getValue() || this._o_which == RingEnum.Protection.getValue()
                 || this._o_which == RingEnum.R_ADDHIT.getValue() || this._o_which == RingEnum.R_ADDDAM.getValue()) {
             if ((this._o_arm = Util.rnd(3)) == 0) {
