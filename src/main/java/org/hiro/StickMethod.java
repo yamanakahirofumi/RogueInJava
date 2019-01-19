@@ -18,19 +18,16 @@ import java.util.List;
  */
 public class StickMethod {
 
-
     /*
      * charge_str:
      *	Return an appropriate string for a wand charge
      */
     static String charge_str(ThingImp obj) {
-        String buf;
+        String buf = "";
 
-        if (!(obj.contains_o_flags(Const.ISKNOW))) {
-            buf = "";
-        } else if (Global.terse) {
+        if (obj.contains_o_flags(Const.ISKNOW) && Global.terse) {
             buf = " [" + obj._o_arm + "]";
-        } else {
+        } else if(obj.contains_o_flags(Const.ISKNOW)) {
             buf = " [" + obj._o_arm + " charges]";
         }
         return buf;
@@ -42,10 +39,11 @@ public class StickMethod {
      *	Perform a zap with a wand
      */
     static void do_zap() {
-        ThingImp obj;
+        ThingImp obj = Pack.get_item("zap with", ObjectType.STICK);
 
-        if ((obj = Pack.get_item("zap with", ObjectType.STICK)) == null)
+        if (obj == null) {
             return;
+        }
         if (!(obj instanceof Stick)) {
             Global.after = false;
             IOUtil.msg("you can't zap with that!");
