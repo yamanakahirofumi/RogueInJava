@@ -132,7 +132,7 @@ public class Chase {
      *	this calculates d^2, not d, but that's good enough for
      *	our purposes, since it's only used comparitively.
      */
-    static int dist(int y1, int x1, int y2, int x2) {
+    private static int dist(int y1, int x1, int y2, int x2) {
         return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
@@ -157,8 +157,8 @@ public class Chase {
          * We can only see if the hero in the same room as
          * the coordinate and the room is lit or if it is close.
          */
-        Room rer;
-        return ((rer = roomin(c)) == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK));
+        Room rer = roomin(c);
+        return rer == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
