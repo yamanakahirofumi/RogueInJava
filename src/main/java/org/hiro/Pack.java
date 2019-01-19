@@ -14,6 +14,7 @@ import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Pack {
 
@@ -101,17 +102,13 @@ public class Pack {
 
         Global.n_objs = 0;
         for (ThingImp th : list) {
-            if (type != ObjectType.Initial && type != th.getDisplay() ) {
+            if (type != ObjectType.Initial && type != th.getDisplay()) {
                 continue;
             }
             Global.n_objs++;
             inv_temp = th._o_packch + ") %s";
-            if (MASTER) {
-                if (th._o_packch == 0) {
-                    inv_temp = "%s";
-                } else {
-
-                }
+            if (MASTER && th._o_packch == 0) {
+                inv_temp = "%s";
             }
             Global.msg_esc = true;
             if (ThingMethod.add_line(inv_temp, ThingMethod.inv_name(th, false)) == Const.ESCAPE) {
@@ -196,7 +193,6 @@ public class Pack {
      *	it off the ground.
      */
     static void add_pack(ThingImp obj, boolean silent) {
-        Boolean discarded = false;
 
         boolean from_floor = false;
         if (obj == null) {
@@ -209,92 +205,58 @@ public class Pack {
         /*
          * Check for and deal with scare monster scrolls
          */
-        if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue())
-            if (obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
-                Global.lvl_obj.remove(obj);
-                Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
-                Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
-                update_mdest(obj);
-                discarded = true;
-                IOUtil.msg("the scroll turns to dust as you pick it up");
-                return;
-            }
+        if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue() &&
+                obj.contains_o_flags(StateEnum.ISFOUND.getValue())) { // TODO:o_flagとt_flag共有を考えないと
+            Global.lvl_obj.remove(obj);
+            Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
+            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            update_mdest(obj);
+            IOUtil.msg("the scroll turns to dust as you pick it up");
+            return;
+        }
 
+        boolean discarded = false;
         if (Global.player.getBaggageSize() == 0) {
+            // カバンの中がからだから
             Global.player.addItem(obj);
             obj._o_packch = pack_char();
             Global.inpack++;
         } else {
-            ThingImp lp = null;
-            for (ThingImp op : Global.player.getBaggage()) {
-                if (op.getClass() != obj.getClass()) {
-                    lp = op;
-                } else {
-                    while (op.getClass() == obj.getClass() && op._o_which != obj._o_which) {
-                        lp = op;
-                        if (op._l_next == null) {
-                            break;
-                        } else {
-                            op = op._l_next;
-                        }
-                    }
-                    if (op.getClass() == obj.getClass() && op._o_which == obj._o_which) {
-                        if (op instanceof Potion || op instanceof Scroll || op instanceof Food) {
-                            if (!pack_room(from_floor, obj)) {
-                                return;
-                            }
-                            op._o_count++;
-                            update_mdest(obj);
-                            obj = op;
-                            discarded = true;
-                            lp = null;
-                            // goto out;
-                        } else if (obj.isGroup()) {
-                            lp = op;
-                            while (op.getClass() == obj.getClass()
-                                    && op._o_which == obj._o_which
-                                    && op._o_group != obj._o_group) {
-                                lp = op;
-                                if (op._l_next == null) {
-                                    break;
-                                } else {
-                                    op = op._l_next;
-                                }
-                            }
-                            if (op.getClass() == obj.getClass()
-                                    && op._o_which == obj._o_which
-                                    && op._o_group == obj._o_group) {
-                                op._o_count += obj._o_count;
-                                Global.inpack--;
-                                if (!pack_room(from_floor, obj)) {
-                                    return;
-                                }
-                                // goto dump_it;
-                                update_mdest(obj);
-                                obj = op;
-                                discarded = true;
-                                lp = null;
-                            }
-                        } else {
-                            lp = op;
-                        }
-                    }
-                    out:
-                    break;
+            boolean isAdd = false;
+            // カバンの中に同じものがあるか確認
+            ThingImp fin = obj;
+            List<ThingImp> collect = Global.player.getBaggage().stream()
+                    .filter(it -> fin.getClass() == it.getClass())
+                    .collect(Collectors.toList());
+            if (collect.size() < 1) {
+                isAdd = true;
+            } else if (obj.isGroup() && obj._o_group == collect.get(0)._o_group) {
+                if (!pack_room(from_floor, obj)) {
+                    return;
                 }
+                Global.inpack--;
+                ThingImp t = collect.get(0);
+                obj._o_count += t._o_count;
+                update_mdest(obj);
+                discarded = true;
+            } else if (obj instanceof Potion || obj instanceof Scroll || obj instanceof Food) {
+                if (!pack_room(from_floor, obj)) {
+                    return;
+                }
+                ThingImp t = collect.get(0);
+                obj._o_count += t._o_count;
+                update_mdest(obj);
+                discarded = true;
+            } else {
+                isAdd = true;
             }
 
-            if (lp != null) {
+            if (isAdd) {
                 if (!pack_room(from_floor, obj)) {
                     return;
                 } else {
                     obj._o_packch = pack_char();
-                    obj._l_next = lp._l_next;
-                    obj._l_prev = lp;
-                    if (lp._l_next != null) {
-                        lp._l_next._l_prev = obj;
-                    }
-                    lp._l_next = obj;
+                    Global.player.addItem(obj);
                 }
             }
         }
