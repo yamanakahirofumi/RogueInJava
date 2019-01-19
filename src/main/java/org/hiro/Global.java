@@ -82,7 +82,7 @@ public class Global {
     static File scoreboard;
 
     static Coordinate stairs;  /* Location of staircase */
-    static Coordinate delta;
+    public static Coordinate delta;
     static Coordinate oldpos;
 
     static Room oldrp;
@@ -121,10 +121,10 @@ public class Global {
     static String fruit = "slime-mold";  /* Favorite fruit */
 
     static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
-    static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
+    public static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
     static Ring cur_ring[];
     @Deprecated
-    static ThingImp player;
+    public static ThingImp player;
     static Armor cur_armor;
     static ThingImp last_pick;   /* Last object picked in get_item() */
     static ThingImp l_last_pick;
@@ -139,7 +139,7 @@ public class Global {
 
     public static Delayed_action[] d_list = new Delayed_action[Const.MAXDAEMONS];
 
-    static Room[] passages = new Room[Const.MAXPASS];    /* One for each passage */
+    public static Room[] passages = new Room[Const.MAXPASS];    /* One for each passage */
 //	{
 //		{ {0, 0}, {0, 0}, {0, 0}, 0, Const.ISGONE|Const.ISDARK, 0, {{0,0}} },
 //		{ {0, 0}, {0, 0}, {0, 0}, 0, Const.ISGONE|Const.ISDARK, 0, {{0,0}} },
@@ -167,7 +167,7 @@ public class Global {
 //	{ "1x2",	"2x4",	-1,	ISMANY|ISMISL,	},	/* Shuriken */
 //	{ "2x3",	"1x6",	-1,	ISMISL,		},	/* Spear */
 
-    static boolean terse = false;  /* True if we should be short */
+    public static boolean terse = false;  /* True if we should be short */
     static String file_name;
 
     static boolean VDSUSP;

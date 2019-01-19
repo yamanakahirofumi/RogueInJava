@@ -11,11 +11,11 @@ public class IOUtil {
      *	Returns true if it is ok to step on ch
      *  歩けるところがtrue
      */
-    static boolean step_ok(ObjectType ch) {
+    public static boolean step_ok(ObjectType ch) {
         return step_ok(ch.getValue());
     }
 
-    static boolean step_ok(char ch) {
+    private static boolean step_ok(char ch) {
         switch (ch) {
             case ' ':
             case '|':
@@ -49,7 +49,7 @@ public class IOUtil {
 
 
     /* VARARGS1 */
-    static int msg(String message, Object... args) {
+    public static int msg(String message, Object... args) {
         // va_list args;
 
         /*
@@ -75,7 +75,7 @@ public class IOUtil {
      *	Display a new msg (giving him a chance to see the previous one
      *	if it is up there with the --More--)
      */
-    static int endmsg() {
+    public static int endmsg() {
         int ch;
 
         if (Global.save_msg) {
@@ -137,7 +137,7 @@ public class IOUtil {
      *	Add things to the current message
      */
     /* VARARGS1 */
-    static void addmsg(String fmt, Object... args) {
+    public static void addmsg(String fmt, Object... args) {
         // va_list args;
 
         // va_start(args, fmt);
@@ -171,7 +171,8 @@ public class IOUtil {
      *	Display the important stats line.  Keep the cursor where it was.
      */
     static void status() {
-        int oy, ox;
+        int oy;
+        int ox;
         int s_hungry = 0;
         int s_lvl = 0;
         int s_pur = -1;
@@ -217,18 +218,18 @@ public class IOUtil {
         if (Global.stat_msg) {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
+                    s_lvl, s_pur, hpwidth, s_hp, hpwidth,
                     Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
-                    state_name[Global.hungry_state]);
+                    state_name[s_hungry]);
         } else {
             Display.move(Const.STATLINE, 0);
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    s_lvl, Global.purse, hpwidth, s_hp, hpwidth,
+                    s_lvl, s_pur, hpwidth, s_hp, hpwidth,
                     Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
-                    state_name[Global.hungry_state]);
+                    state_name[s_hungry]);
         }
 
         Display.clrtoeol();

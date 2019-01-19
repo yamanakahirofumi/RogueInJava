@@ -1,11 +1,13 @@
 package org.hiro;
 
 import org.hiro.character.Human;
-import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
-import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.*;
+import org.hiro.things.ObjectType;
+import org.hiro.things.Stick;
+import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
+import org.hiro.things.WeaponEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,6 @@ public class StickMethod {
      *	Perform a zap with a wand
      */
     static void do_zap() {
-        boolean MASTER = false;
         ThingImp obj;
 
         if ((obj = Pack.get_item("zap with", ObjectType.STICK)) == null)
@@ -54,232 +55,19 @@ public class StickMethod {
             IOUtil.msg("nothing happens");
             return;
         }
-        StickEnum st = StickEnum.get(obj._o_which);
-        ThingImp tp;
-        String name;
 
-        switch (st) {
-            case WS_LIGHT:
-                /*
-                 * Reddy Kilowat wand.  Light up the room
-                 */
-                Global.ws_info[st.getValue()].know();
-                if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
-                    IOUtil.msg("the corridor glows and then fades");
-                } else {
-                    Global.player.t_room.removeInfo(RoomInfoEnum.ISDARK);
-                    /*
-                     * Light the room and put the player back up
-                     */
-                    Rooms.enter_room(Global.player._t_pos);
-                    IOUtil.addmsg("the room is lit");
-                    if (!Global.terse) {
-                        IOUtil.addmsg(" by a shimmering %s light", Init.pick_color("blue"));
-                    }
-                    IOUtil.endmsg();
-                }
-                break;
-            case WS_DRAIN:
-                /*
-                 * take away 1/2 of hero's hit points, then take it away
-                 * evenly from the monsters in the room (or next to hero
-                 * if he is in a passage)
-                 */
-                if (Human.instance.getHp() < 2) {
-                    IOUtil.msg("you are too weak to use it");
-                    return;
-                } else {
-                    drain();
-                }
-                break;
-            case WS_INVIS:
-            case WS_POLYMORPH:
-            case WS_TELAWAY:
-            case WS_TELTO:
-            case WS_CANCEL:
-                Coordinate tmp = new Coordinate();
-                tmp.y = Global.player._t_pos.y;
-                tmp.x = Global.player._t_pos.x;
-                while (IOUtil.step_ok(Util.winat(tmp))) {
-                    tmp.y += Global.delta.y;
-                    tmp.x += Global.delta.x;
-                }
-                if ((tp = Util.getPlace(tmp).p_monst) != null) {
-                    int monster = tp._t_type;
-                    if (monster == 'F') {
-                        Human.instance.removeState(StateEnum.ISHELD);
-                    }
-                    switch (st) {
-                        case WS_INVIS:
-                            tp.addState(StateEnum.ISINVIS);
-                            if (Chase.isSee(tmp)) {
-                                Display.mvaddch(tmp.y, tmp.x, (char) tp._t_oldch);
-                            }
-                            break;
-                        case WS_POLYMORPH: {
-
-                            List<ThingImp> pp = tp.getBaggage();
-                            Global.mlist.remove(tp);
-                            if (Chase.see_monst(tp)) {
-                                Display.mvaddch(tmp.y, tmp.x, Util.getPlace(tmp).p_ch.getValue());
-                            }
-                            int oldch = tp._t_oldch;
-                            Global.delta.y = tmp.y;
-                            Global.delta.x = tmp.x;
-                            Monst.new_monster(tp, monster = Util.rnd(26) + 'A', Global.delta);
-                            if (Chase.see_monst(tp)) {
-                                Display.mvaddch(tmp.y, tmp.x, (char) monster);
-                            }
-                            tp._t_oldch = oldch;
-                            tp.setBaggage(pp);
-                            Global.ws_info[st.getValue()].addKnown(Chase.see_monst(tp));
-                            break;
-                        }
-                        case WS_CANCEL:
-                            tp.addState(StateEnum.ISCANC);
-                            tp.removeState(StateEnum.ISINVIS);
-                            tp.removeState(StateEnum.CANHUH);
-                            tp._t_disguise = tp._t_type;
-                            if (Chase.see_monst(tp)) {
-                                Display.mvaddch(tmp.y, tmp.x, (char) tp._t_disguise);
-                            }
-                            break;
-                        case WS_TELAWAY:
-                        case WS_TELTO: {
-                            Coordinate new_pos = new Coordinate();
-
-                            if (obj._o_which == StickEnum.WS_TELAWAY.getValue()) {
-                                do {
-                                    DrawRoom.find_floor(null, new_pos, false, true);
-                                } while (new_pos.equals(Global.player._t_pos));
-                            } else {
-                                new_pos.y = Global.player._t_pos.y + Global.delta.y;
-                                new_pos.x = Global.player._t_pos.x + Global.delta.x;
-                            }
-                            tp._t_dest = Global.player._t_pos;
-                            tp.addState(StateEnum.ISRUN);
-                            Chase.relocate(tp, new_pos);
-                        }
-                    }
-                }
-                break;
-            case WS_MISSILE:
-                Global.ws_info[StickEnum.WS_MISSILE.getValue()].know();
-                Missile bolt = new Missile();
-                if (Human.instance.getWeapons().size() > 0) {
-                    bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
-                }
-                WeaponMethod.do_motion(bolt, Global.delta.y, Global.delta.x);
-                if ((tp = Util.getPlace(bolt._o_pos).p_monst) != null
-                        && !Monst.save_throw(Const.VS_MAGIC, tp)) {
-                    WeaponMethod.hit_monster(bolt._o_pos, bolt);
-                } else if (Global.terse) {
-                    IOUtil.msg("missle vanishes");
-                } else {
-                    IOUtil.msg("the missle vanishes with a puff of smoke");
-                }
-                break;
-            case WS_HASTE_M:
-            case WS_SLOW_M:
-                Coordinate tmp2 = new Coordinate();
-                tmp2.y = Global.player._t_pos.y;
-                tmp2.x = Global.player._t_pos.x;
-                while (IOUtil.step_ok(Util.winat(tmp2))) {
-                    tmp2.y += Global.delta.y;
-                    tmp2.x += Global.delta.x;
-                }
-                if ((tp = Util.getPlace(tmp2).p_monst) != null) {
-                    if (obj._o_which == StickEnum.WS_HASTE_M.getValue()) {
-                        if (tp.containsState(StateEnum.ISSLOW)) {
-                            tp.removeState(StateEnum.ISSLOW);
-                        } else {
-                            tp.addState(StateEnum.ISHASTE);
-                        }
-                    } else {
-                        if (tp.containsState(StateEnum.ISHASTE)) {
-                            tp.removeState(StateEnum.ISHASTE);
-                        } else {
-                            tp.addState(StateEnum.ISSLOW);
-                        }
-                        tp._t_turn = true;
-                    }
-                    Global.delta.y = tmp2.y;
-                    Global.delta.x = tmp2.x;
-                    Chase.runto(Global.delta);
-                }
-                break;
-            case WS_ELECT:
-            case WS_FIRE:
-            case WS_COLD:
-                if (obj._o_which == StickEnum.WS_ELECT.getValue()) {
-                    name = "bolt";
-                } else if (obj._o_which == StickEnum.WS_FIRE.getValue()) {
-                    name = "flame";
-                } else {
-                    name = "ice";
-                }
-                fire_bolt(Global.player._t_pos, Global.delta, name);
-                Global.ws_info[obj._o_which].know();
-                break;
-            case WS_NOP:
-                break;
-            default:
-                if (MASTER) {
-                    IOUtil.msg("what a bizarre schtick!");
-                }
-        }
-        obj._o_arm--;
-    }
-
-    /*
-     * drain:
-     *	Do drain hit points from player shtick
-     */
-    static void drain() {
-        /*
-         * First cnt how many things we need to spread the hit points among
-         */
-        Room corp;
-        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.DOOR) {
-            corp = Global.passages[Util.flat(Global.player._t_pos) & Const.F_PNUM];
-        } else {
-            corp = null;
-        }
-        boolean inpass = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE);
-        List<ThingImp> drainee = new ArrayList<>();
-        for (ThingImp mp : Global.mlist) {
-            if (mp.t_room == Global.player.t_room || mp.t_room == corp ||
-                    (inpass && Util.getPlace(mp._t_pos).p_ch == ObjectType.DOOR &&
-                            Global.passages[Util.flat(mp._t_pos) & Const.F_PNUM] == Global.player.t_room)) {
-                drainee.add(mp);
-            }
-        }
-        if (drainee.size() == 0) {
-            IOUtil.msg("you have a tingling feeling");
-            return;
-        }
-        Global.player._t_stats.s_hpt /= 2;
-        int cnt = Human.instance.getHp() / drainee.size();
-        /*
-         * Now zot all of the monsters
-         */
-        for (ThingImp dp : drainee) {
-            if ((dp._t_stats.s_hpt -= cnt) <= 0) {
-                Fight.killed(dp, Chase.see_monst(dp));
-            } else {
-                Chase.runto(dp._t_pos);
-            }
-        }
+        Stick stick = (Stick) obj;
+        stick.shake();
     }
 
     /*
      * fire_bolt:
      *	Fire a bolt in a given direction from a specific starting place
      */
-    static void fire_bolt(Coordinate start, Coordinate dir, String name) {
+    public static void fire_bolt(Coordinate start, Coordinate dir, String name) {
         List<Coordinate> spotpos = new ArrayList<>();
-        Weapon bolt = new Weapon(WeaponEnum.FLAME,100);
-        bolt._o_hurldmg ="6x6";
+        Weapon bolt = new Weapon(WeaponEnum.FLAME, 100);
+        bolt._o_hurldmg = "6x6";
         Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
         int dirch = 0;
         switch (dir.y + dir.x) {
@@ -414,7 +202,7 @@ public class StickMethod {
                         changed = !changed;
                         if (!Monst.save(Const.VS_MAGIC)) {
                             Human.instance.deleteHp(Dice.roll(6, 6));
-                            if (Human.instance.getHp()<= 0) {
+                            if (Human.instance.getHp() <= 0) {
                                 if (Global.player._t_pos.equals(start)) {
                                     Rip.death('b');
                                 } else {

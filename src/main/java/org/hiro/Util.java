@@ -22,7 +22,7 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
-    static Place getPlace(Coordinate c){
+    public static Place getPlace(Coordinate c){
         return Global.places.get((c.getX() << 5) + c.getY());
     }
 
@@ -30,7 +30,7 @@ public class Util {
         return Global.places.get((x << 5) + y);
     }
 
-    static int flat(Coordinate c) {
+    public static int flat(Coordinate c) {
         return getPlace(c).p_flags;
     }
 
@@ -75,7 +75,7 @@ public class Util {
 //		return Global.places.get((x << 5) + y).p_ch
 //	}
 
-    static ObjectType winat(Coordinate coordinate) {
+    public static ObjectType winat(Coordinate coordinate) {
         if (getPlace(coordinate).p_monst != null) {
             return ObjectType.get((char) getPlace(coordinate).p_monst._t_disguise);
 

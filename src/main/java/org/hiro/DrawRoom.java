@@ -307,7 +307,7 @@ public class DrawRoom {
      *	Find a valid floor spot in this room.  If rp is NULL, then
      *	pick a new room each time around the loop.
      */
-    static boolean find_floor(Room rp, Coordinate cp, boolean limit, boolean monst) {
+    public static boolean find_floor(Room rp, Coordinate cp, boolean limit, boolean monst) {
 
         boolean pickroom = (rp == null);
 

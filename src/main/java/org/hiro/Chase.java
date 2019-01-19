@@ -48,7 +48,7 @@ public class Chase {
      * runto:
      *	Set a monster running after the hero.
      */
-    static void runto(Coordinate runner) {
+    public static void runto(Coordinate runner) {
         ThingImp tp;
 
         /*
@@ -106,7 +106,7 @@ public class Chase {
      *	Return true if the hero can see the monster
      *  true: 主人公がモンスターを見える場合
      */
-    static boolean see_monst(ThingImp mp) {
+    public static boolean see_monst(ThingImp mp) {
         if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return false;
         }
@@ -142,7 +142,7 @@ public class Chase {
      * 昔はcan_see()
      *	Returns true if the hero can see a certain coordinate.
      */
-    static boolean isSee(Coordinate c) {
+    public static boolean isSee(Coordinate c) {
         if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return false;
         }
@@ -181,7 +181,7 @@ public class Chase {
      *	Make the monster's new location be the specified one, updating
      *	all the relevant state.
      */
-    static void relocate(ThingImp th, Coordinate new_loc) {
+    public static void relocate(ThingImp th, Coordinate new_loc) {
 
         if (!new_loc.equals(th._t_pos)) {
             Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);

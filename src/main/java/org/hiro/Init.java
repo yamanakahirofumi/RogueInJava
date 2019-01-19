@@ -10,7 +10,7 @@ public class Init {
      *	If he is halucinating, pick a random color name and return it,
      *	otherwise return the given color.
      */
-    static String pick_color(String col) {
+    public static String pick_color(String col) {
         return (Human.instance.containsState(StateEnum.ISHALU) ? Global.rainbow[Util.rnd(Global.rainbow.length)] : col);
     }
 

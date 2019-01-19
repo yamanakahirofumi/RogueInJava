@@ -9,7 +9,7 @@ public class Stats {
 	long s_exp;				/* Experience */
 	int s_lvl;				/* level of mastery */
 	int s_arm;				/* ArmorEnum class */
-	int s_hpt;			/* Hit points */
+	public int s_hpt;			/* Hit points */
 	String s_dmg;			/* String describing damage done */
 	int  s_maxhp;			/* Max hit points */
 

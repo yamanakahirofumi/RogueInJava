@@ -51,7 +51,7 @@ public class Monst {
      * new_monster:
      *	Pick a new monster and add it to the list
      */
-    static void new_monster(ThingImp tp, int type, Coordinate cp) {
+    public static void new_monster(ThingImp tp, int type, Coordinate cp) {
         Monster mp;
         int lev_add;
 
@@ -211,7 +211,7 @@ public class Monst {
      * save_throw:
      *	See if a creature save against something
      */
-    static boolean save_throw(int which, ThingImp tp) {
+    public static boolean save_throw(int which, ThingImp tp) {
         int need;
 
         need = 14 + which - tp._t_stats.s_lvl / 2;

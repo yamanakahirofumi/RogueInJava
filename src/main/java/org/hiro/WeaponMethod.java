@@ -110,7 +110,7 @@ public class WeaponMethod {
      * hit_monster:
      *	Does the missile hit the monster?
      */
-    static boolean hit_monster(Coordinate mp, Weapon obj) {
+    public static boolean hit_monster(Coordinate mp, Weapon obj) {
         return Fight.fight(mp, obj, true);
     }
 
@@ -119,7 +119,7 @@ public class WeaponMethod {
      *	Do the actual motion on the screen done by an object traveling
      *	across the room
      */
-    static void do_motion(ThingImp obj, int ydelta, int xdelta) {
+    public static void do_motion(ThingImp obj, int ydelta, int xdelta) {
         ObjectType ch;
 
         /*
