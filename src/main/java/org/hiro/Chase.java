@@ -6,9 +6,8 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.Scroll;
-import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.scrolltype.Scare;
 
 /**
  * Code for one creature to chase another
@@ -83,7 +82,7 @@ public class Chase {
             return Global.player._t_pos;
         }
         for (ThingImp obj : Global.lvl_obj) {
-            if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue()) {
+            if (obj instanceof Scare) {
                 continue;
             }
             if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
@@ -472,7 +471,7 @@ public class Chase {
                                     break;
                                 }
                             }
-                            if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
+                            if (obj2 instanceof Scare) {
                                 continue;
                             }
                         }

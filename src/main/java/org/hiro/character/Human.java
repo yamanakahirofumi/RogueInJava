@@ -2,6 +2,7 @@ package org.hiro.character;
 
 import org.hiro.Misc;
 import org.hiro.Util;
+import org.hiro.baggage.Bag;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Armor;
 import org.hiro.things.Food;
@@ -43,6 +44,7 @@ public class Human implements Player {
     /**
      * 装備周り
      */
+    private Bag bag;
     private Weapon weapon;
     private Armor armor;
     private Ring ring;
@@ -53,6 +55,7 @@ public class Human implements Player {
         this.state = new HashSet<>();
         this.weapon = null;
         this.hugerTime = 1300;
+        this.bag = new Bag();
     }
 
     @Override
@@ -251,5 +254,30 @@ public class Human implements Player {
     public boolean removeArmor() {
         this.armor = null;
         return true;
+    }
+
+    @Override
+    public int getBaggageSize(){
+        return this.bag.getFillingSize();
+    }
+
+    @Override
+    public List<Thing> getBaggage() {
+        return this.bag.getContents();
+    }
+
+    @Override
+    public boolean addContent(Thing t){
+        return this.bag.addContents(t);
+    }
+
+    @Override
+    public char getPositionOfContent(Thing t) {
+        return this.bag.getPosition(t);
+    }
+
+    @Override
+    public boolean isContent(Thing t) {
+        return this.bag.isContent(t);
     }
 }

@@ -194,7 +194,7 @@ public class WeaponMethod {
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
-        IOUtil.msg("wielding %s (%c)", sp, obj._o_packch);
+        IOUtil.msg("wielding %s (%c)", sp, Human.instance.getPositionOfContent(obj));
     }
 
 

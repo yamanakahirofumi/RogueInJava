@@ -80,4 +80,10 @@ public interface Player {
     boolean putOnArmor(Armor armor);
     boolean removeArmor();
 
+    int getBaggageSize();
+    List<Thing> getBaggage();
+    boolean addContent(Thing t);
+    char getPositionOfContent(Thing t);
+    boolean isContent(Thing t);
+
 }

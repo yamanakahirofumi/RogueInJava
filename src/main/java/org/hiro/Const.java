@@ -42,7 +42,7 @@ public class Const {
      */
     // static int MAXTHINGS = 9;
     static int MAXOBJ = 9;
-    static int MAXPACK = 23;
+    // static int MAXPACK = 23;
     static int MAXTRAPS = 10;
     static int AMULETLEVEL = 26;
     // public static int NUMTHINGS = 7;    /* number of types of things */

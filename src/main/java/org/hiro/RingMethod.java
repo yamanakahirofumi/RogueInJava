@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
@@ -128,7 +129,8 @@ public class RingMethod {
         if (!Global.terse) {
             IOUtil.addmsg("you are now wearing ");
         }
-        IOUtil.msg("%s (%c)", ThingMethod.inv_name(ringObject, true), ringObject._o_packch);
+        IOUtil.msg("%s (%c)", ThingMethod.inv_name(ringObject, true),
+                Human.instance.getPositionOfContent(ringObject));
     }
 
     /*
@@ -158,7 +160,8 @@ public class RingMethod {
             return;
         }
         if (ThingMethod.isDrop(obj))
-            IOUtil.msg("was wearing %s(%c)", ThingMethod.inv_name(obj, true), obj._o_packch);
+            IOUtil.msg("was wearing %s(%c)", ThingMethod.inv_name(obj, true),
+                    Human.instance.getPositionOfContent(obj));
     }
 
     /*

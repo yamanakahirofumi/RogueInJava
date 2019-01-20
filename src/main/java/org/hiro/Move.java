@@ -9,10 +9,10 @@ import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
-import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
+import org.hiro.things.scrolltype.Scare;
 
 /**
  * hero movement commands
@@ -223,7 +223,7 @@ public class Move {
                             break;
                         }
                     }
-                    if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
+                    if (obj2 instanceof Scare) {
                         break bad;
                     }
                 }
@@ -340,7 +340,7 @@ public class Move {
                         IOUtil.msg("oh no! An arrow shot you");
                 } else {
                     arrow = new Weapon(WeaponEnum.ARROW, 0);
-                    arrow._o_count = 1;
+                    arrow.addCount(1);
                     arrow._o_pos = Global.player._t_pos;
                     WeaponMethod.fall(arrow, false);
                     IOUtil.msg("an arrow shoots past you");

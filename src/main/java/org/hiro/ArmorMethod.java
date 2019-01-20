@@ -76,7 +76,8 @@ public class ArmorMethod {
         } else {
             IOUtil.addmsg("you used to be");
         }
-        IOUtil.msg(" wearing %c) %s", String.valueOf(obj._o_packch), ThingMethod.inv_name(obj, true));
+        IOUtil.msg(" wearing %c) %s", String.valueOf(Human.instance.getPositionOfContent(obj)),
+                ThingMethod.inv_name(obj, true));
     }
 
 

@@ -20,7 +20,7 @@ public class Scroll extends ThingImp {
     @Override
     public int getWorth() {
         int worth = Global.scr_info[this._o_which].getWorth();
-        worth *= this._o_count;
+        worth *= this.getCount();
         Obj_info op = Global.scr_info[this._o_which];
         if (!op.isKnown()) {
             worth /= 2;

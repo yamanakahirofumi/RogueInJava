@@ -713,7 +713,7 @@ public class Command {
                 IOUtil.addmsg("you are %s (", how);
             }
             Global.inv_describe = false;
-            IOUtil.addmsg("%c) %s", cur._o_packch, ThingMethod.inv_name(cur, true));
+            IOUtil.addmsg("%c) %s", Human.instance.getPositionOfContent(cur), ThingMethod.inv_name(cur, true));
             Global.inv_describe = true;
             if (where != null) {
                 IOUtil.addmsg(" %s", where);
