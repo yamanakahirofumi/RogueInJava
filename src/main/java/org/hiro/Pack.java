@@ -284,20 +284,6 @@ public class Pack {
     }
 
     /*
-     * pack_char:
-     *	Return the next unused pack character.
-     */
-    static int pack_char() {
-        int bp;
-
-        for (bp = 0; Global.pack_used[bp]; bp++) {
-            continue;
-        }
-        Global.pack_used[bp] = true;
-        return (bp + 'a');
-    }
-
-    /*
      * pick_up:
      *	Add something to characters pack.
      */
