@@ -57,15 +57,12 @@ public class Fight {
      */
     static boolean fight(Coordinate mp, Weapon weap, boolean thrown) {
         ThingImp tp;
-        boolean did_hit = true;
-        String mname;
-        char ch;
-        boolean MASTER = false;
 
         /*
          * Find the monster we want to fight
          */
         if ((tp = Util.getPlace(mp).p_monst) == null) {
+            boolean MASTER = false;
             if (MASTER) {
                 // debug("Fight what @ %d,%d", mp . y, mp . x);
             }
@@ -81,7 +78,7 @@ public class Fight {
         /*
          * Let him know it was really a xeroc (if it was one).
          */
-        ch = '\0';
+        char ch = '\0';
         if (tp._t_type == 'X' && tp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
             tp._t_disguise = 'X';
             if (Human.instance.containsState(StateEnum.ISHALU)) {
@@ -93,8 +90,8 @@ public class Fight {
             if (!thrown)
                 return false;
         }
-        mname = set_mname(tp);
-        did_hit = false;
+        String mname = set_mname(tp);
+        boolean did_hit = false;
         Global.has_hit = (Global.terse && !Global.to_death);
         if (roll_em(Global.player, tp, weap, thrown)) {
             did_hit = false;
@@ -360,18 +357,14 @@ public class Fight {
                 -7, -6, -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 3,
                 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6
         };
-        String cp;
         boolean did_hit = false;
-        int hplus;
-        int dplus;
+        int hplus= 0;
+        int dplus = 0;
 
         Stats att = thatt._t_stats;
         Stats def = thdef._t_stats;
-        if (weap == null) {
-            cp = att.s_dmg;
-            dplus = 0;
-            hplus = 0;
-        } else {
+        String cp = att.s_dmg;
+        if (weap != null) {
             hplus = weap._o_hplus;
             dplus = weap._o_dplus;
             List<Weapon> curWeapons = Human.instance.getWeapons();
@@ -627,7 +620,7 @@ public class Fight {
                         steal = null;
                         for (ThingImp obj : Global.player.getBaggage()) {
                             if (!Human.instance.isEquipped(obj)
-                                    &&obj.isMagic() && Util.rnd(++nobj) == 0) {
+                                    && obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
                             }
                         }
