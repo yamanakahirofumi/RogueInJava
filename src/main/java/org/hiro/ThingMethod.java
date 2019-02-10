@@ -4,9 +4,10 @@ import org.hiro.character.Human;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.SeeInvisibleRing;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -353,9 +354,9 @@ public class ThingMethod {
             Human.instance.removeArmor();
         } else {
             Global.cur_ring[obj == Global.cur_ring[Const.LEFT] ? Const.LEFT : Const.RIGHT] = null;
-            if (obj._o_which == RingEnum.R_ADDSTR.getValue()) {
+            if (obj instanceof AddStrengthRing) {
                 Misc.chg_str(-obj._o_arm);
-            } else if (obj._o_which == RingEnum.R_SEEINVIS.getValue()) {
+            } else if (obj instanceof SeeInvisibleRing) {
                 Daemons.unsee();
                 try {
                     Method m = Daemons.class.getMethod("unsee");

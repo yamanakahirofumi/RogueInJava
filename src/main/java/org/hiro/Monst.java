@@ -5,9 +5,11 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AggravateMonsterRing;
+import org.hiro.things.ringtype.ProtectionRing;
+import org.hiro.things.ringtype.StealthRing;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -79,7 +81,7 @@ public class Monst {
         }
         tp._t_turn = true;
         tp.setBaggage(new ArrayList<>());
-        if (Util.ISWEARING(RingEnum.R_AGGR)) {
+        if (AggravateMonsterRing.isInclude(Human.instance.getRings())) {
             Chase.runto(cp);
         }
         if (type == 'X') {
@@ -145,7 +147,7 @@ public class Monst {
          */
         if (!tp.containsState(StateEnum.ISRUN) && Util.rnd(3) != 0
                 && tp.containsState(StateEnum.ISMEAN) && !tp.containsState(StateEnum.ISHELD)
-                && !Util.ISWEARING(RingEnum.R_STEALTH) && !Human.instance.containsState(StateEnum.ISLEVIT)) {
+                && !StealthRing.isInclude(Human.instance.getRings()) && !Human.instance.containsState(StateEnum.ISLEVIT)) {
             tp._t_dest = Global.player._t_pos;
             tp.addState(StateEnum.ISRUN);
         }
@@ -198,10 +200,12 @@ public class Monst {
      */
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {
-            if (Util.ISRING(Const.LEFT, RingEnum.Protection))
+            if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing ) {
                 which -= Global.cur_ring[Const.LEFT]._o_arm;
-            if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
+            }
+            if (Global.cur_ring[Const.RIGHT] instanceof  ProtectionRing) {
                 which -= Global.cur_ring[Const.RIGHT]._o_arm;
+            }
         }
         return save_throw(which, Global.player);
     }

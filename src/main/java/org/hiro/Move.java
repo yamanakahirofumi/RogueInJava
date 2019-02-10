@@ -8,10 +8,11 @@ import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
+import org.hiro.things.ringtype.MaintainArmorRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
 import org.hiro.things.scrolltype.Scare;
 
 /**
@@ -363,7 +364,7 @@ public class Move {
                         IOUtil.msg("a poisoned dart killed you");
                         Rip.death('d');
                     }
-                    if (!Util.ISWEARING(RingEnum.R_SUSTSTR) && !Monst.save(Const.VS_POISON))
+                    if (!SustainStrengthRing.isInclude(Human.instance.getRings()) && !Monst.save(Const.VS_POISON))
                         Misc.chg_str(-1);
                     IOUtil.msg("a small dart just hit you in the shoulder");
                 }
@@ -388,7 +389,7 @@ public class Move {
                 arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
             return;
         }
-        if (arm.contains_o_flags(Const.ISPROT) || Util.ISWEARING(RingEnum.R_SUSTARM)) {
+        if (arm.contains_o_flags(Const.ISPROT) || MaintainArmorRing.isInclude(Human.instance.getRings())) {
             if (!Global.to_death) {
                 IOUtil.msg("the rust vanishes instantly");
             }

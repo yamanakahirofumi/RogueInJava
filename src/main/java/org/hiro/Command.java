@@ -9,8 +9,8 @@ import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
-import org.hiro.things.Weapon;
-import org.hiro.things.WeaponEnum;
+import org.hiro.things.ringtype.SearchingRing;
+import org.hiro.things.ringtype.TeleportationRing;
 
 import java.util.concurrent.TimeUnit;
 
@@ -604,9 +604,9 @@ public class Command {
         }
         Daemon.do_daemons(Const.AFTER);
         Daemon.do_fuses(Const.AFTER);
-        if (Util.ISRING(Const.LEFT, RingEnum.R_SEARCH)) {
+        if (SearchingRing.isInclude(Human.instance.getRings())) {
             search();
-        } else if (Util.ISRING(Const.LEFT, RingEnum.R_TELEPORT) && Util.rnd(50) == 0) {
+        }else  if(TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0){
             Wizard.teleport();
         }
         if (Util.ISRING(Const.RIGHT, RingEnum.R_SEARCH)) {

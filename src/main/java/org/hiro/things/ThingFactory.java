@@ -2,6 +2,19 @@ package org.hiro.things;
 
 import org.hiro.Global;
 import org.hiro.ThingMethod;
+import org.hiro.things.ringtype.AddDamageRing;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.AggravateMonsterRing;
+import org.hiro.things.ringtype.DexterityRing;
+import org.hiro.things.ringtype.MaintainArmorRing;
+import org.hiro.things.ringtype.ProtectionRing;
+import org.hiro.things.ringtype.RegenerationRing;
+import org.hiro.things.ringtype.SearchingRing;
+import org.hiro.things.ringtype.SeeInvisibleRing;
+import org.hiro.things.ringtype.SlowDigestionRing;
+import org.hiro.things.ringtype.StealthRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
+import org.hiro.things.ringtype.TeleportationRing;
 import org.hiro.things.scrolltype.Confuse;
 import org.hiro.things.scrolltype.CreateMonster;
 import org.hiro.things.scrolltype.EnchantArmor;
@@ -50,7 +63,7 @@ public class ThingFactory {
             case 4:
                 return new Armor();
             case 5:
-                return new Ring();
+                return createRing();
             case 6:
                 return createStick();
             default:
@@ -135,5 +148,41 @@ public class ThingFactory {
             default:
                 return new Stick();
         }
+    }
+
+    private static Ring createRing() {
+        RingEnum s = RingEnum.get(ThingMethod.pick_one(Arrays.asList(Global.ring_info)));
+        switch (s){
+            case Protection:
+                return new ProtectionRing();
+            case AddStrength:
+                return new AddStrengthRing();
+            case SustainStrength:
+                return new SustainStrengthRing();
+            case Searching:
+                return new SearchingRing();
+            case SeeInvisible:
+                return new SeeInvisibleRing();
+            case AggravateMonster:
+                return new AggravateMonsterRing();
+            case Dexterity:
+                return new DexterityRing();
+            case AddDamage:
+                return new AddDamageRing();
+            case Regeneration:
+                return new RegenerationRing();
+            case SlowDigestion:
+                return new SlowDigestionRing();
+            case Teleportation:
+                return new TeleportationRing();
+            case Stealth:
+                return new StealthRing();
+            case MaintainArmor:
+                return new MaintainArmorRing();
+            case Adornment:
+            default:
+                return new Ring();
+        }
+
     }
 }

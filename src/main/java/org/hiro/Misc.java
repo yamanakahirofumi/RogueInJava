@@ -8,9 +8,9 @@ import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
 
 import java.lang.reflect.Method;
 
@@ -310,13 +310,13 @@ public class Misc {
         }
         Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
         int comp = Human.instance.getCurrentStrength();
-        if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+        if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
             comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
         }
-        if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing ) {
             comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
         }
-        if (comp > Global.max_stats.s_str) {
+        if (comp > Human.instance.getMaxStrength()) {
             Global.max_stats.s_str = comp;
         }
     }

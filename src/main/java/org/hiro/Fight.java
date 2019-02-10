@@ -5,9 +5,12 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Gold;
-import org.hiro.things.RingEnum;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
+import org.hiro.things.ringtype.AddDamageRing;
+import org.hiro.things.ringtype.DexterityRing;
+import org.hiro.things.ringtype.ProtectionRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
 
 import java.util.List;
 
@@ -369,14 +372,14 @@ public class Fight {
             dplus = weap._o_dplus;
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
-                if (Util.ISRING(Const.LEFT, RingEnum.R_ADDDAM)) {
+                if (Global.cur_ring[Const.LEFT] instanceof AddDamageRing) {
                     dplus += Global.cur_ring[Const.LEFT]._o_arm;
-                } else if (Util.ISRING(Const.LEFT, RingEnum.R_ADDHIT)) {
+                } else if (Global.cur_ring[Const.LEFT] instanceof DexterityRing) {
                     hplus += Global.cur_ring[Const.LEFT]._o_arm;
                 }
-                if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDDAM)) {
+                if (Global.cur_ring[Const.RIGHT] instanceof AddDamageRing) {
                     dplus += Global.cur_ring[Const.RIGHT]._o_arm;
-                } else if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDHIT)) {
+                } else if (Global.cur_ring[Const.RIGHT] instanceof DexterityRing) {
                     hplus += Global.cur_ring[Const.RIGHT]._o_arm;
                 }
             }
@@ -403,10 +406,12 @@ public class Fight {
             if (Human.instance.isEquippedArmor()) {
                 def_arm = Human.instance.getArmor()._o_arm;
             }
-            if (Util.ISRING(Const.LEFT, RingEnum.Protection))
+            if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing) {
                 def_arm -= Global.cur_ring[Const.LEFT]._o_arm;
-            if (Util.ISRING(Const.RIGHT, RingEnum.Protection))
+            }
+            if (Global.cur_ring[Const.RIGHT] instanceof ProtectionRing) {
                 def_arm -= Global.cur_ring[Const.RIGHT]._o_arm;
+            }
         }
         boolean MASTER = false;
         while (cp != null && cp.length() < 1) {
@@ -531,7 +536,7 @@ public class Fight {
                          * Rattlesnakes have poisonous bites
                          */
                         if (!Monst.save(Const.VS_POISON)) {
-                            if (!Util.ISWEARING(RingEnum.R_SUSTSTR)) {
+                            if (!SustainStrengthRing.isInclude(Human.instance.getRings())) {
                                 Misc.chg_str(-1);
                                 if (!Global.terse) {
                                     IOUtil.msg("you feel a bite in your leg and now feel weaker");

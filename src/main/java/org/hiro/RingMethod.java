@@ -6,6 +6,7 @@ import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.SlowDigestionRing;
 
 public class RingMethod {
 
@@ -21,9 +22,9 @@ public class RingMethod {
         }
         switch (RingEnum.valueOf(String.valueOf(obj._o_which))) {
             case Protection:
-            case R_ADDSTR:
-            case R_ADDDAM:
-            case R_ADDHIT:
+            case AddStrength:
+            case AddDamage:
+            case Dexterity:
                 buf = " [" + WeaponMethod.num(obj._o_arm, 0, ObjectType.RING) + "]";
                 break;
             default:
@@ -44,18 +45,18 @@ public class RingMethod {
         }
         int eat;
         int[] uses = {
-                1,    /* Protection */         1,    /* R_ADDSTR */
-                1,    /* R_SUSTSTR */        -3,    /* R_SEARCH */
-                -5,    /* R_SEEINVIS */     0,    /* R_NOP */
-                0,    /* R_AGGR */        -3,    /* R_ADDHIT */
-                -3,    /* R_ADDDAM */         2,    /* R_REGEN */
-                -2,    /* R_DIGEST */         0,    /* R_TELEPORT */
-                1,    /* R_STEALTH */         1    /* R_SUSTARM */
+                1,    /* Protection */         1,    /* AddStrength */
+                1,    /* SustainStrength */        -3,    /* Searching */
+                -5,    /* SeeInvisible */     0,    /* Adornment */
+                0,    /* AggravateMonster */        -3,    /* Dexterity */
+                -3,    /* AddDamage */         2,    /* Regeneration */
+                -2,    /* SlowDigestion */         0,    /* Teleportation */
+                1,    /* Stealth */         1    /* MaintainArmor */
         };
         if ((eat = uses[ring._o_which]) < 0) {
             eat = (Util.rnd(-eat) == 0 ? 1 : 0);
         }
-        if (ring._o_which == RingEnum.R_DIGEST.getValue()) {
+        if (ring instanceof SlowDigestionRing) {
             eat = -eat;
         }
         return eat;
@@ -92,15 +93,9 @@ public class RingMethod {
             return;
         }
 
-        int ring;
-        if (Global.cur_ring[Const.LEFT] == null && Global.cur_ring[Const.RIGHT] == null) {
-            if ((ring = gethand()) < 0)
-                return;
-        } else if (Global.cur_ring[Const.LEFT] == null)
-            ring = Const.LEFT;
-        else if (Global.cur_ring[Const.RIGHT] == null)
-            ring = Const.RIGHT;
-        else {
+
+        boolean result = Human.instance.putOnRing(ringObject);
+        if(!result) {
             if (!Global.terse) {
                 IOUtil.msg("you already have a ring on each hand");
             } else {
@@ -115,13 +110,13 @@ public class RingMethod {
          */
         RingEnum r = RingEnum.get(ringObject._o_which);
         switch (r) {
-            case R_ADDSTR:
+            case AddStrength:
                 Misc.chg_str(ringObject._o_arm);
                 break;
-            case R_SEEINVIS:
+            case SeeInvisible:
                 Potions.invis_on();
                 break;
-            case R_AGGR:
+            case AggravateMonster:
                 Misc.aggravate();
                 break;
         }

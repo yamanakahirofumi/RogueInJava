@@ -6,9 +6,10 @@ import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -94,7 +95,7 @@ public class Potions {
                 break;
             case P_POISON:
                 Global.pot_info[p.getValue()].know();
-                if (Util.ISWEARING(RingEnum.R_SUSTSTR)) {
+                if (SustainStrengthRing.isInclude(Human.instance.getRings())) {
                     IOUtil.msg("you feel momentarily sick");
                 } else {
                     Misc.chg_str(-(Util.rnd(3) + 1));
@@ -211,19 +212,19 @@ public class Potions {
                     IOUtil.msg("you feel yourself moving much faster");
                 break;
             case P_RESTORE:
-                if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
                 }
-                if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
                 }
-                if (Human.instance.getCurrentStrength() < Global.max_stats.s_str) {
-                    Global.player._t_stats.s_str = Global.max_stats.s_str;
+                if (Human.instance.getCurrentStrength() < Human.instance.getMaxStrength()) {
+                    Global.player._t_stats.s_str = Human.instance.getMaxStrength();
                 }
-                if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
                 }
-                if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");

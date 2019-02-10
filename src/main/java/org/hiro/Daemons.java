@@ -5,6 +5,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.RegenerationRing;
 
 import java.lang.reflect.Method;
 
@@ -161,5 +162,35 @@ public class Daemons {
         IOUtil.msg("you feel yourself slowing down");
     }
 
+    /*
+     * doctor:
+     *	A healing daemon that restors hit points after rest
+     */
+    void doctor() {
+        int lv, ohp;
+
+        lv = Global.player._t_stats.s_lvl;
+        ohp = Human.instance.getHp();
+        Global.quiet++;
+        if (lv < 8) {
+            if (Global.quiet + (lv << 1) > 20) {
+                Human.instance.addHp(1);
+            }
+        } else if (Global.quiet >= 3) {
+            Human.instance.addHp(Util.rnd(lv - 7) + 1);
+        }
+        if (Global.cur_ring[Const.LEFT] instanceof RegenerationRing) {
+            Human.instance.addHp(1);
+        }
+        if (Global.cur_ring[Const.RIGHT] instanceof RegenerationRing) {
+            Human.instance.addHp(1);
+        }
+        if (ohp != Human.instance.getHp()) {
+            if (Human.instance.getHp() > Human.instance.getMaxHp()) {
+                Global.player._t_stats.s_hpt = Human.instance.getMaxHp();
+            }
+            Global.quiet = 0;
+        }
+    }
 
 }

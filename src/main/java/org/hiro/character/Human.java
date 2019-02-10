@@ -13,6 +13,7 @@ import org.hiro.things.Weapon;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -47,7 +48,7 @@ public class Human implements Player {
     private Bag bag;
     private Weapon weapon;
     private Armor armor;
-    private Ring ring;
+    private Map<Arm, Ring> rings;
 
     public Human(String name) {
         this.name = name;
@@ -111,7 +112,7 @@ public class Human implements Player {
 
     @Override
     public Optional<Thing> eat(Thing t) {
-        if(!(t instanceof Food)){
+        if (!(t instanceof Food)) {
             return Optional.of(t);
         }
 
@@ -142,6 +143,16 @@ public class Human implements Player {
         }
 
         return this.currentStrength;
+    }
+
+    @Override
+    public void setStrength(int strength) {
+
+    }
+
+    @Override
+    public int getMaxStrength() {
+        return this.strength;
     }
 
     @Override
@@ -176,7 +187,7 @@ public class Human implements Player {
     }
 
     @Override
-    public int getStomachSize(){
+    public int getStomachSize() {
         return this.stomachSize;
     }
 
@@ -197,7 +208,7 @@ public class Human implements Player {
 
     @Override
     public boolean isEquipped(Thing thing) {
-        return this.weapon == thing || this.armor == thing || this.ring == thing;
+        return this.weapon == thing || this.armor == thing || this.rings.values().contains(thing);
     }
 
     @Override
@@ -240,7 +251,7 @@ public class Human implements Player {
     }
 
     @Override
-    public Armor getArmor(){
+    public Armor getArmor() {
         return this.armor;
     }
 
@@ -257,7 +268,31 @@ public class Human implements Player {
     }
 
     @Override
-    public int getBaggageSize(){
+    public boolean isEquippedRing(Ring ring){
+        return this.rings.values().contains(ring);
+    }
+
+    @Override
+    public List<Ring> getRings(){
+        return new ArrayList<>(this.rings.values());
+    }
+
+    @Override
+    public boolean putOnRing(Ring ring) {
+        if (this.rings.containsKey(Arm.Left) && this.rings.containsKey(Arm.Right)) {
+            return false;
+        }
+        if(this.rings.containsKey(Arm.Right)){
+            this.rings.put(Arm.Left, ring);
+        }else{
+            this.rings.put(Arm.Right, ring);
+        }
+
+        return true;
+    }
+
+    @Override
+    public int getBaggageSize() {
         return this.bag.getFillingSize();
     }
 
@@ -267,7 +302,7 @@ public class Human implements Player {
     }
 
     @Override
-    public boolean addContent(Thing t){
+    public boolean addContent(Thing t) {
         return this.bag.addContents(t);
     }
 
