@@ -112,7 +112,7 @@ public class DefaultCommand implements KeyboardCommand {
      * illcom:
      *	What to do with an illegal command
      */
-    void illcom(int ch) {
+    private void illcom(int ch) {
         Global.save_msg = false;
         Global.count = 0;
         IOUtil.msg("illegal command '%s'", Display.unctrl(ch));
