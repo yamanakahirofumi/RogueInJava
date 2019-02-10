@@ -1,7 +1,6 @@
 package org.hiro.input.keyboard;
 
 import org.hiro.Global;
-import org.hiro.ThingMethod;
 
 public class EscapeCommand implements KeyboardCommand {
 
