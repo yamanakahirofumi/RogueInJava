@@ -19,7 +19,7 @@ public class New_Level {
     static final int TREAS_ROOM = 20; /* one chance in TREAS_ROOM for a treasure room */
 
 
-    static void new_level() {
+    public static void new_level() {
 
         Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
         if (Human.instance.getLevel() > Global.max_level) {

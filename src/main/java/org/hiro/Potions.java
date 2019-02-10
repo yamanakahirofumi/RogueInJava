@@ -24,7 +24,7 @@ public class Potions {
      * turn_see:
      *	Put on or off seeing monsters on this level
      */
-    static int turn_see(boolean turn_off) {
+    public static int turn_see(boolean turn_off) {
 
         int add_new = 0;
         for (ThingImp mp : Global.mlist) {
@@ -61,7 +61,7 @@ public class Potions {
      * quaff:
      *	Quaff a potion from the pack
      */
-    static void quaff() {
+    public static void quaff() {
         boolean MASTER = false;
 
         Thing obj = Pack.get_item("quaff", ObjectType.POTION);
@@ -356,7 +356,7 @@ public class Potions {
      * raise_level:
      *	The guy just magically went up a level.
      */
-    static void raise_level() {
+    public static void raise_level() {
         Global.player._t_stats.s_exp = Global.e_levels[Global.player._t_stats.s_lvl - 1] + 1L;
         Misc.check_level();
     }

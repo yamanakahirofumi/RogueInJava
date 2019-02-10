@@ -164,7 +164,7 @@ public class Chase {
      * diag_ok:
      *	Check to see if the move is legal if it is diagonal
      */
-    static boolean diag_ok(Coordinate sp, Coordinate ep) {
+    public static boolean diag_ok(Coordinate sp, Coordinate ep) {
         if (ep.x < 0 || ep.x >= Const.NUMCOLS || ep.y <= 0 || ep.y >= Const.NUMLINES - 1) {
             return false;
         }

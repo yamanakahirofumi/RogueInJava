@@ -66,7 +66,7 @@ public class RingMethod {
      * ring_on:
      *	Put a ring on a hand
      */
-    static void ring_on() {
+    public static void ring_on() {
         Thing obj;
 
         obj = Pack.get_item("put on", ObjectType.RING);
@@ -103,7 +103,6 @@ public class RingMethod {
             }
             return;
         }
-        Global.cur_ring[ring] = ringObject;
 
         /*
          * Calculate the effect it has on the poor guy.
@@ -132,7 +131,7 @@ public class RingMethod {
      * ring_off:
      *	take off a ring
      */
-    static void ring_off() {
+    public static void ring_off() {
         int ring;
 
         if (Global.cur_ring[Const.LEFT] == null && Global.cur_ring[Const.RIGHT] == null) {

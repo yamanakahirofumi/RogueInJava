@@ -81,7 +81,7 @@ public class Options {
      * option:
      *	Print and then set options from the terminal
      */
-    static void option() {
+    public static void option() {
         int retval;
 
         // wclear(hw);

@@ -18,7 +18,7 @@ public class Pack {
      * get_item:
      *	Pick something out of a pack for a purpose
      */
-    static ThingImp get_item(String purpose, ObjectType type) {
+    public static ThingImp get_item(String purpose, ObjectType type) {
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");
@@ -91,7 +91,7 @@ public class Pack {
      *	List what is in the pack.  Return true if there is something of
      *	the given type.
      */
-    static boolean inventory(List<ThingImp> list, ObjectType type) {
+    public static boolean inventory(List<ThingImp> list, ObjectType type) {
         boolean MASTER = false;
         String inv_temp;
 
@@ -187,7 +187,7 @@ public class Pack {
      *	non-null use it as the linked_list pointer instead of gettting
      *	it off the ground.
      */
-    static void add_pack(ThingImp obj, boolean silent) {
+    public static void add_pack(ThingImp obj, boolean silent) {
 
         boolean from_floor = false;
         if (obj == null) {
@@ -287,7 +287,7 @@ public class Pack {
      * pick_up:
      *	Add something to characters pack.
      */
-    static void pick_up() {
+    public static void pick_up() {
         if (Human.instance.containsState(StateEnum.ISLEVIT)) {
             return;
         }
@@ -330,7 +330,7 @@ public class Pack {
      * picky_inven:
      *	Allow player to inventory a single item
      */
-    static void picky_inven() {
+    public static void picky_inven() {
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");

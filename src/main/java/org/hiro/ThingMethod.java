@@ -373,7 +373,7 @@ public class ThingMethod {
      * drop:
      *	Put something down
      */
-    static void drop() {
+    public static void drop() {
 
         ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {

@@ -21,7 +21,7 @@ public class Const {
     static int F_LOCKED = 0x20;        /* door is locked */
     public static int F_REAL = 0x10;        /* what you see is what you get */
     public static int F_PNUM = 0x0f;        /* passage number mask */
-    static int F_TMASK = 0x07;        /* trap number mask */
+    public static int F_TMASK = 0x07;        /* trap number mask */
 
 
     static int LAMPDIST = 3;

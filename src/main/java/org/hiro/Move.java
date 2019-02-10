@@ -43,7 +43,7 @@ public class Move {
      *	Check to see that a move is legal.  If it is handle the
      * consequences (fighting, picking up, etc.)
      */
-    static void do_move(int dy, int dx) {
+    public static void do_move(int dy, int dx) {
         ObjectType ch;
         char fl;
         Coordinate nh = new Coordinate();
@@ -407,7 +407,7 @@ public class Move {
      * do_run:
      *	Start the hero running
      */
-    static void do_run(int ch) {
+    public static void do_run(int ch) {
         Global.running = true;
         Global.after = false;
         Global.runch = ch;

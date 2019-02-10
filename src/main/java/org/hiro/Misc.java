@@ -473,7 +473,7 @@ public class Misc {
      * eat:
      *	She wants to eat something, so let her try
      */
-    static void eat(ThingImp obj) {
+    public static void eat(ThingImp obj) {
         if (obj == null) {
             return;
         }
@@ -511,7 +511,7 @@ public class Misc {
      *	Set up the direction co_ordinate for use in varios "prefix"
      *	commands
      */
-    static boolean get_dir() {
+    public static boolean get_dir() {
         Coordinate last_delt = new Coordinate(0, 0);
 
         if (Global.again && Global.last_dir != '\0') {

@@ -26,7 +26,7 @@ public class WeaponMethod {
      * missile:
      *	Fire a missile in a given direction
      */
-    static void missile(Coordinate delta) {
+    public static void missile(Coordinate delta) {
         ThingImp obj = Pack.get_item("throw", ObjectType.WEAPON);
 
         /*
@@ -165,7 +165,7 @@ public class WeaponMethod {
      * wield:
      *	Pull out a certain weapon
      */
-    static void wield() {
+    public static void wield() {
 
         Weapon oweapon = Human.instance.getWeapons().get(0);
         if (!ThingMethod.isDrop(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null)) {

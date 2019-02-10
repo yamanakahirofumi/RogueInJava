@@ -84,7 +84,7 @@ public class Util {
         }
     }
 
-    static char CTRL(char c) {
+    public static char CTRL(char c) {
         return (char) (c & 037);
     }
 

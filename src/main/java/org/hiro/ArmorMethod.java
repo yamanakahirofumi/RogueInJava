@@ -11,7 +11,7 @@ public class ArmorMethod {
      * wear:
      *	The player wants to wear something, so let him/her put it on.
      */
-    static void wear() {
+    public static void wear() {
         Thing obj;
         if ((obj = Pack.get_item("wear", ObjectType.ARMOR)) == null) {
             return;
@@ -56,7 +56,7 @@ public class ArmorMethod {
      * take_off:
      *	Get the armor off of the players back
      */
-    static void take_off() {
+    public static void take_off() {
         if (!Human.instance.isEquippedArmor()) {
             Global.after = false;
             if (Global.terse) {

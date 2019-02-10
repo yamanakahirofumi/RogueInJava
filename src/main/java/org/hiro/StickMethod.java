@@ -38,7 +38,7 @@ public class StickMethod {
      * do_zap:
      *	Perform a zap with a wand
      */
-    static void do_zap() {
+    public static void do_zap() {
         ThingImp obj = Pack.get_item("zap with", ObjectType.STICK);
 
         if (obj == null) {

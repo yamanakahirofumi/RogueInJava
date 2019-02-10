@@ -365,7 +365,7 @@ public class Rip {
      * total_winner:
      *	Code for a winner
      */
-    static void total_winner() {
+    public static void total_winner() {
         Display.clear();
         Display.standout();
         Display.addstr("                                                               \n");
