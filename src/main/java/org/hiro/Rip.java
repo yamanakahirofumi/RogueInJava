@@ -394,7 +394,7 @@ public class Rip {
             if (worth < 0) {
                 worth = 0;
             }
-            // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inv_name(obj, false));
+            // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inventoryName(obj, false));
             Global.purse += worth;
         }
         Display.printw("   %5d  Gold Pieces          ", oldpurse);

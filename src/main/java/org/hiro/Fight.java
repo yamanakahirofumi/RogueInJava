@@ -633,7 +633,7 @@ public class Fight {
                             remove_mon(mp._t_pos, Util.getPlace(mp._t_pos).p_monst, false);
                             mp = null;
                             steal = Pack.leave_pack(steal, true, false);
-                            IOUtil.msg("she stole %s!", ThingMethod.inv_name(steal, true));
+                            IOUtil.msg("she stole %s!", ThingMethod.inventoryName(steal, true));
                         }
                     }
                     break;

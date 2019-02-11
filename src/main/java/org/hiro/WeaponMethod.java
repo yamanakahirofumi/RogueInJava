@@ -189,7 +189,7 @@ public class WeaponMethod {
             return;
         }
 
-        String sp = ThingMethod.inv_name(obj, true);
+        String sp = ThingMethod.inventoryName(obj, true);
         Human.instance.putOnWeapon((Weapon) obj);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");

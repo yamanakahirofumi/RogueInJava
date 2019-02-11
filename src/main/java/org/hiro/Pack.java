@@ -106,7 +106,7 @@ public class Pack {
                 inv_temp = "%s";
             }
             Global.msg_esc = true;
-            if (ThingMethod.add_line(inv_temp, ThingMethod.inv_name(th, false)) == Const.ESCAPE) {
+            if (ThingMethod.add_line(inv_temp, ThingMethod.inventoryName(th, false)) == Const.ESCAPE) {
                 Global.msg_esc = false;
                 IOUtil.msg("");
                 return true;
@@ -232,7 +232,7 @@ public class Pack {
             if (!Global.terse) {
                 IOUtil.addmsg("you now have ");
             }
-            IOUtil.msg("%s (%c)", ThingMethod.inv_name(obj, !Global.terse),
+            IOUtil.msg("%s (%c)", ThingMethod.inventoryName(obj, !Global.terse),
                     Human.instance.getPositionOfContent(obj));
         }
     }
@@ -280,7 +280,7 @@ public class Pack {
         if (!Global.terse) {
             IOUtil.addmsg("you ");
         }
-        IOUtil.msg("moved onto %s", ThingMethod.inv_name(obj, true));
+        IOUtil.msg("moved onto %s", ThingMethod.inventoryName(obj, true));
     }
 
     /*
@@ -335,7 +335,7 @@ public class Pack {
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");
         } else if (Global.player.getBaggageSize() == 1) {
-            IOUtil.msg("a) %s", ThingMethod.inv_name(Global.player.getBaggage().get(0), false));
+            IOUtil.msg("a) %s", ThingMethod.inventoryName(Global.player.getBaggage().get(0), false));
         } else {
             IOUtil.msg(Global.terse ? "item: " : "which item do you wish to inventory: ");
             int mch = IOUtil.readchar();
@@ -346,7 +346,7 @@ public class Pack {
             }
             for (ThingImp obj : Global.player.getBaggage()) {
                 if (mch == Human.instance.getPositionOfContent(obj)) {
-                    IOUtil.msg("%c) %s", mch, ThingMethod.inv_name(obj, false));
+                    IOUtil.msg("%c) %s", mch, ThingMethod.inventoryName(obj, false));
                     return;
                 }
             }

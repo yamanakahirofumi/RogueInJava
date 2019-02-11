@@ -100,7 +100,7 @@ public class Wizard {
         } else if (obj instanceof Ring) {
             set_know(obj, Global.ring_info);
         }
-        IOUtil.msg(ThingMethod.inv_name(obj, false));
+        IOUtil.msg(ThingMethod.inventoryName(obj, false));
     }
 
     /*

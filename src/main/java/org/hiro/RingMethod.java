@@ -123,7 +123,7 @@ public class RingMethod {
         if (!Global.terse) {
             IOUtil.addmsg("you are now wearing ");
         }
-        IOUtil.msg("%s (%c)", ThingMethod.inv_name(ringObject, true),
+        IOUtil.msg("%s (%c)", ThingMethod.inventoryName(ringObject, true),
                 Human.instance.getPositionOfContent(ringObject));
     }
 
@@ -154,7 +154,7 @@ public class RingMethod {
             return;
         }
         if (ThingMethod.isDrop(obj))
-            IOUtil.msg("was wearing %s(%c)", ThingMethod.inv_name(obj, true),
+            IOUtil.msg("was wearing %s(%c)", ThingMethod.inventoryName(obj, true),
                     Human.instance.getPositionOfContent(obj));
     }
 

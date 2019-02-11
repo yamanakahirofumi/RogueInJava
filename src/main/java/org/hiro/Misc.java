@@ -180,7 +180,7 @@ public class Misc {
                 }
 
                 if (Global.door_stop && !Global.firstmove && Global.running) {
-                    switch ((char) Global.runch) {
+                    switch (Global.runch) {
                         case 'h':
                             if (x == ex)
                                 continue;

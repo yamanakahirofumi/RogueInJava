@@ -33,7 +33,7 @@ public class ArmorMethod {
         Armor armor = (Armor) obj;
         waste_time();
         obj.add_o_flags(Const.ISKNOW);
-        String sp = ThingMethod.inv_name(armor, true);
+        String sp = ThingMethod.inventoryName(armor, true);
         Human.instance.putOnArmor(armor);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
@@ -77,7 +77,7 @@ public class ArmorMethod {
             IOUtil.addmsg("you used to be");
         }
         IOUtil.msg(" wearing %c) %s", String.valueOf(Human.instance.getPositionOfContent(obj)),
-                ThingMethod.inv_name(obj, true));
+                ThingMethod.inventoryName(obj, true));
     }
 
 
