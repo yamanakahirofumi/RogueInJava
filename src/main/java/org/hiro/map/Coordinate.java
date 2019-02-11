@@ -55,4 +55,8 @@ public class Coordinate implements AbstractCoordinate {
         }
     }
 
+    @Override
+    public int hashCode() {
+         return this.y *31 + this.x;
+    }
 }

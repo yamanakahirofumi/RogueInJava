@@ -54,6 +54,11 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return this.y * 31 + this.x;
+    }
+
     public void setDimensions(int x, int y) {
         this.x = x;
         this.y = y;
