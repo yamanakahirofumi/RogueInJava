@@ -113,129 +113,139 @@ public class Misc {
         ObjectType pch = pp.p_ch;
         int pfl = pp.p_flags;
 
-        for (int y = sy; y <= ey; y++)
-            if (y > 0 && y < Const.NUMLINES - 1) for (int x = sx; x <= ex; x++) {
-                if (x < 0 || x >= Const.NUMCOLS) {
-                    continue;
-                }
-                Coordinate target = new Coordinate(x, y);
-                if (!Human.instance.containsState(StateEnum.ISBLIND)) {
-                    if (Global.player._t_pos.equals(target)) {
+        for (int y = sy; y <= ey; y++) {
+            if (y > 0 && y < Const.NUMLINES - 1) {
+                for (int x = sx; x <= ex; x++) {
+                    if (x < 0 || x >= Const.NUMCOLS) {
                         continue;
                     }
-                }
+                    Coordinate target = new Coordinate(x, y);
+                    if (!Human.instance.containsState(StateEnum.ISBLIND)) {
+                        if (Global.player._t_pos.equals(target)) {
+                            continue;
+                        }
+                    }
 
-                pp = Util.INDEX(y, x);
-                ObjectType ch = pp.p_ch;
-                if (ch.getValue() == ObjectType.Blank.getValue()) {
-                    /* nothing need be done with a ' ' */
-                    continue;
-                }
-                int fp = pp.p_flags;
-                if (pch != ObjectType.DOOR && ch != ObjectType.DOOR) {
-                    if ((pfl & Const.F_PASS) != (fp & Const.F_PASS)) {
+                    pp = Util.INDEX(y, x);
+                    ObjectType ch = pp.p_ch;
+                    if (ch.getValue() == ObjectType.Blank.getValue()) {
+                        /* nothing need be done with a ' ' */
                         continue;
                     }
-                }
-                if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
-                        ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
-                    if (Global.player._t_pos.x != x && Global.player._t_pos.y != y &&
-                            !IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch) &&
-                            !IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch)) {
-                        continue;
+                    int fp = pp.p_flags;
+                    if (pch != ObjectType.DOOR && ch != ObjectType.DOOR) {
+                        if ((pfl & Const.F_PASS) != (fp & Const.F_PASS)) {
+                            continue;
+                        }
                     }
-                }
-
-                ThingImp tp;
-                if ((tp = pp.p_monst) == null) {
-                    ch = trip_ch(target, ch);
-                } else if (Human.instance.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
-                    if (Global.door_stop && !Global.firstmove) {
-                        Global.running = false;
+                    if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
+                            ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
+                        if (Global.player._t_pos.x != x && Global.player._t_pos.y != y &&
+                                !IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch) &&
+                                !IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch)) {
+                            continue;
+                        }
                     }
-                    continue;
-                } else {
-                    if (wakeup)
-                        Monst.wake_monster(y, x);
-                    if (Chase.see_monst(tp)) {
-                        if (Human.instance.containsState(StateEnum.ISHALU))
-                            ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
-                        else
-                            ch = ObjectType.get((char) tp._t_disguise);
-                    }
-                }
-                if (Human.instance.containsState(StateEnum.ISBLIND) && (!Global.player._t_pos.equals(target))) {
-                    continue;
-                }
 
-                Display.move(y, x);
-
-                if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK) &&
-                        !Global.see_floor && ch == ObjectType.FLOOR) {
-                    ch = ObjectType.Blank;
-                }
-
-                if (tp != null || ch.getValue() != Util.CCHAR(Display.inch())) {
-                    Display.addch(ch.getValue());
-                }
-
-                if (Global.door_stop && !Global.firstmove && Global.running) {
-                    switch (Global.runch) {
-                        case 'h':
-                            if (x == ex)
-                                continue;
-                            break;
-                        case 'j':
-                            if (y == sy)
-                                continue;
-                            break;
-                        case 'k':
-                            if (y == ey) {
-                                continue;
-                            }
-                            break;
-                        case 'l':
-                            if (x == sx)
-                                continue;
-                            break;
-                        case 'y':
-                            if ((y + x) - sumhero >= 1)
-                                continue;
-                            break;
-                        case 'u':
-                            if ((y - x) - diffhero >= 1)
-                                continue;
-                            break;
-                        case 'n':
-                            if ((y + x) - sumhero <= -1)
-                                continue;
-                            break;
-                        case 'b':
-                            if ((y - x) - diffhero <= -1)
-                                continue;
-                    }
-                    switch (ch) {
-                        case DOOR:
-                            if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
-                                Global.running = false;
-                            }
-                            break;
-                        case PASSAGE:
-                            if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
-                                passcount++;
-                            }
-                            break;
-                        case FLOOR:
-                        case Vert:
-                        case Horizon:
-                        case Blank:
-                            break;
-                        default:
+                    ThingImp tp;
+                    if ((tp = pp.p_monst) == null) {
+                        ch = trip_ch(target, ch);
+                    } else if (Human.instance.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
+                        if (Global.door_stop && !Global.firstmove) {
                             Global.running = false;
-                            break;
+                        }
+                        continue;
+                    } else {
+                        if (wakeup)
+                            Monst.wake_monster(y, x);
+                        if (Chase.see_monst(tp)) {
+                            if (Human.instance.containsState(StateEnum.ISHALU))
+                                ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
+                            else
+                                ch = ObjectType.get((char) tp._t_disguise);
+                        }
+                    }
+                    if (Human.instance.containsState(StateEnum.ISBLIND) && (!Global.player._t_pos.equals(target))) {
+                        continue;
+                    }
+
+                    Display.move(y, x);
+
+                    if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK) &&
+                            !Global.see_floor && ch == ObjectType.FLOOR) {
+                        ch = ObjectType.Blank;
+                    }
+
+                    if (tp != null || ch.getValue() != Util.CCHAR(Display.inch())) {
+                        Display.addch(ch.getValue());
+                    }
+
+                    if (Global.door_stop && !Global.firstmove && Global.running) {
+                        switch (Global.runch) {
+                            case 'h':
+                                if (x == ex) {
+                                    continue;
+                                }
+                                break;
+                            case 'j':
+                                if (y == sy) {
+                                    continue;
+                                }
+                                break;
+                            case 'k':
+                                if (y == ey) {
+                                    continue;
+                                }
+                                break;
+                            case 'l':
+                                if (x == sx) {
+                                    continue;
+                                }
+                                break;
+                            case 'y':
+                                if ((y + x) - sumhero >= 1) {
+                                    continue;
+                                }
+                                break;
+                            case 'u':
+                                if ((y - x) - diffhero >= 1) {
+                                    continue;
+                                }
+                                break;
+                            case 'n':
+                                if ((y + x) - sumhero <= -1) {
+                                    continue;
+                                }
+                                break;
+                            case 'b':
+                                if ((y - x) - diffhero <= -1) {
+                                    continue;
+                                }
+                        }
+                        switch (ch) {
+                            case DOOR:
+                                if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
+                                    Global.running = false;
+                                }
+                                break;
+                            case PASSAGE:
+                                if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
+                                    passcount++;
+                                }
+                                break;
+                            case FLOOR:
+                            case Vert:
+                            case Horizon:
+                            case Blank:
+                                break;
+                            default:
+                                Global.running = false;
+                                break;
+                        }
                     }
                 }
             }
+        }
         if (Global.door_stop && !Global.firstmove && passcount > 1)
             Global.running = false;
         if (!Global.running || !Global.jump)
@@ -313,7 +323,7 @@ public class Misc {
         if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
             comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
         }
-        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing ) {
+        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
             comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
         }
         if (comp > Human.instance.getMaxStrength()) {
@@ -530,15 +540,15 @@ public class Misc {
                 switch (Global.dir_ch = IOUtil.readchar()) {
                     case 'h':
                     case 'H':
-                        Global.delta = new Coordinate(-1,0);
+                        Global.delta = new Coordinate(-1, 0);
                         break;
                     case 'j':
                     case 'J':
-                        Global.delta = new Coordinate(0,1);
+                        Global.delta = new Coordinate(0, 1);
                         break;
                     case 'k':
                     case 'K':
-                        Global.delta = new Coordinate(0,-1);
+                        Global.delta = new Coordinate(0, -1);
                         break;
                     case 'l':
                     case 'L':
@@ -550,15 +560,15 @@ public class Misc {
                         break;
                     case 'u':
                     case 'U':
-                        Global.delta = new Coordinate( -1, -1);
+                        Global.delta = new Coordinate(-1, -1);
                         break;
                     case 'b':
                     case 'B':
-                        Global.delta =  new Coordinate(-1,1);
+                        Global.delta = new Coordinate(-1, 1);
                         break;
                     case 'n':
                     case 'N':
-                        Global.delta =  new Coordinate(1,1);
+                        Global.delta = new Coordinate(1, 1);
                         break;
                     case Const.ESCAPE:
                         Global.last_dir = '\0';
@@ -579,8 +589,8 @@ public class Misc {
         }
         if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) == 0) {
             do {
-                Global.delta = new Coordinate(Util.rnd(3) - 1,Util.rnd(3) - 1);
-            } while (Global.delta.equals(new Coordinate(0,0)));
+                Global.delta = new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1);
+            } while (Global.delta.equals(new Coordinate(0, 0)));
         }
         Global.mpos = 0;
         IOUtil.msg("");
