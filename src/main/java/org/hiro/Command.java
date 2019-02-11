@@ -276,29 +276,29 @@ public class Command {
         Daemon.do_fuses(Const.AFTER);
         if (SearchingRing.isInclude(Human.instance.getRings())) {
             search();
-        }else  if(TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0){
+        } else if (TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0) {
             Wizard.teleport();
         }
         // rightもね
     }
 
     private static void putCommands(Map<Integer, KeyboardCommand> commands) {
-        commands.put((int)'h', new LeftCommand());
-        commands.put((int)'l', new RightCommand());
-        commands.put((int)'k', new UpCommand());
-        commands.put((int)'j', new DownCommand());
-        commands.put((int)'y', new UpLeftCommand());
-        commands.put((int)'u', new UpRightCommand());
-        commands.put((int)'b', new DownLeftCommand());
-        commands.put((int)'n', new DownRightCommand());
-        commands.put((int)'H', new LeftRunCommand());
-        commands.put((int)'L', new RightRunCommand());
-        commands.put((int)'K', new UpRunCommand());
-        commands.put((int)'J', new DownRunCommand());
-        commands.put((int)'Y', new UpLeftRunCommand());
-        commands.put((int)'U', new UpRightRunCommand());
-        commands.put((int)'B', new DownLeftRunCommand());
-        commands.put((int)'N', new DownRightRunCommand());
+        commands.put((int) 'h', new LeftCommand());
+        commands.put((int) 'l', new RightCommand());
+        commands.put((int) 'k', new UpCommand());
+        commands.put((int) 'j', new DownCommand());
+        commands.put((int) 'y', new UpLeftCommand());
+        commands.put((int) 'u', new UpRightCommand());
+        commands.put((int) 'b', new DownLeftCommand());
+        commands.put((int) 'n', new DownRightCommand());
+        commands.put((int) 'H', new LeftRunCommand());
+        commands.put((int) 'L', new RightRunCommand());
+        commands.put((int) 'K', new UpRunCommand());
+        commands.put((int) 'J', new DownRunCommand());
+        commands.put((int) 'Y', new UpLeftRunCommand());
+        commands.put((int) 'U', new UpRightRunCommand());
+        commands.put((int) 'B', new DownLeftRunCommand());
+        commands.put((int) 'N', new DownRightRunCommand());
         KeyboardCommand c = new ContinuedMoveCommand();
         commands.put('H' & CTRL, c);
         commands.put('J' & CTRL, c);
@@ -309,48 +309,48 @@ public class Command {
         commands.put('B' & CTRL, c);
         commands.put('N' & CTRL, c);
 
-            commands.put((int)'m', new MoveOnWithoutPickUpCommand());
-        commands.put((int)'>', new DownFloorCommand());
-        commands.put((int)'<', new UpFloorCommand());
-        commands.put((int)'!', new ShellCommand());
-        commands.put((int)'?', new HelpCommand());
-        commands.put((int)'Q', new QuitCommand());
-        commands.put((int)'i', new PrintInventoryCommand());
-        commands.put((int)'I', new PrintInventorySingleCommand());
-        commands.put((int)'v', new PrintVersionCommand());
-        commands.put((int)'@', new PrintStatusCommand());
-        commands.put((int)'=', new PrintCurrentRingsCommand());
-        commands.put((int)']', new PrintCurrentArmorCommand());
-        commands.put((int)')', new PrintCurrentWeaponCommand());
-        commands.put((int)'R' & CTRL, new RedrawScreenCommand());
-        commands.put((int)'P' & CTRL, new RepeatLastMessageCommand());
-        commands.put((int)'s', new SearchCommand());
-        commands.put((int)'D', new DiscoverCommand());
-        commands.put((int)',', new PickUpCommand());
-        commands.put((int)'f', new FightingCommand());
-        commands.put((int)'F', new FightingEndlessCommand());
-        commands.put((int)'/', new IdentifyCommand());
-        commands.put((int)'^', new IdentifyTrapTypeCommand());
-        commands.put((int)' ', new IllegalCommand());
-        commands.put((int)'a', new RepeatCommand());
-        commands.put((int)'o', new SetOptionsCommand());
+        commands.put((int) 'm', new MoveOnWithoutPickUpCommand());
+        commands.put((int) '>', new DownFloorCommand());
+        commands.put((int) '<', new UpFloorCommand());
+        commands.put((int) '!', new ShellCommand());
+        commands.put((int) '?', new HelpCommand());
+        commands.put((int) 'Q', new QuitCommand());
+        commands.put((int) 'i', new PrintInventoryCommand());
+        commands.put((int) 'I', new PrintInventorySingleCommand());
+        commands.put((int) 'v', new PrintVersionCommand());
+        commands.put((int) '@', new PrintStatusCommand());
+        commands.put((int) '=', new PrintCurrentRingsCommand());
+        commands.put((int) ']', new PrintCurrentArmorCommand());
+        commands.put((int) ')', new PrintCurrentWeaponCommand());
+        commands.put((int) 'R' & CTRL, new RedrawScreenCommand());
+        commands.put((int) 'P' & CTRL, new RepeatLastMessageCommand());
+        commands.put((int) 's', new SearchCommand());
+        commands.put((int) 'D', new DiscoverCommand());
+        commands.put((int) ',', new PickUpCommand());
+        commands.put((int) 'f', new FightingCommand());
+        commands.put((int) 'F', new FightingEndlessCommand());
+        commands.put((int) '/', new IdentifyCommand());
+        commands.put((int) '^', new IdentifyTrapTypeCommand());
+        commands.put((int) ' ', new IllegalCommand());
+        commands.put((int) 'a', new RepeatCommand());
+        commands.put((int) 'o', new SetOptionsCommand());
         commands.put(Const.ESCAPE, new EscapeCommand());
-        commands.put((int)'.', new RestCommand());
-        commands.put((int)'S', new SaveCommand());
-        commands.put((int)'c', new CallObjectCommand());
-        commands.put((int)'w', new WieldWeaponCommand());
-        commands.put((int)'W', new WearArmorCommand());
-        commands.put((int)'T', new TakeOfArmorCommand());
-        commands.put((int)'e', new EatCommand());
-        commands.put((int)'t', new FireItemCommand());
-        commands.put((int)'z', new ZapWandCommand());
-        commands.put((int)'q', new QuaffCommand());
-        commands.put((int)'d', new DropCommand());
-        commands.put((int)'r', new ReadScrollCommand());
-        commands.put((int)'P', new PutOnRingCommand());
-        commands.put((int)'R', new RemoveRingCommand());
+        commands.put((int) '.', new RestCommand());
+        commands.put((int) 'S', new SaveCommand());
+        commands.put((int) 'c', new CallObjectCommand());
+        commands.put((int) 'w', new WieldWeaponCommand());
+        commands.put((int) 'W', new WearArmorCommand());
+        commands.put((int) 'T', new TakeOfArmorCommand());
+        commands.put((int) 'e', new EatCommand());
+        commands.put((int) 't', new FireItemCommand());
+        commands.put((int) 'z', new ZapWandCommand());
+        commands.put((int) 'q', new QuaffCommand());
+        commands.put((int) 'd', new DropCommand());
+        commands.put((int) 'r', new ReadScrollCommand());
+        commands.put((int) 'P', new PutOnRingCommand());
+        commands.put((int) 'R', new RemoveRingCommand());
 
-        commands.put((int)'+', new ChangeWizardModeCommand());
+        commands.put((int) '+', new ChangeWizardModeCommand());
     }
 
     /*
@@ -467,6 +467,79 @@ public class Command {
         }
         IOUtil.msg("You can't.  You're floating off the ground!");
         return true;
+    }
+
+
+    /*
+     * help:
+     *	Give single character help, or the whole mess if he wants it
+     */
+    public static void help() {
+        int helpch;
+        int numprint;
+        int cnt;
+        IOUtil.msg("character you want help for (* for all): ");
+        helpch = IOUtil.readchar();
+        Global.mpos = 0;
+        /*
+         * If its not a *, print the right help string
+         * or an error if he typed a funny character.
+         */
+        if (helpch != '*') {
+            Display.move(0, 0);
+            for (Help_list strp : Global.helpstr) {
+                if (strp.h_ch == helpch) {
+                    Global.lower_msg = true;
+                    IOUtil.msg("%s%s", Display.unctrl(strp.h_ch), strp.h_desc);
+                    Global.lower_msg = false;
+                    return;
+                }
+            }
+            IOUtil.msg("unknown character '%s'", Display.unctrl(helpch));
+            return;
+        }
+        /*
+         * Here we print help for everything.
+         * Then wait before we return to command mode
+         */
+        numprint = 0;
+        for (Help_list strp : Global.helpstr) {
+            if (strp.h_print) {
+                numprint++;
+            }
+        }
+        if ((numprint & 01) != 0) {        /* round odd numbers up */
+            numprint++;
+        }
+        numprint /= 2;
+        if (numprint > Display.LINES - 1) {
+            numprint = Display.LINES - 1;
+        }
+        // wclear(hw);
+        cnt = 0;
+        for (Help_list strp : Global.helpstr) {
+            if (strp.h_print) {
+                // wmove(hw, cnt % numprint, cnt >= numprint ? COLS / 2 : 0);
+                if (strp.h_ch != 0) {
+                    // waddstr(hw, Display.unctrl(strp . h_ch));
+                }
+                // waddstr(hw, strp . h_desc);
+                if (++cnt >= numprint * 2) {
+                    break;
+                }
+            }
+        }
+        // wmove(hw, LINES - 1, 0);
+        // waddstr(hw, "--Press space to continue--");
+        // wrefresh(hw);
+        // wait_for(hw, ' ');
+        // clearok(stdscr, TRUE);
+/*
+    refresh();
+*/
+        IOUtil.msg("");
+        // touchwin(stdscr);
+        // wrefresh(stdscr);
     }
 
 
