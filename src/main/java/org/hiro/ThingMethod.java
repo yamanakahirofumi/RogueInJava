@@ -3,9 +3,17 @@ package org.hiro;
 import org.hiro.character.Human;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
+import org.hiro.things.Armor;
+import org.hiro.things.Food;
+import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
+import org.hiro.things.Ring;
+import org.hiro.things.Scroll;
+import org.hiro.things.Stick;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.SeeInvisibleRing;
 
@@ -88,7 +96,7 @@ public class ThingMethod {
         }
         if (Global.inv_type == Const.INV_SLOW) {
             if (fmt != null && fmt.length() != 0) {
-                if (IOUtil.msg(fmt,(Object) arg) == Const.ESCAPE) {
+                if (IOUtil.msg(fmt, (Object) arg) == Const.ESCAPE) {
                     return Const.ESCAPE;
                 }
             }
@@ -175,32 +183,17 @@ public class ThingMethod {
 
         pb = Global.prbuf;
         which = obj._o_which;
-        switch (obj.getDisplay()) {
-            case POTION:
-                try {
-                    Method m = ThingMethod.class.getMethod("nullstr", ThingImp.class);
-                    nameit(obj, "potion", Global.p_colors[which], Global.pot_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RING:
-                try {
-                    Method m = RingMethod.class.getMethod("ring_num", ThingImp.class);
-                    nameit(obj, "ring", Global.r_stones[which], Global.ring_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case STICK:
-                try {
-                    Method m = StickMethod.class.getMethod("charge_str", ThingImp.class);
-                    nameit(obj, Global.ws_type[which], Global.ws_made[which], Global.ws_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case SCROLL:
+        try {
+            if (obj instanceof Potion) {
+                Method m = ThingMethod.class.getMethod("nullstr", ThingImp.class);
+                nameit(obj, "potion", Global.p_colors[which], Global.pot_info[which], m);
+            } else if (obj instanceof Ring) {
+                Method m = RingMethod.class.getMethod("ring_num", ThingImp.class);
+                nameit(obj, "ring", Global.r_stones[which], Global.ring_info[which], m);
+            } else if (obj instanceof Stick) {
+                Method m = StickMethod.class.getMethod("charge_str", ThingImp.class);
+                nameit(obj, Global.ws_type[which], Global.ws_made[which], Global.ws_info[which], m);
+            } else if (obj instanceof Scroll) {
                 if (obj.getCount() == 1) {
                     Global.prbuf = "A scroll ";
                 } else {
@@ -214,8 +207,7 @@ public class ThingMethod {
                 } else {
                     Global.prbuf = Global.prbuf + "titled '" + Global.s_names[which] + "'";
                 }
-                break;
-            case FOOD:
+            } else if (obj instanceof Food) {
                 if (which == 1) {
                     if (obj.getCount() == 1) {
                         Global.prbuf = "A" + Misc.vowelstr(Global.fruit) + " " + Global.fruit;
@@ -227,8 +219,7 @@ public class ThingMethod {
                 } else {
                     Global.prbuf = obj.getCount() + " rations of food";
                 }
-                break;
-            case WEAPON:
+            } else if (obj instanceof Weapon) {
                 sp = Global.weap_info[which].getName();
                 if (obj.getCount() > 1) {
                     Global.prbuf = obj.getCount() + " ";
@@ -247,8 +238,7 @@ public class ThingMethod {
                 if (obj._o_label != Character.MIN_VALUE) {
                     Global.prbuf = Global.prbuf + " called " + obj._o_label;
                 }
-                break;
-            case ARMOR:
+            } else if (obj instanceof Armor) {
                 sp = Global.arm_info[which].getName();
                 if (obj.contains_o_flags(Const.ISKNOW)) {
                     Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj._o_arm, 0, ObjectType.ARMOR)
@@ -263,18 +253,13 @@ public class ThingMethod {
                 if (obj._o_label != Character.MIN_VALUE) {
                     Global.prbuf = Global.prbuf + " called " + obj._o_label;
                 }
-                break;
-            case AMULET:
+            } else if (obj instanceof Amulet) {
                 Global.prbuf = "The Amulet of Yendor";
-                break;
-            case GOLD:
+            } else if (obj instanceof Gold) {
                 Global.prbuf = obj._o_arm + " Gold pieces";
-                break;
-            default:
-                if (MASTER) {
-                    // debug("Picked up something funny %s", Display.unctrl(obj._o_type));
-                    // sprintf(pb, "Something bizarre %s", Display.unctrl(obj._o_type));
-                }
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
         if (Global.inv_describe) {
             if (Human.instance.isEquippedArmor(obj)) {
@@ -341,7 +326,7 @@ public class ThingMethod {
         if (obj == null) {
             return true;
         }
-        if (!Human.instance.isEquipped(obj)){
+        if (!Human.instance.isEquipped(obj)) {
             return true;
         }
         if (obj.contains_o_flags(Const.ISCURSED)) {
@@ -369,23 +354,26 @@ public class ThingMethod {
         return true;
     }
 
+    /**
+     * drop check
+     *
+     * Is this floor clear?
+     */
+    public static boolean dropCheck(){
+        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
+        if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
+            return false;
+        }
+        return true;
+    }
+
     /*
      * drop:
      *	Put something down
      */
     public static void drop() {
-
-        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
-        if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
-            Global.after = false;
-            IOUtil.msg("there is something there already");
-            return;
-        }
-        ThingImp obj= Pack.get_item("drop", ObjectType.Initial);
-        if (obj == null) {
-            return;
-        }
-        if (!isDrop(obj)) {
+        ThingImp obj = Pack.get_item("drop", ObjectType.Initial);
+        if (obj == null || !isDrop(obj)) {
             return;
         }
         obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj));
