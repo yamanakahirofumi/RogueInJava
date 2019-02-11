@@ -18,19 +18,16 @@ import java.util.List;
  */
 public class StickMethod {
 
-
     /*
      * charge_str:
      *	Return an appropriate string for a wand charge
      */
     static String charge_str(ThingImp obj) {
-        String buf;
+        String buf = "";
 
-        if (!(obj.contains_o_flags(Const.ISKNOW))) {
-            buf = "";
-        } else if (Global.terse) {
+        if (obj.contains_o_flags(Const.ISKNOW) && Global.terse) {
             buf = " [" + obj._o_arm + "]";
-        } else {
+        } else if(obj.contains_o_flags(Const.ISKNOW)) {
             buf = " [" + obj._o_arm + " charges]";
         }
         return buf;
@@ -41,11 +38,12 @@ public class StickMethod {
      * do_zap:
      *	Perform a zap with a wand
      */
-    static void do_zap() {
-        ThingImp obj;
+    public static void do_zap() {
+        ThingImp obj = Pack.get_item("zap with", ObjectType.STICK);
 
-        if ((obj = Pack.get_item("zap with", ObjectType.STICK)) == null)
+        if (obj == null) {
             return;
+        }
         if (!(obj instanceof Stick)) {
             Global.after = false;
             IOUtil.msg("you can't zap with that!");
@@ -65,7 +63,7 @@ public class StickMethod {
      *	Fire a bolt in a given direction from a specific starting place
      */
     public static void fire_bolt(Coordinate start, Coordinate dir, String name) {
-        List<Coordinate> spotpos = new ArrayList<>();
+        List<Coordinate> spotPosition = new ArrayList<>();
         Weapon bolt = new Weapon(WeaponEnum.FLAME, 100);
         bolt._o_hurldmg = "6x6";
         Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
@@ -89,15 +87,14 @@ public class StickMethod {
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
             Coordinate c1;
-            if (spotpos.size() <= i) {
+            if (spotPosition.size() <= i) {
                 c1 = new Coordinate();
-                spotpos.add(c1);
+                spotPosition.add(c1);
             } else {
-                c1 = spotpos.get(i);
+                c1 = spotPosition.get(i);
             }
 
-            pos.y += dir.y;
-            pos.x += dir.x;
+            pos = dir.add(pos);
             c1 = pos;
             ObjectType ch = Util.winat(pos);
             ThingImp tp;
@@ -156,7 +153,7 @@ public class StickMethod {
                                 IOUtil.msg("the %s whizzes by you", name);
                             }
                         }
-                        Display.mvaddch(pos.y, pos.x, (char) dirch);
+                        Display.mvaddch(pos, (char) dirch);
                         Display.refresh();
                     }
                     /* FALLTHROUGH */
@@ -219,13 +216,13 @@ public class StickMethod {
                             IOUtil.msg("the %s whizzes by you", name);
                         }
                     }
-                    Display.mvaddch(pos.y, pos.x, (char) dirch);
+                    Display.mvaddch(pos, (char) dirch);
                     Display.refresh();
             }
         }
         for (int j = 0; j < i; j++) {
-            Coordinate c2 = spotpos.get(j);
-            Display.mvaddch(c2.y, c2.x, Util.getPlace(c2).p_ch.getValue());
+            Coordinate c2 = spotPosition.get(j);
+            Display.mvaddch(c2, Util.getPlace(c2).p_ch.getValue());
         }
     }
 

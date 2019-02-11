@@ -25,7 +25,7 @@ public class Wizard {
     public static void teleport() {
         Coordinate c = new Coordinate();
 
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
+        Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
         if (Chase.roomin(c) != Global.player.t_room) {
             Rooms.leave_room(Global.player._t_pos);
@@ -35,7 +35,7 @@ public class Wizard {
             Global.player._t_pos = c;
             Misc.look(true);
         }
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
+        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
         /*
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap

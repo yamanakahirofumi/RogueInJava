@@ -10,7 +10,7 @@ public class ScrollMethod {
      * read_scroll:
      *	Read a scroll from the pack and do the appropriate thing
      */
-    static void read_scroll() {
+    public static void read_scroll() {
         boolean MASTER = false;
 
         Thing obj = Pack.get_item("read", ObjectType.SCROLL);

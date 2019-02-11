@@ -10,6 +10,9 @@ public class Display {
     static public void move(int x, int y) {
 
     }
+    static  public void move(AbstractCoordinate c){
+
+    }
 
     static public void clrtoeol() {
     }
@@ -53,6 +56,9 @@ public class Display {
     }
 
     static public char mvinch(int y, int x) {
+        return 'a';
+    }
+    static public char mvinch(AbstractCoordinate c){
         return 'a';
     }
 

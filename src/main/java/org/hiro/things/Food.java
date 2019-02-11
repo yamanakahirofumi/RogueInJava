@@ -52,7 +52,7 @@ public class Food extends ThingImp {
 
 	@Override
 	public int getWorth(){
-		return 2 * this._o_count;
+		return 2 * this.getCount();
 	}
 
 	@Override

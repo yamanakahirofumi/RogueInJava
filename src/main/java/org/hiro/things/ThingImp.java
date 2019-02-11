@@ -3,6 +3,7 @@ package org.hiro.things;
 import org.hiro.Obj_info;
 import org.hiro.Room;
 import org.hiro.Stats;
+import org.hiro.baggage.Bag;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 
@@ -29,21 +30,21 @@ public class ThingImp implements OriginalMonster, Thing {
     public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
     public Coordinate _t_dest;        /* Where it is running to */
-    @Deprecated
-    private int _t_flags;            /* State word */ // Enumの配列が良さそう
+    // private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
     public Stats _t_stats;        /* Physical description */  //
     public Room t_room;        /* Current room for thing */
     @Deprecated
     public ThingImp _t_pack;        /* What the thing is carrying */  // 配列
     private List<ThingImp> baggage = new ArrayList<>();
+    private Bag bag;
     public int _t_reserved;
 
     // これでアクセスされるパターン２
     public Coordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
-    public int _o_packch;            /* What character it is in the pack */
+    // public int _o_packch;            /* What character it is in the pack */
     public int _o_count;            /* count for plural objects */
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
     public int _o_hplus;            /* Plusses to hit */
@@ -121,6 +122,7 @@ public class ThingImp implements OriginalMonster, Thing {
      * new_Thing()の代わり
      */
     public ThingImp() {
+        this.bag = new Bag();
         this._o_hplus = 0;
         this._o_dplus = 0;
         this._o_arm = 11;
@@ -172,5 +174,20 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public boolean isGroup() {
         return this._o_group != 0;
+    }
+
+    @Override
+    public int getGroup(){
+        return this._o_group;
+    }
+
+    @Override
+    public void addCount(int c) {
+        this._o_count += c;
+    }
+
+    @Override
+    public int getCount() {
+        return this._o_count;
     }
 }

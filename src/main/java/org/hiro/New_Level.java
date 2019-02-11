@@ -19,7 +19,7 @@ public class New_Level {
     static final int TREAS_ROOM = 20; /* one chance in TREAS_ROOM for a treasure room */
 
 
-    static void new_level() {
+    public static void new_level() {
 
         Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
         if (Human.instance.getLevel() > Global.max_level) {
@@ -89,7 +89,7 @@ public class New_Level {
 
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);
         Rooms.enter_room(Global.player._t_pos);
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
+        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
         if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }

@@ -14,7 +14,7 @@ public class Weapon extends ThingImp {
 
     Weapon() {
         super();
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.weap_info), WeaponEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.weap_info));
         initWeapon();
         int r = Util.rnd(100);
         if (r < 10) {
@@ -40,7 +40,7 @@ public class Weapon extends ThingImp {
     @Override
     public int getWorth(){
         int worth = Global.weap_info[this._o_which].getWorth();
-        worth *= 3 * (this._o_hplus + this._o_dplus) + this._o_count;
+        worth *= 3 * (this._o_hplus + this._o_dplus) + this.getCount();
         this.add_o_flags(Const.ISKNOW);
 
         return worth;

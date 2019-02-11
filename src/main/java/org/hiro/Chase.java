@@ -6,9 +6,8 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.Scroll;
-import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
+import org.hiro.things.scrolltype.Scare;
 
 /**
  * Code for one creature to chase another
@@ -29,7 +28,7 @@ public class Chase {
         }
         for (int i = 0; i < Const.MAXROOMS; i++) {
             Room rp = Global.rooms.get(i);
-            if(rp.isInMyRoom(cp)){
+            if (rp.isInMyRoom(cp)) {
                 return rp;
             }
         }
@@ -83,7 +82,7 @@ public class Chase {
             return Global.player._t_pos;
         }
         for (ThingImp obj : Global.lvl_obj) {
-            if (obj instanceof Scroll && obj._o_which == ScrollEnum.Scare.getValue()) {
+            if (obj instanceof Scare) {
                 continue;
             }
             if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
@@ -132,7 +131,7 @@ public class Chase {
      *	this calculates d^2, not d, but that's good enough for
      *	our purposes, since it's only used comparitively.
      */
-    static int dist(int y1, int x1, int y2, int x2) {
+    private static int dist(int y1, int x1, int y2, int x2) {
         return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
@@ -157,15 +156,15 @@ public class Chase {
          * We can only see if the hero in the same room as
          * the coordinate and the room is lit or if it is close.
          */
-        Room rer;
-        return ((rer = roomin(c)) == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK));
+        Room rer = roomin(c);
+        return rer == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
      * diag_ok:
      *	Check to see if the move is legal if it is diagonal
      */
-    static boolean diag_ok(Coordinate sp, Coordinate ep) {
+    public static boolean diag_ok(Coordinate sp, Coordinate ep) {
         if (ep.x < 0 || ep.x >= Const.NUMCOLS || ep.y <= 0 || ep.y >= Const.NUMLINES - 1) {
             return false;
         }
@@ -184,7 +183,7 @@ public class Chase {
     public static void relocate(ThingImp th, Coordinate new_loc) {
 
         if (!new_loc.equals(th._t_pos)) {
-            Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
+            Display.mvaddch(th._t_pos, (char) th._t_oldch);
             th.t_room = roomin(new_loc);
             set_oldch(th, new_loc);
             Room oroom = th.t_room;
@@ -196,7 +195,7 @@ public class Chase {
             th._t_pos = new_loc;
             Util.getPlace(new_loc).p_monst = th;
         }
-        Display.move(new_loc.y, new_loc.x);
+        Display.move(new_loc);
         if (see_monst(th)) {
             Display.addch((char) th._t_disguise);
         } else if (Human.instance.containsState(StateEnum.SEEMONST)) {
@@ -217,7 +216,7 @@ public class Chase {
         }
 
         int sch = tp._t_oldch;
-        tp._t_oldch = Util.CCHAR(Display.mvinch(cp.y, cp.x));
+        tp._t_oldch = Util.CCHAR(Display.mvinch(cp));
         if (!Human.instance.containsState(StateEnum.ISBLIND)) {
             if ((sch == ObjectType.FLOOR.getValue() || tp._t_oldch == ObjectType.FLOOR.getValue()) &&
                     tp.t_room.containInfo(RoomInfoEnum.ISDARK)) {
@@ -340,8 +339,8 @@ public class Chase {
                         || Math.abs(th._t_pos.y - Global.player._t_pos.y) == Math.abs(th._t_pos.x - Global.player._t_pos.x))
                         && dist_cp(th._t_pos, Global.player._t_pos) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
                         && !th.containsState(StateEnum.ISCANC) && Util.rnd(DRAGONSHOT) == 0) {
-                    Global.delta.y = Misc.sign(Global.player._t_pos.y - th._t_pos.y);
-                    Global.delta.x = Misc.sign(Global.player._t_pos.x - th._t_pos.x);
+                    Global.delta = new Coordinate(Misc.sign(Global.player._t_pos.x - th._t_pos.x),
+                            Misc.sign(Global.player._t_pos.y - th._t_pos.y));
                     if (Global.has_hit) {
                         IOUtil.endmsg();
                     }
@@ -472,7 +471,7 @@ public class Chase {
                                     break;
                                 }
                             }
-                            if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
+                            if (obj2 instanceof Scare) {
                                 continue;
                             }
                         }

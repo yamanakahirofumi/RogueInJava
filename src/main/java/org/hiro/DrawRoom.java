@@ -17,9 +17,7 @@ public class DrawRoom {
 
     static void do_rooms() {
         int left_out;
-        Coordinate bsze = new Coordinate();                /* maximum room size */
-        bsze.x = Const.NUMCOLS / 3;
-        bsze.y = Const.NUMLINES / 3;
+        Coordinate bsze = new Coordinate(Const.NUMCOLS / 3,Const.NUMLINES / 3);                /* maximum room size */
         /*
          * Clear things for a new level
          */
@@ -39,7 +37,7 @@ public class DrawRoom {
             Room r = Global.rooms.get(rnd_room());
             r.addInfo(RoomInfoEnum.ISGONE);
         }
-        Coordinate top = new Coordinate();
+        Coordinate top;
         /*
          * dig and populate all the rooms on the level
          */
@@ -48,16 +46,14 @@ public class DrawRoom {
             /*
              * Find upper left corner of box that this room goes in
              */
-            top.x = (i % 3) * bsze.x + 1;
-            top.y = (i / 3) * bsze.y;
+            top = new Coordinate((i % 3) * bsze.x + 1, (i / 3) * bsze.y);
             if (rp.containInfo(RoomInfoEnum.ISGONE)) {
                 /*
                  * Place a gone room.  Make certain that there is a blank line
                  * for passage drawing.
                  */
                 do {
-                    rp.r_pos.x = top.x + Util.rnd(bsze.x - 2) + 1;
-                    rp.r_pos.y = top.y + Util.rnd(bsze.y - 2) + 1;
+                    rp.r_pos = (Coordinate) top.add(new Coordinate(Util.rnd(bsze.x - 2) + 1, Util.rnd(bsze.y - 2) + 1));
                     rp.r_max.x = -Const.NUMCOLS;
                     rp.r_max.y = -Const.NUMLINES;
                 } while (!(rp.r_pos.y > 0 && rp.r_pos.y < Const.NUMLINES - 1));
@@ -76,20 +72,18 @@ public class DrawRoom {
              * Find a place and size for a random room
              */
             if (rp.containInfo(RoomInfoEnum.ISMAZE)) {
-                rp.r_max.x = bsze.x - 1;
-                rp.r_max.y = bsze.y - 1;
-                if ((rp.r_pos.x = top.x) == 1)
+                rp.r_max = bsze.add(new Coordinate(-1, -1));
+                if ((rp.r_pos.x = top.x) == 1) {
                     rp.r_pos.x = 0;
+                }
                 if ((rp.r_pos.y = top.y) == 0) {
                     rp.r_pos.y++;
                     rp.r_max.y--;
                 }
             } else {
                 do {
-                    rp.r_max.x = Util.rnd(bsze.x - 4) + 4;
-                    rp.r_max.y = Util.rnd(bsze.y - 4) + 4;
-                    rp.r_pos.x = top.x + Util.rnd(bsze.x - rp.r_max.x);
-                    rp.r_pos.y = top.y + Util.rnd(bsze.y - rp.r_max.y);
+                    rp.r_max = new Coordinate(Util.rnd(bsze.x - 4) + 4, Util.rnd(bsze.y - 4) + 4);
+                    rp.r_pos = top.add(new Coordinate(Util.rnd(bsze.x - rp.r_max.x), Util.rnd(bsze.y - rp.r_max.y)));
                 } while (rp.r_pos.y == 0);
             }
             draw_room(rp);
@@ -103,7 +97,7 @@ public class DrawRoom {
                 gold = new Gold(Human.instance.getLevel());
                 rp.r_goldval = gold.getGold();
                 find_floor(rp, rp.r_gold, false, false);
-                gold._o_pos =  rp.r_gold;
+                gold._o_pos = rp.r_gold;
                 Util.getPlace(rp.r_gold).p_ch = ObjectType.GOLD;
 
                 Global.lvl_obj.add(gold);
@@ -198,7 +192,6 @@ public class DrawRoom {
      */
 
     static void dig(int y, int x) {
-        int newy, newx, nexty = 0, nextx = 0;
         Coordinate[] del = new Coordinate[4];
         // もしかしたらx,y逆かも
         del[0].x = 2;
@@ -210,12 +203,13 @@ public class DrawRoom {
         del[3].x = 0;
         del[3].y = -2;
 
-        for (; ; ) {
+        int nextx = 0;
+        for (int nexty = 0; ; ) {
             int cnt = 0;
             for (int i = 0; i < 4; i++) {
                 Coordinate cp = del[i];
-                newy = y + cp.y;
-                newx = x + cp.x;
+                int newy = y + cp.y;
+                int newx = x + cp.x;
                 if (newy < 0 || newy > Maxy || newx < 0 || newx > Maxx) {
                     continue;
                 }
@@ -263,17 +257,16 @@ public class DrawRoom {
      */
     static void accnt_maze(int y, int x, int ny, int nx) {
         Spot sp;
-        Coordinate cp = new Coordinate();
+        Coordinate cp;
 
         sp = maze[y][x];
         for (int i = 0; i < sp.nexits; i++) {
             cp = sp.exits[i];
-            if (cp.y == ny && cp.x == nx) {
+            if (cp.equals(new Coordinate(nx, ny))) {
                 return;
             }
         }
-        cp.y = ny;
-        cp.x = nx;
+        sp.exits[sp.nexits - 1] = new Coordinate(nx, ny);
     }
 
 
@@ -323,7 +316,7 @@ public class DrawRoom {
                 rp = Global.rooms.get(rnd_room());
                 compchar = (rp.containInfo(RoomInfoEnum.ISMAZE) ? ObjectType.PASSAGE : ObjectType.FLOOR);
             }
-            rnd_pos(rp, cp);
+            cp = rnd_pos(rp);
             Place pp = Util.getPlace(cp);
             if (monst) {
                 // 足元に何もない　かつ 歩けるとこ
@@ -342,9 +335,8 @@ public class DrawRoom {
      * rnd_pos:
      *	Pick a random spot in a room
      */
-    static void rnd_pos(Room rp, Coordinate cp) {
-        cp.x = rp.r_pos.x + Util.rnd(rp.r_max.x - 2) + 1;
-        cp.y = rp.r_pos.y + Util.rnd(rp.r_max.y - 2) + 1;
+    static Coordinate rnd_pos(Room rp) {
+        return rp.r_pos.add(new Coordinate(Util.rnd(rp.r_max.x - 2) + 1, Util.rnd(rp.r_max.y - 2) + 1));
     }
 
 

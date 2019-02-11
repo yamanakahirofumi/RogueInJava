@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class Scroll extends ThingImp {
     public Scroll() {
         super();
-        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.scr_info), ScrollEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(Arrays.asList(Global.scr_info));
     }
 
     @Override
@@ -20,7 +20,7 @@ public class Scroll extends ThingImp {
     @Override
     public int getWorth() {
         int worth = Global.scr_info[this._o_which].getWorth();
-        worth *= this._o_count;
+        worth *= this.getCount();
         Obj_info op = Global.scr_info[this._o_which];
         if (!op.isKnown()) {
             worth /= 2;

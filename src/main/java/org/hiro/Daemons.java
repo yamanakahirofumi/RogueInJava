@@ -5,6 +5,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.RegenerationRing;
 
 import java.lang.reflect.Method;
 
@@ -25,7 +26,7 @@ public class Daemons {
          */
         for (ThingImp tp : Global.lvl_obj) {
             if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, Misc.rnd_thing().getValue());
+                Display.mvaddch(tp._o_pos, Misc.rnd_thing().getValue());
             }
         }
 
@@ -33,7 +34,7 @@ public class Daemons {
          * change the stairs
          */
         if (!Global.seenstairs && Chase.isSee(Global.stairs)) {
-            Display.mvaddch(Global.stairs.y, Global.stairs.x, Misc.rnd_thing().getValue());
+            Display.mvaddch(Global.stairs, Misc.rnd_thing().getValue());
         }
 
         /*
@@ -41,7 +42,7 @@ public class Daemons {
          */
         boolean seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos.y, tp._t_pos.x);
+            Display.move(tp._t_pos);
             if (Chase.see_monst(tp)) {
                 if (tp._t_type == 'X' && tp._t_disguise != 'X') {
                     Display.addch(Misc.rnd_thing().getValue());
@@ -63,7 +64,7 @@ public class Daemons {
     static void unsee() {
         for (ThingImp th : Global.mlist) {
             if (th.containsState(StateEnum.ISINVIS) && Chase.see_monst(th)) {
-                Display.mvaddch(th._t_pos.y, th._t_pos.x, (char) th._t_oldch);
+                Display.mvaddch(th._t_pos, (char) th._t_oldch);
             }
         }
         Human.instance.removeState(StateEnum.CANSEE);
@@ -127,7 +128,7 @@ public class Daemons {
          */
         for (ThingImp tp : Global.lvl_obj) {
             if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos.y, tp._o_pos.x, tp.getDisplay().getValue());
+                Display.mvaddch(tp._o_pos, tp.getDisplay().getValue());
             }
         }
 
@@ -136,7 +137,7 @@ public class Daemons {
          */
         seemonst = Human.instance.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos.y, tp._t_pos.x);
+            Display.move(tp._t_pos);
             if (Chase.isSee(tp._t_pos)) {
                 if (!tp.containsState(StateEnum.ISINVIS) || Human.instance.containsState(StateEnum.CANSEE))
                     Display.addch((char) tp._t_disguise);
@@ -161,5 +162,35 @@ public class Daemons {
         IOUtil.msg("you feel yourself slowing down");
     }
 
+    /*
+     * doctor:
+     *	A healing daemon that restors hit points after rest
+     */
+    void doctor() {
+        int lv, ohp;
+
+        lv = Global.player._t_stats.s_lvl;
+        ohp = Human.instance.getHp();
+        Global.quiet++;
+        if (lv < 8) {
+            if (Global.quiet + (lv << 1) > 20) {
+                Human.instance.addHp(1);
+            }
+        } else if (Global.quiet >= 3) {
+            Human.instance.addHp(Util.rnd(lv - 7) + 1);
+        }
+        if (Global.cur_ring[Const.LEFT] instanceof RegenerationRing) {
+            Human.instance.addHp(1);
+        }
+        if (Global.cur_ring[Const.RIGHT] instanceof RegenerationRing) {
+            Human.instance.addHp(1);
+        }
+        if (ohp != Human.instance.getHp()) {
+            if (Human.instance.getHp() > Human.instance.getMaxHp()) {
+                Global.player._t_stats.s_hpt = Human.instance.getMaxHp();
+            }
+            Global.quiet = 0;
+        }
+    }
 
 }

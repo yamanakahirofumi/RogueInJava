@@ -33,6 +33,17 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
         return new TwoDimensionsCoordinate(_x, _y);
     }
 
+
+    @Override
+    public AbstractCoordinate add(AbstractCoordinate coordinate) {
+        if (coordinate instanceof TwoDimensionsCoordinate){
+            throw new RuntimeException("型制限");
+        }
+        TwoDimensionsCoordinate c = (TwoDimensionsCoordinate) coordinate;
+        return new TwoDimensionsCoordinate(this.x + c.x, this.y + c.y);
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof TwoDimensionsCoordinate) {

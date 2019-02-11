@@ -6,9 +6,10 @@ import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ public class Potions {
      * turn_see:
      *	Put on or off seeing monsters on this level
      */
-    static int turn_see(boolean turn_off) {
+    public static int turn_see(boolean turn_off) {
 
         int add_new = 0;
         for (ThingImp mp : Global.mlist) {
-            Display.move(mp._t_pos.y, mp._t_pos.x);
+            Display.move(mp._t_pos);
             boolean can_see = Chase.see_monst(mp);
             if (turn_off) {
                 if (!can_see) {
@@ -60,7 +61,7 @@ public class Potions {
      * quaff:
      *	Quaff a potion from the pack
      */
-    static void quaff() {
+    public static void quaff() {
         boolean MASTER = false;
 
         Thing obj = Pack.get_item("quaff", ObjectType.POTION);
@@ -94,7 +95,7 @@ public class Potions {
                 break;
             case P_POISON:
                 Global.pot_info[p.getValue()].know();
-                if (Util.ISWEARING(RingEnum.R_SUSTSTR)) {
+                if (SustainStrengthRing.isInclude(Human.instance.getRings())) {
                     IOUtil.msg("you feel momentarily sick");
                 } else {
                     Misc.chg_str(-(Util.rnd(3) + 1));
@@ -211,19 +212,19 @@ public class Potions {
                     IOUtil.msg("you feel yourself moving much faster");
                 break;
             case P_RESTORE:
-                if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
                 }
-                if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
                 }
-                if (Human.instance.getCurrentStrength() < Global.max_stats.s_str) {
-                    Global.player._t_stats.s_str = Global.max_stats.s_str;
+                if (Human.instance.getCurrentStrength() < Human.instance.getMaxStrength()) {
+                    Global.player._t_stats.s_str = Human.instance.getMaxStrength();
                 }
-                if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
                 }
-                if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+                if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
                     Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
@@ -355,7 +356,7 @@ public class Potions {
      * raise_level:
      *	The guy just magically went up a level.
      */
-    static void raise_level() {
+    public static void raise_level() {
         Global.player._t_stats.s_exp = Global.e_levels[Global.player._t_stats.s_lvl - 1] + 1L;
         Misc.check_level();
     }
@@ -376,7 +377,7 @@ public class Potions {
         for (ThingImp mp : Global.mlist) {
             if (mp.containsState(StateEnum.ISINVIS) && Chase.see_monst(mp)
                     && !Human.instance.containsState(StateEnum.ISHALU)) {
-                Display.mvaddch(mp._t_pos.y, mp._t_pos.x, (char) mp._t_disguise);
+                Display.mvaddch(mp._t_pos, (char) mp._t_disguise);
             }
         }
     }
@@ -387,7 +388,7 @@ public class Potions {
      */
     static boolean seen_stairs() {
 
-        Display.move(Global.stairs.y, Global.stairs.x);
+        Display.move(Global.stairs);
         if (Util.CCHAR(Display.inch()) == ObjectType.STAIRS.getValue()) {            /* it's on the map */
             return true;
         }

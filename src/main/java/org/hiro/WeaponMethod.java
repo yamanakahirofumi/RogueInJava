@@ -26,8 +26,8 @@ public class WeaponMethod {
      * missile:
      *	Fire a missile in a given direction
      */
-    static void missile(int ydelta, int xdelta) {
-        ThingImp obj=Pack.get_item("throw", ObjectType.WEAPON);
+    public static void missile(Coordinate delta) {
+        ThingImp obj = Pack.get_item("throw", ObjectType.WEAPON);
 
         /*
          * Get which thing we are hurling
@@ -35,11 +35,11 @@ public class WeaponMethod {
         if (obj == null) {
             return;
         }
-        if (!ThingMethod.dropcheck(obj) || Misc.is_current(obj)) {
+        if (!ThingMethod.isDrop(obj) || Misc.is_current(obj)) {
             return;
         }
         obj = Pack.leave_pack(obj, true, false);
-        do_motion(obj, ydelta, xdelta);
+        do_motion(obj, delta);
         /*
          * AHA! Here it has hit something.  If it is a wall or a door,
          * or if it misses (combat) the monster, put it on the floor
@@ -65,7 +65,7 @@ public class WeaponMethod {
                 if (pp.p_monst != null) {
                     pp.p_monst._t_oldch = obj.getDisplay().getValue();
                 } else
-                    Display.mvaddch(fpos.y, fpos.x, obj.getDisplay().getValue());
+                    Display.mvaddch(fpos, obj.getDisplay().getValue());
             }
             Global.lvl_obj.add(obj);
             return;
@@ -119,7 +119,7 @@ public class WeaponMethod {
      *	Do the actual motion on the screen done by an object traveling
      *	across the room
      */
-    public static void do_motion(ThingImp obj, int ydelta, int xdelta) {
+    public static void do_motion(ThingImp obj, Coordinate delta) {
         ObjectType ch;
 
         /*
@@ -134,7 +134,7 @@ public class WeaponMethod {
                 ch = Util.getPlace(obj._o_pos).p_ch;
                 if (ch == ObjectType.FLOOR && !Misc.show_floor())
                     ch = ObjectType.Blank;
-                Display.mvaddch(obj._o_pos.y, obj._o_pos.x, ch.getValue());
+                Display.mvaddch(obj._o_pos, ch.getValue());
                 if (!Global.jump) {
                     Command.msleep(10L);
                 }
@@ -142,15 +142,14 @@ public class WeaponMethod {
             /*
              * Get the new position
              */
-            obj._o_pos.y += ydelta;
-            obj._o_pos.x += xdelta;
+            obj._o_pos = obj._o_pos.add(delta);
             if (IOUtil.step_ok(ch = Util.winat(obj._o_pos)) && ch != ObjectType.DOOR) {
                 /*
                  * It hasn't hit anything yet, so display it
                  * If it alright.
                  */
                 if (Chase.isSee(obj._o_pos) && !Global.terse) {
-                    Display.mvaddch(obj._o_pos.y, obj._o_pos.x, obj.getDisplay().getValue());
+                    Display.mvaddch(obj._o_pos, obj.getDisplay().getValue());
                     Display.refresh();
                 }
                 if (!Global.jump) {
@@ -166,14 +165,14 @@ public class WeaponMethod {
      * wield:
      *	Pull out a certain weapon
      */
-    static void wield() {
+    public static void wield() {
 
         Weapon oweapon = Human.instance.getWeapons().get(0);
-        if (!ThingMethod.dropcheck(Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null)) {
-            Human.instance.putOnWeapon((Weapon) oweapon);
+        if (!ThingMethod.isDrop(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null)) {
+            Human.instance.putOnWeapon(oweapon);
             return;
         }
-        Human.instance.putOnWeapon((Weapon) oweapon);
+        Human.instance.putOnWeapon(oweapon);
         ThingImp obj = Pack.get_item("wield", ObjectType.WEAPON);
         if (obj == null) {
             Global.after = false;
@@ -195,7 +194,7 @@ public class WeaponMethod {
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
-        IOUtil.msg("wielding %s (%c)", sp, obj._o_packch);
+        IOUtil.msg("wielding %s (%c)", sp, Human.instance.getPositionOfContent(obj));
     }
 
 

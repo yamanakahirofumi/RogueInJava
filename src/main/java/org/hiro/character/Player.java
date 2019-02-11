@@ -1,6 +1,8 @@
 package org.hiro.character;
 
 import org.hiro.map.AbstractCoordinate;
+import org.hiro.things.Armor;
+import org.hiro.things.Ring;
 import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
@@ -44,6 +46,8 @@ public interface Player {
 
     // ステータス周り
     int getCurrentStrength();
+    void setStrength(int strength);
+    int getMaxStrength();
 
     int getMaxHp();
 
@@ -73,5 +77,19 @@ public interface Player {
     boolean isEquippedWeapons(Thing thing);
     boolean putOnWeapon(Weapon w);
     boolean removeWeapon(Thing thing);
+    boolean isEquippedArmor();
+    boolean isEquippedArmor(Thing  thing);
+    Armor getArmor();
+    boolean putOnArmor(Armor armor);
+    boolean removeArmor();
+    boolean isEquippedRing(Ring ring);
+    List<Ring> getRings();
+    boolean putOnRing(Ring ring);
+
+    int getBaggageSize();
+    List<Thing> getBaggage();
+    boolean addContent(Thing t);
+    char getPositionOfContent(Thing t);
+    boolean isContent(Thing t);
 
 }

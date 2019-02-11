@@ -4,9 +4,10 @@ import org.hiro.character.Human;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.SeeInvisibleRing;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,16 +29,16 @@ public class ThingMethod {
      * pick_one:
      *	Pick an item out of a list of nitems possible objects
      */
-    public static int pick_one(List<Obj_info> info, int nitems) {
+    public static int pick_one(List<Obj_info> info) {
 
         int rnd = Util.rnd(100);
         int j;
-        for (j = 0; j < nitems; j++) {
+        for (j = 0; j < info.size(); j++) {
             if (rnd < info.get(j).getProbability()) {
                 break;
             }
         }
-        if (j == nitems) {
+        if (j == info.size()) {
             boolean MASTER = false;
             if (MASTER) {
                 if (Global.wizard) {
@@ -200,10 +201,10 @@ public class ThingMethod {
                 }
                 break;
             case SCROLL:
-                if (obj._o_count == 1) {
+                if (obj.getCount() == 1) {
                     Global.prbuf = "A scroll ";
                 } else {
-                    Global.prbuf = obj._o_count + " scrolls ";
+                    Global.prbuf = obj.getCount() + " scrolls ";
                 }
                 op = Global.scr_info[which];
                 if (op.isKnown()) {
@@ -216,21 +217,21 @@ public class ThingMethod {
                 break;
             case FOOD:
                 if (which == 1) {
-                    if (obj._o_count == 1) {
+                    if (obj.getCount() == 1) {
                         Global.prbuf = "A" + Misc.vowelstr(Global.fruit) + " " + Global.fruit;
                     } else {
-                        Global.prbuf = obj._o_count + " " + Global.fruit + "s";
+                        Global.prbuf = obj.getCount() + " " + Global.fruit + "s";
                     }
-                } else if (obj._o_count == 1) {
+                } else if (obj.getCount() == 1) {
                     Global.prbuf = "Some food";
                 } else {
-                    Global.prbuf = obj._o_count + " rations of food";
+                    Global.prbuf = obj.getCount() + " rations of food";
                 }
                 break;
             case WEAPON:
                 sp = Global.weap_info[which].getName();
-                if (obj._o_count > 1) {
-                    Global.prbuf = obj._o_count + " ";
+                if (obj.getCount() > 1) {
+                    Global.prbuf = obj.getCount() + " ";
                 } else {
                     Global.prbuf = "A" + Misc.vowelstr(sp) + " ";
                 }
@@ -240,7 +241,7 @@ public class ThingMethod {
                 } else {
                     Global.prbuf = Global.prbuf + sp;
                 }
-                if (obj._o_count > 1) {
+                if (obj.getCount() > 1) {
                     Global.prbuf = Global.prbuf + "s";
                 }
                 if (obj._o_label != Character.MIN_VALUE) {
@@ -276,7 +277,7 @@ public class ThingMethod {
                 }
         }
         if (Global.inv_describe) {
-            if (obj == Global.cur_armor) {
+            if (Human.instance.isEquippedArmor(obj)) {
                 Global.prbuf = Global.prbuf + " (being worn)";
             }
             if (Human.instance.isEquippedWeapons(obj)) {
@@ -302,10 +303,10 @@ public class ThingMethod {
      */
     static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
         if (op.isKnown() || op.isTemporaryNamed()) {
-            if (obj._o_count == 1) {
+            if (obj.getCount() == 1) {
                 Global.prbuf = "A " + type + " ";
             } else {
-                Global.prbuf = obj._o_count + " " + type + " ";
+                Global.prbuf = obj.getCount() + " " + type + " ";
             }
             try {
                 if (op.isKnown()) {
@@ -316,10 +317,10 @@ public class ThingMethod {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-        } else if (obj._o_count == 1) {
+        } else if (obj.getCount() == 1) {
             Global.prbuf = "A" + Misc.vowelstr(String.valueOf(which)) + " " + which + " " + type;
         } else {
-            Global.prbuf = obj._o_count + " " + which + " " + type;
+            Global.prbuf = obj.getCount() + " " + which + " " + type;
         }
     }
 
@@ -333,10 +334,10 @@ public class ThingMethod {
     }
 
     /*
-     * dropcheck:
+     * isDrop:
      *	Do special checks for dropping or unweilding|unwearing|unringing
      */
-    static boolean dropcheck(ThingImp obj) {
+    static boolean isDrop(ThingImp obj) {
         if (obj == null) {
             return true;
         }
@@ -348,14 +349,14 @@ public class ThingMethod {
             return false;
         }
         Human.instance.removeWeapon(obj);
-        if (obj == Global.cur_armor) {
+        if (Human.instance.isEquippedArmor(obj)) {
             ArmorMethod.waste_time();
-            Global.cur_armor = null;
+            Human.instance.removeArmor();
         } else {
             Global.cur_ring[obj == Global.cur_ring[Const.LEFT] ? Const.LEFT : Const.RIGHT] = null;
-            if (obj._o_which == RingEnum.R_ADDSTR.getValue()) {
+            if (obj instanceof AddStrengthRing) {
                 Misc.chg_str(-obj._o_arm);
-            } else if (obj._o_which == RingEnum.R_SEEINVIS.getValue()) {
+            } else if (obj instanceof SeeInvisibleRing) {
                 Daemons.unsee();
                 try {
                     Method m = Daemons.class.getMethod("unsee");
@@ -372,7 +373,7 @@ public class ThingMethod {
      * drop:
      *	Put something down
      */
-    static void drop() {
+    public static void drop() {
 
         ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
         if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
@@ -384,7 +385,7 @@ public class ThingMethod {
         if (obj == null) {
             return;
         }
-        if (!dropcheck(obj)) {
+        if (!isDrop(obj)) {
             return;
         }
         obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj));

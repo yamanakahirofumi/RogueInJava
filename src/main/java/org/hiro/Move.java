@@ -8,11 +8,12 @@ import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
-import org.hiro.things.ScrollEnum;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
+import org.hiro.things.ringtype.MaintainArmorRing;
+import org.hiro.things.ringtype.SustainStrengthRing;
+import org.hiro.things.scrolltype.Scare;
 
 /**
  * hero movement commands
@@ -42,7 +43,7 @@ public class Move {
      *	Check to see that a move is legal.  If it is handle the
      * consequences (fighting, picking up, etc.)
      */
-    static void do_move(int dy, int dx) {
+    public static void do_move(int dy, int dx) {
         ObjectType ch;
         char fl;
         Coordinate nh = new Coordinate();
@@ -66,8 +67,7 @@ public class Move {
             }
         } else {
             over:
-            nh.y = Global.player._t_pos.y + dy;
-            nh.x = Global.player._t_pos.x + dx;
+            nh = Global.player._t_pos.add(new Coordinate(dx,dy));
         }
 
         /*
@@ -175,7 +175,7 @@ public class Move {
             default:
                 Global.running = false;
                 if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
-                    Fight.fight(nh, Human.instance.getWeapons().size() > 0? Human.instance.getWeapons().get(0) : null, false);
+                    Fight.fight(nh, Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
                         Global.take = ch;
@@ -186,7 +186,7 @@ public class Move {
     }
 
     static private void move_stuff(char fl, Coordinate nh) {
-        Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, Pack.floor_at().getValue());
+        Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         if ((fl & Const.F_PASS) != 0 && Util.getPlace(Global.oldpos).p_ch == ObjectType.DOOR) {
             Rooms.leave_room(nh);
         }
@@ -198,10 +198,8 @@ public class Move {
      *	Move in a random direction if the monster/person is confused
      */
     static Coordinate rndmove(ThingImp who) {
-        Coordinate ret = new Coordinate();  /* what we will be returning */
+        Coordinate ret = who._t_pos.add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
 
-        ret.y = who._t_pos.y + Util.rnd(3) - 1;
-        ret.x = who._t_pos.x + Util.rnd(3) - 1;
         /*
          * Now check to see if that's a legal move.  If not, don't move.
          * (I.e., bump into the wall or whatever)
@@ -226,7 +224,7 @@ public class Move {
                             break;
                         }
                     }
-                    if (obj2 != null && obj2._o_which == ScrollEnum.Scare.getValue()) {
+                    if (obj2 instanceof Scare) {
                         break bad;
                     }
                 }
@@ -342,8 +340,8 @@ public class Move {
                     } else
                         IOUtil.msg("oh no! An arrow shot you");
                 } else {
-                    arrow = new Weapon(WeaponEnum.ARROW,0);
-                    arrow._o_count = 1;
+                    arrow = new Weapon(WeaponEnum.ARROW, 0);
+                    arrow.addCount(1);
                     arrow._o_pos = Global.player._t_pos;
                     WeaponMethod.fall(arrow, false);
                     IOUtil.msg("an arrow shoots past you");
@@ -355,7 +353,7 @@ public class Move {
                  * down for us, so we have to do it ourself
                  */
                 Wizard.teleport();
-                Display.mvaddch(tc.y, tc.x, ObjectType.TRAP.getValue());
+                Display.mvaddch(tc, ObjectType.TRAP.getValue());
                 break;
             case Const.T_DART:
                 if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {
@@ -366,14 +364,14 @@ public class Move {
                         IOUtil.msg("a poisoned dart killed you");
                         Rip.death('d');
                     }
-                    if (!Util.ISWEARING(RingEnum.R_SUSTSTR) && !Monst.save(Const.VS_POISON))
+                    if (!SustainStrengthRing.isInclude(Human.instance.getRings()) && !Monst.save(Const.VS_POISON))
                         Misc.chg_str(-1);
                     IOUtil.msg("a small dart just hit you in the shoulder");
                 }
                 break;
             case Const.T_RUST:
                 IOUtil.msg("a gush of water hits you on the head");
-                rust_armor(Global.cur_armor);
+                rust_armor(Human.instance.getArmor());
         }
         Mach_dep.flush_type();
         return tr.getValue();
@@ -391,7 +389,7 @@ public class Move {
                 arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
             return;
         }
-        if (arm.contains_o_flags(Const.ISPROT) || Util.ISWEARING(RingEnum.R_SUSTARM)) {
+        if (arm.contains_o_flags(Const.ISPROT) || MaintainArmorRing.isInclude(Human.instance.getRings())) {
             if (!Global.to_death) {
                 IOUtil.msg("the rust vanishes instantly");
             }
@@ -409,7 +407,7 @@ public class Move {
      * do_run:
      *	Start the hero running
      */
-    static void do_run(int ch) {
+    public static void do_run(int ch) {
         Global.running = true;
         Global.after = false;
         Global.runch = ch;

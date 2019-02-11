@@ -170,7 +170,7 @@ public class IOUtil {
      * status:
      *	Display the important stats line.  Keep the cursor where it was.
      */
-    static void status() {
+    public static void status() {
         int oy;
         int ox;
         int s_hungry = 0;
@@ -186,7 +186,7 @@ public class IOUtil {
          * If nothing has changed since the last status, don't
          * bother.
          */
-        int temp = (Global.cur_armor != null ? Global.cur_armor._o_arm : Global.player._t_stats.s_arm);
+        int temp = (Human.instance.isEquippedArmor() ? Human.instance.getArmor()._o_arm : Global.player._t_stats.s_arm);
         if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
                 && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Human.instance.getLevel()
                 && s_hungry == Global.hungry_state && !Global.stat_msg) {
@@ -219,7 +219,7 @@ public class IOUtil {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
                     s_lvl, s_pur, hpwidth, s_hp, hpwidth,
-                    Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
+                    Human.instance.getMaxHp(), s_str, Human.instance.getMaxStrength(),
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[s_hungry]);
         } else {
@@ -227,7 +227,7 @@ public class IOUtil {
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
                     s_lvl, s_pur, hpwidth, s_hp, hpwidth,
-                    Human.instance.getMaxHp(), s_str, Global.max_stats.s_str,
+                    Human.instance.getMaxHp(), s_str, Human.instance.getMaxStrength(),
                     10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
                     state_name[s_hungry]);
         }

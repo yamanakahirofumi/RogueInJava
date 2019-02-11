@@ -31,4 +31,7 @@ public interface Thing {
     }
 
     boolean isGroup();
+    int getGroup();
+    void addCount(int c);
+    int getCount();
 }

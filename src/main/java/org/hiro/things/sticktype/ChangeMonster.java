@@ -22,12 +22,9 @@ public class ChangeMonster extends Stick {
 
     @Override
     public void shake() {
-        Coordinate tmp = new Coordinate();
-        tmp.y = Global.player._t_pos.y;
-        tmp.x = Global.player._t_pos.x;
+        Coordinate tmp = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp))) {
-            tmp.y += Global.delta.y;
-            tmp.x += Global.delta.x;
+            tmp = tmp.add(Global.delta);
         }
         ThingImp tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
@@ -38,14 +35,13 @@ public class ChangeMonster extends Stick {
             List<ThingImp> pp = tp.getBaggage();
             Global.mlist.remove(tp);
             if (Chase.see_monst(tp)) {
-                Display.mvaddch(tmp.y, tmp.x, Util.getPlace(tmp).p_ch.getValue());
+                Display.mvaddch(tmp, Util.getPlace(tmp).p_ch.getValue());
             }
             int oldValue = tp._t_oldch;
-            Global.delta.y = tmp.y;
-            Global.delta.x = tmp.x;
+            Global.delta = new Coordinate(tmp);
             Monst.new_monster(tp, monster = Util.rnd(26) + 'A', Global.delta);
             if (Chase.see_monst(tp)) {
-                Display.mvaddch(tmp.y, tmp.x, (char) monster);
+                Display.mvaddch(tmp, (char) monster);
             }
             tp._t_oldch = oldValue;
             tp.setBaggage(pp);

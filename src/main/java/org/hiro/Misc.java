@@ -8,9 +8,9 @@ import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
 
 import java.lang.reflect.Method;
 
@@ -239,7 +239,7 @@ public class Misc {
         if (Global.door_stop && !Global.firstmove && passcount > 1)
             Global.running = false;
         if (!Global.running || !Global.jump)
-            Display.mvaddch(Global.player._t_pos.y, Global.player._t_pos.x, ObjectType.PLAYER.getValue());
+            Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
         if (DEBUG) {
             boolean done = false;
         } /* DEBUG */
@@ -310,13 +310,13 @@ public class Misc {
         }
         Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
         int comp = Human.instance.getCurrentStrength();
-        if (Util.ISRING(Const.LEFT, RingEnum.R_ADDSTR)) {
+        if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
             comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
         }
-        if (Util.ISRING(Const.RIGHT, RingEnum.R_ADDSTR)) {
+        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing ) {
             comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
         }
-        if (comp > Global.max_stats.s_str) {
+        if (comp > Human.instance.getMaxStrength()) {
             Global.max_stats.s_str = comp;
         }
     }
@@ -473,7 +473,7 @@ public class Misc {
      * eat:
      *	She wants to eat something, so let her try
      */
-    static void eat(ThingImp obj) {
+    public static void eat(ThingImp obj) {
         if (obj == null) {
             return;
         }
@@ -511,12 +511,11 @@ public class Misc {
      *	Set up the direction co_ordinate for use in varios "prefix"
      *	commands
      */
-    static boolean get_dir() {
+    public static boolean get_dir() {
         Coordinate last_delt = new Coordinate(0, 0);
 
         if (Global.again && Global.last_dir != '\0') {
-            Global.delta.y = last_delt.y;
-            Global.delta.x = last_delt.x;
+            Global.delta = new Coordinate(last_delt);
             Global.dir_ch = Global.last_dir;
         } else {
             String prompt;
@@ -531,43 +530,35 @@ public class Misc {
                 switch (Global.dir_ch = IOUtil.readchar()) {
                     case 'h':
                     case 'H':
-                        Global.delta.y = 0;
-                        Global.delta.x = -1;
+                        Global.delta = new Coordinate(-1,0);
                         break;
                     case 'j':
                     case 'J':
-                        Global.delta.y = 1;
-                        Global.delta.x = 0;
+                        Global.delta = new Coordinate(0,1);
                         break;
                     case 'k':
                     case 'K':
-                        Global.delta.y = -1;
-                        Global.delta.x = 0;
+                        Global.delta = new Coordinate(0,-1);
                         break;
                     case 'l':
                     case 'L':
-                        Global.delta.y = 0;
-                        Global.delta.x = 1;
+                        Global.delta = new Coordinate(1, 0);
                         break;
                     case 'y':
                     case 'Y':
-                        Global.delta.y = -1;
-                        Global.delta.x = -1;
+                        Global.delta = new Coordinate(-1, -1);
                         break;
                     case 'u':
                     case 'U':
-                        Global.delta.y = -1;
-                        Global.delta.x = 1;
+                        Global.delta = new Coordinate( -1, -1);
                         break;
                     case 'b':
                     case 'B':
-                        Global.delta.y = 1;
-                        Global.delta.x = -1;
+                        Global.delta =  new Coordinate(-1,1);
                         break;
                     case 'n':
                     case 'N':
-                        Global.delta.y = 1;
-                        Global.delta.x = 1;
+                        Global.delta =  new Coordinate(1,1);
                         break;
                     case Const.ESCAPE:
                         Global.last_dir = '\0';
@@ -584,14 +575,12 @@ public class Misc {
                 Global.dir_ch = Character.toLowerCase(Global.dir_ch);
             }
             Global.last_dir = (char) Global.dir_ch;
-            last_delt.y = Global.delta.y;
-            last_delt.x = Global.delta.x;
+            last_delt = new Coordinate(Global.delta);
         }
         if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) == 0) {
             do {
-                Global.delta.y = Util.rnd(3) - 1;
-                Global.delta.x = Util.rnd(3) - 1;
-            } while (Global.delta.y == 0 && Global.delta.x == 0);
+                Global.delta = new Coordinate(Util.rnd(3) - 1,Util.rnd(3) - 1);
+            } while (Global.delta.equals(new Coordinate(0,0)));
         }
         Global.mpos = 0;
         IOUtil.msg("");

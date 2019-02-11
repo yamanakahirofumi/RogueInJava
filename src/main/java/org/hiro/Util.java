@@ -65,7 +65,7 @@ public class Util {
      */
     @Deprecated
     static boolean ce(Coordinate a, Coordinate b) {
-        return (a.x == b.x && a.y == b.y);
+        return false;
     }
 
 //	#define moat(y,x)	 Global.places.get((x << 5) + y).p_monst
@@ -84,7 +84,7 @@ public class Util {
         }
     }
 
-    static char CTRL(char c) {
+    public static char CTRL(char c) {
         return (char) (c & 037);
     }
 

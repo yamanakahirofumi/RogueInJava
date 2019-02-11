@@ -2,7 +2,7 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.output.Display;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -365,7 +365,7 @@ public class Rip {
      * total_winner:
      *	Code for a winner
      */
-    static void total_winner() {
+    public static void total_winner() {
         Display.clear();
         Display.standout();
         Display.addstr("                                                               \n");
@@ -389,7 +389,7 @@ public class Rip {
         Display.mvaddstr(0, 0, "   Worth  Item\n");
 
         int oldpurse = Global.purse;
-        for (ThingImp obj : Global.player.getBaggage()) {
+        for (Thing obj : Human.instance.getBaggage()) {
             int worth = obj.getWorth();
             if (worth < 0) {
                 worth = 0;

@@ -37,7 +37,7 @@ public class Main2 {
      * quit:
      *	Have player make certain, then exit.
      */
-    static void quit(int sig) {
+    public static void quit(int sig) {
 
         // NOOP(sig);
 

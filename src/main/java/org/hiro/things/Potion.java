@@ -10,7 +10,7 @@ public class Potion extends ThingImp {
 
     Potion() {
         super();
-        this._o_which = ThingMethod.pick_one(getTypes(), PotionEnum.getMaxValue());
+        this._o_which = ThingMethod.pick_one(getTypes());
     }
 
     @Override
@@ -21,7 +21,7 @@ public class Potion extends ThingImp {
     @Override
     public int getWorth(){
         int worth = Global.pot_info[this._o_which].getWorth();
-        worth *= this._o_count;
+        worth *= this.getCount();
         Obj_info op = Global.pot_info[this._o_which];
         if (!op.isKnown()) {
             worth /= 2;
