@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
@@ -66,10 +67,7 @@ public class RingMethod {
      * ring_on:
      *	Put a ring on a hand
      */
-    public static void ring_on() {
-        Thing obj;
-
-        obj = Pack.get_item("put on", ObjectType.RING);
+    public static void ring_on(Player player, Thing obj) {
         /*
          * Make certain that it is somethings that we want to wear
          */
@@ -94,7 +92,7 @@ public class RingMethod {
         }
 
 
-        boolean result = Human.instance.putOnRing(ringObject);
+        boolean result = player.putOnRing(ringObject);
         if(!result) {
             if (!Global.terse) {
                 IOUtil.msg("you already have a ring on each hand");
@@ -124,7 +122,7 @@ public class RingMethod {
             IOUtil.addmsg("you are now wearing ");
         }
         IOUtil.msg("%s (%c)", ThingMethod.inventoryName(ringObject, true),
-                Human.instance.getPositionOfContent(ringObject));
+                player.getPositionOfContent(ringObject));
     }
 
     /*
