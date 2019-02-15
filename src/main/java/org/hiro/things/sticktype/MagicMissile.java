@@ -6,7 +6,7 @@ import org.hiro.IOUtil;
 import org.hiro.Monst;
 import org.hiro.Util;
 import org.hiro.WeaponMethod;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.things.Magic;
 import org.hiro.things.Stick;
 import org.hiro.things.StickEnum;
@@ -18,11 +18,11 @@ public class MagicMissile extends Stick {
     }
 
     @Override
-    public void shake() {
+    public void shake(Player player) {
         Global.ws_info[StickEnum.MagicMissile.getValue()].know();
         Magic bolt = new Magic();
-        if (Human.instance.getWeapons().size() > 0) {
-            bolt._o_launch = Human.instance.getWeapons().get(0)._o_which;
+        if (player.getWeapons().size() > 0) {
+            bolt._o_launch = player.getWeapons().get(0)._o_which;
         }
         ThingImp tp = Util.getPlace(bolt._o_pos).p_monst;
         WeaponMethod.do_motion(bolt, Global.delta);

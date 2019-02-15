@@ -7,7 +7,7 @@ import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Room;
 import org.hiro.Util;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Stick;
@@ -22,16 +22,16 @@ public class Drain extends Stick {
     }
 
     @Override
-    public void shake() {
+    public void shake(Player player) {
         /*
          * take away 1/2 of hero's hit points, then take it away
          * evenly from the monsters in the room (or next to hero
          * if he is in a passage)
          */
-        if (Human.instance.getHp() < 2) {
+        if (player.getHp() < 2) {
             IOUtil.msg("you are too weak to use it");
         } else {
-            drain();
+            drain(player);
         }
 
     }
@@ -40,7 +40,7 @@ public class Drain extends Stick {
      * drain:
      *	Do drain hit points from player shtick
      */
-    private void drain() {/*
+    private void drain(Player player) {/*
          * First cnt how many things we need to spread the hit points among
          */
         Room corp;
@@ -63,7 +63,7 @@ public class Drain extends Stick {
             return;
         }
         Global.player._t_stats.s_hpt /= 2;
-        int cnt = Human.instance.getHp() / drainList.size();
+        int cnt = player.getHp() / drainList.size();
         /*
          * Now zot all of the monsters
          */

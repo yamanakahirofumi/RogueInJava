@@ -5,7 +5,7 @@ import org.hiro.DrawRoom;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Util;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.things.Stick;
@@ -17,7 +17,7 @@ public class TeleportAway extends Stick {
     }
 
     @Override
-    public void shake() {
+    public void shake(Player player) {
         Coordinate tmp = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
@@ -26,7 +26,7 @@ public class TeleportAway extends Stick {
         if (tp != null) {
             int monster = tp._t_type;
             if (monster == 'F') {
-                Human.instance.removeState(StateEnum.ISHELD);
+                player.removeState(StateEnum.ISHELD);
             }
             Coordinate new_pos = new Coordinate();
 

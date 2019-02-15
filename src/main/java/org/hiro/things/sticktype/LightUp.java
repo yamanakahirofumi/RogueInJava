@@ -5,6 +5,7 @@ import org.hiro.IOUtil;
 import org.hiro.Init;
 import org.hiro.Rooms;
 import org.hiro.Util;
+import org.hiro.character.Player;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.things.Stick;
 import org.hiro.things.StickEnum;
@@ -16,7 +17,7 @@ public class LightUp extends Stick {
     }
 
     @Override
-    public void shake(){
+    public void shake(Player player){
         /*
          * Reddy Kilowat wand.  Light up the room
          */

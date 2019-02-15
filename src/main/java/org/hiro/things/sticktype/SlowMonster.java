@@ -4,6 +4,7 @@ import org.hiro.Chase;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Util;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.things.Stick;
@@ -15,7 +16,7 @@ public class SlowMonster extends Stick {
     }
 
     @Override
-    public void shake() {
+    public void shake(Player player) {
         Coordinate tmp2 = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp2))) {
             tmp2 = Global.delta.add(tmp2);
