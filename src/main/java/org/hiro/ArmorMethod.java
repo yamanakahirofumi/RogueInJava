@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Thing;
@@ -56,8 +57,8 @@ public class ArmorMethod {
      * take_off:
      *	Get the armor off of the players back
      */
-    public static void take_off() {
-        if (!Human.instance.isEquippedArmor()) {
+    public static void take_off(Player player) {
+        if (!player.isEquippedArmor()) {
             Global.after = false;
             if (Global.terse) {
                 IOUtil.msg("not wearing armor");
@@ -66,17 +67,17 @@ public class ArmorMethod {
             }
             return;
         }
-        if (!ThingMethod.isDrop(Human.instance.getArmor())) {
+        if (!ThingMethod.isDrop(player.getArmor())) {
             return;
         }
-        Armor obj = Human.instance.getArmor();
-        Human.instance.removeArmor();
+        Armor obj = player.getArmor();
+        player.removeArmor();
         if (Global.terse) {
             IOUtil.addmsg("was");
         } else {
             IOUtil.addmsg("you used to be");
         }
-        IOUtil.msg(" wearing %c) %s", String.valueOf(Human.instance.getPositionOfContent(obj)),
+        IOUtil.msg(" wearing %c) %s", String.valueOf(player.getPositionOfContent(obj)),
                 ThingMethod.inventoryName(obj, true));
     }
 
