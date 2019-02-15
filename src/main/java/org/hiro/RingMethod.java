@@ -17,7 +17,7 @@ public class RingMethod {
      * ring_num:
      *	Print ring bonuses
      */
-    static String ring_num(ThingImp obj) {
+    static String ring_num(Ring obj) {
         String buf;
 
         if (!(obj.contains_o_flags(Const.ISKNOW))) {

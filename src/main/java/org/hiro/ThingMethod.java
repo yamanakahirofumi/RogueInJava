@@ -176,7 +176,7 @@ public class ThingMethod {
 
     private static void inventoryName(Ring obj) throws NoSuchMethodException {
         int which = obj._o_which;
-        Method m = RingMethod.class.getMethod("ring_num", ThingImp.class);
+        Method m = RingMethod.class.getMethod("ring_num", Ring.class);
         nameit(obj, "ring", Global.r_stones[which], Global.ring_info[which], m);
     }
 
@@ -282,7 +282,7 @@ public class ThingMethod {
             } else if (obj instanceof Amulet) {
                 Global.prbuf = "The Amulet of Yendor";
             } else if (obj instanceof Gold) {
-                Global.prbuf = obj._o_arm + " Gold pieces";
+                Global.prbuf = ((Gold) obj).getGold() + " Gold pieces";
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -366,7 +366,7 @@ public class ThingMethod {
         } else {
             Global.cur_ring[obj == Global.cur_ring[Const.LEFT] ? Const.LEFT : Const.RIGHT] = null;
             if (obj instanceof AddStrengthRing) {
-                Misc.chg_str(-obj._o_arm);
+                Misc.chg_str(-((AddStrengthRing) obj).getStrength());
             } else if (obj instanceof SeeInvisibleRing) {
                 Daemons.unsee();
                 try {
