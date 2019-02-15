@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
@@ -483,7 +484,7 @@ public class Misc {
      * eat:
      *	She wants to eat something, so let her try
      */
-    public static void eat(ThingImp obj) {
+    public static void eat(Player player, ThingImp obj) {
         if (obj == null) {
             return;
         }
@@ -498,16 +499,16 @@ public class Misc {
         if (Global.food_left < 0) {
             Global.food_left = 0;
         }
-        if ((Global.food_left += Const.HUNGERTIME - 200 + Util.rnd(400)) > Human.instance.getStomachSize()) {
+        if ((Global.food_left += Const.HUNGERTIME - 200 + Util.rnd(400)) > player.getStomachSize()) {
             Global.food_left = Human.instance.getStomachSize();
         }
         Global.hungry_state = 0;
         // 装備している武器を食べる場合
-        Human.instance.removeWeapon(obj);
+        player.removeWeapon(obj);
         if (obj._o_which == 1)
             IOUtil.msg("my, that was a yummy %s", Global.fruit);
         else if (Util.rnd(100) > 70) {
-            Human.instance.addExperience(1);
+            player.addExperience(1);
             IOUtil.msg("%s, this food tastes awful", choose_str("bummer", "yuk"));
             check_level();
         } else {
