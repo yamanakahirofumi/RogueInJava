@@ -297,10 +297,11 @@ public class Pack {
             move_msg(obj);
         } else {
             if (obj instanceof Gold) {
-                money(obj._o_arm);
-                Global.lvl_obj.remove(obj);
-                update_mdest(obj);
-                Global.lvl_obj.remove(obj);
+                Gold gold = (Gold) obj;
+                money(gold.getGold());
+                Global.lvl_obj.remove(gold);
+                update_mdest(gold);
+                Global.lvl_obj.remove(gold);
                 Global.player.t_room.r_goldval = 0;
             } else {
                 add_pack(null, false);
