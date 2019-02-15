@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
@@ -165,14 +165,14 @@ public class WeaponMethod {
      * wield:
      *	Pull out a certain weapon
      */
-    public static void wield() {
+    public static void wield(Player player) {
 
-        Weapon oweapon = Human.instance.getWeapons().get(0);
-        if (!ThingMethod.isDrop(Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null)) {
-            Human.instance.putOnWeapon(oweapon);
+        Weapon oweapon = player.getWeapons().get(0);
+        if (!ThingMethod.isDrop(player.getWeapons().size() > 0 ? player.getWeapons().get(0) : null)) {
+            player.putOnWeapon(oweapon);
             return;
         }
-        Human.instance.putOnWeapon(oweapon);
+        player.putOnWeapon(oweapon);
         ThingImp obj = Pack.get_item("wield", ObjectType.WEAPON);
         if (obj == null) {
             Global.after = false;
@@ -190,11 +190,11 @@ public class WeaponMethod {
         }
 
         String sp = ThingMethod.inventoryName(obj, true);
-        Human.instance.putOnWeapon((Weapon) obj);
+        player.putOnWeapon((Weapon) obj);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
-        IOUtil.msg("wielding %s (%c)", sp, Human.instance.getPositionOfContent(obj));
+        IOUtil.msg("wielding %s (%c)", sp, player.getPositionOfContent(obj));
     }
 
 
