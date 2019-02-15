@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -61,10 +62,9 @@ public class Potions {
      * quaff:
      *	Quaff a potion from the pack
      */
-    public static void quaff() {
+    public static void quaff(Player player, Thing obj) {
         boolean MASTER = false;
 
-        Thing obj = Pack.get_item("quaff", ObjectType.POTION);
         /*
          * Make certain that it is somethings that we want to drink
          */
@@ -80,12 +80,12 @@ public class Potions {
             return;
         }
         Potion potion = (Potion) obj;
-        Human.instance.removeWeapon(potion);
+        player.removeWeapon(potion);
 
         /*
          * Calculate the effect it has on the poor guy.
          */
-        boolean trip = Human.instance.containsState(StateEnum.ISHALU);
+        boolean trip = player.containsState(StateEnum.ISHALU);
         Pack.leave_pack(potion, false, false);
         PotionEnum p = PotionEnum.get(potion._o_which);
         boolean show;
@@ -95,7 +95,7 @@ public class Potions {
                 break;
             case P_POISON:
                 Global.pot_info[p.getValue()].know();
-                if (SustainStrengthRing.isInclude(Human.instance.getRings())) {
+                if (SustainStrengthRing.isInclude(player.getRings())) {
                     IOUtil.msg("you feel momentarily sick");
                 } else {
                     Misc.chg_str(-(Util.rnd(3) + 1));
@@ -105,8 +105,8 @@ public class Potions {
                 break;
             case P_HEALING:
                 Global.pot_info[p.getValue()].know();
-                Human.instance.addHp(Dice.roll(Global.player._t_stats.s_lvl, 4));
-                if (Human.instance.getHp() > Human.instance.getMaxHp()) {
+                player.addHp(Dice.roll(Global.player._t_stats.s_lvl, 4));
+                if (player.getHp() > player.getMaxHp()) {
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
                 }
                 Daemons.sight();
@@ -118,7 +118,7 @@ public class Potions {
                 IOUtil.msg("you feel stronger, now.  What bulging muscles!");
                 break;
             case P_MFIND:
-                Human.instance.addState(StateEnum.SEEMONST);
+                player.addState(StateEnum.SEEMONST);
                 try {
                     Method m = Potions.class.getMethod("turn_see_off");
                     Daemon.fuse(m, 1, Const.HUHDURATION, Const.AFTER);
@@ -165,7 +165,7 @@ public class Potions {
                 break;
             case P_LSD:
                 if (!trip) {
-                    if (Human.instance.containsState(StateEnum.SEEMONST)) {
+                    if (player.containsState(StateEnum.SEEMONST)) {
                         turn_see(false);
                     }
                     try {
@@ -180,7 +180,7 @@ public class Potions {
                 break;
             case P_SEEINVIS:
                 Global.prbuf = "this potion tastes like " + Global.fruit + " juice";
-                show = Human.instance.containsState(StateEnum.CANSEE);
+                show = player.containsState(StateEnum.CANSEE);
                 do_pot(p, false);
                 if (!show) {
                     invis_on();
@@ -194,9 +194,9 @@ public class Potions {
                 break;
             case P_XHEAL:
                 Global.pot_info[p.getValue()].know();
-                Human.instance.addHp(Dice.roll(Global.player._t_stats.s_lvl, 8));
-                if (Human.instance.getHp() > Human.instance.getMaxHp()) {
-                    if (Human.instance.getHp() > Human.instance.getMaxHp() + Global.player._t_stats.s_lvl + 1) {
+                player.addHp(Dice.roll(Global.player._t_stats.s_lvl, 8));
+                if (player.getHp() > player.getMaxHp()) {
+                    if (player.getHp() > player.getMaxHp() + Global.player._t_stats.s_lvl + 1) {
                         ++Global.player._t_stats.s_maxhp;
                     }
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
@@ -213,19 +213,19 @@ public class Potions {
                 break;
             case P_RESTORE:
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
                 }
-                if (Human.instance.getCurrentStrength() < Human.instance.getMaxStrength()) {
-                    Global.player._t_stats.s_str = Human.instance.getMaxStrength();
+                if (player.getCurrentStrength() < player.getMaxStrength()) {
+                    Global.player._t_stats.s_str = player.getMaxStrength();
                 }
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(Human.instance.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
                 break;
