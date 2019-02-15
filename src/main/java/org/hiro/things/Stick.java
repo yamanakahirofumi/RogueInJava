@@ -67,4 +67,8 @@ public class Stick extends ThingImp {
     public void use(){
         this.times--;
     }
+
+    public boolean isUse(){
+        return this.times > 0;
+    }
 }

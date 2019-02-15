@@ -5,6 +5,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Stick;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
@@ -38,9 +39,7 @@ public class StickMethod {
      * do_zap:
      *	Perform a zap with a wand
      */
-    public static void do_zap() {
-        ThingImp obj = Pack.get_item("zap with", ObjectType.STICK);
-
+    public static void do_zap(Thing obj) {
         if (obj == null) {
             return;
         }
@@ -49,12 +48,12 @@ public class StickMethod {
             IOUtil.msg("you can't zap with that!");
             return;
         }
-        if (obj._o_arm == 0) {
+        Stick stick = (Stick) obj;
+        if (stick.isUse()) {
             IOUtil.msg("nothing happens");
             return;
         }
 
-        Stick stick = (Stick) obj;
         stick.shake();
     }
 
