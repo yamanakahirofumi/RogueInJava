@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -39,7 +40,7 @@ public class StickMethod {
      * do_zap:
      *	Perform a zap with a wand
      */
-    public static void do_zap(Thing obj) {
+    public static void do_zap(Player player, Thing obj) {
         if (obj == null) {
             return;
         }
@@ -54,7 +55,7 @@ public class StickMethod {
             return;
         }
 
-        stick.shake();
+        stick.shake(player);
     }
 
     /*
