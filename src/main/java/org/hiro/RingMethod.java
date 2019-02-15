@@ -6,6 +6,9 @@ import org.hiro.things.Ring;
 import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddStrengthRing;
+import org.hiro.things.ringtype.AggravateMonsterRing;
+import org.hiro.things.ringtype.SeeInvisibleRing;
 import org.hiro.things.ringtype.SlowDigestionRing;
 
 public class RingMethod {
@@ -104,17 +107,12 @@ public class RingMethod {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        RingEnum r = RingEnum.get(ringObject._o_which);
-        switch (r) {
-            case AddStrength:
-                Misc.chg_str(ringObject._o_arm);
-                break;
-            case SeeInvisible:
-                Potions.invis_on();
-                break;
-            case AggravateMonster:
-                Misc.aggravate();
-                break;
+        if( ringObject instanceof AddStrengthRing){
+            Misc.chg_str(((AddStrengthRing)ringObject).getStrength());
+        }else if(ringObject instanceof SeeInvisibleRing){
+            Potions.invis_on();
+        }else if(ringObject instanceof AggravateMonsterRing){
+            Misc.aggravate();
         }
 
         if (!Global.terse) {

@@ -38,4 +38,7 @@ public class AddStrengthRing extends Ring {
         return worth;
     }
 
+    public int getStrength() {
+        return strength;
+    }
 }
