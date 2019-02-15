@@ -1,6 +1,5 @@
 package org.hiro;
 
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
@@ -129,7 +128,7 @@ public class RingMethod {
      * ring_off:
      *	take off a ring
      */
-    public static void ring_off() {
+    public static void ring_off(Player player) {
         int ring;
 
         if (Global.cur_ring[Const.LEFT] == null && Global.cur_ring[Const.RIGHT] == null) {
@@ -139,12 +138,13 @@ public class RingMethod {
                 IOUtil.msg("you aren't wearing any rings");
             }
             return;
-        } else if (Global.cur_ring[Const.LEFT] == null)
+        } else if (Global.cur_ring[Const.LEFT] == null) {
             ring = Const.RIGHT;
-        else if (Global.cur_ring[Const.RIGHT] == null)
+        }else if (Global.cur_ring[Const.RIGHT] == null) {
             ring = Const.LEFT;
-        else if ((ring = gethand()) < 0)
+        }else if ((ring = gethand()) < 0) {
             return;
+        }
         Global.mpos = 0;
         Ring obj = Global.cur_ring[ring];
         if (obj == null) {
@@ -153,7 +153,7 @@ public class RingMethod {
         }
         if (ThingMethod.isDrop(obj))
             IOUtil.msg("was wearing %s(%c)", ThingMethod.inventoryName(obj, true),
-                    Human.instance.getPositionOfContent(obj));
+                    player.getPositionOfContent(obj));
     }
 
     /*
