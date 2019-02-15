@@ -53,7 +53,7 @@ public class DrawRoom {
                  * for passage drawing.
                  */
                 do {
-                    rp.r_pos = (Coordinate) top.add(new Coordinate(Util.rnd(bsze.x - 2) + 1, Util.rnd(bsze.y - 2) + 1));
+                    rp.r_pos = top.add(new Coordinate(Util.rnd(bsze.x - 2) + 1, Util.rnd(bsze.y - 2) + 1));
                     rp.r_max.x = -Const.NUMCOLS;
                     rp.r_max.y = -Const.NUMLINES;
                 } while (!(rp.r_pos.y > 0 && rp.r_pos.y < Const.NUMLINES - 1));

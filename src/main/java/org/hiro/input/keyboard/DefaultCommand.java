@@ -75,7 +75,7 @@ public class DefaultCommand implements KeyboardCommand {
                 break;
                 case ('I' & 037): {
                     int i;
-                    ThingImp obj;
+                    Weapon obj;
 
                     for (i = 0; i < 9; i++) {
                         Potions.raise_level();
@@ -86,7 +86,7 @@ public class DefaultCommand implements KeyboardCommand {
                     obj = new Weapon(WeaponEnum.TWOSWORD, 1);
                     obj._o_dplus = 1;
                     Pack.add_pack(obj, true);
-                    Human.instance.putOnWeapon((Weapon) obj);
+                    Human.instance.putOnWeapon(obj);
                     /*
                      * And his suit of armor
                      */
