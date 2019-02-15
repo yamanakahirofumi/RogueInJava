@@ -1,9 +1,7 @@
 package org.hiro;
 
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.things.Armor;
-import org.hiro.things.ObjectType;
 import org.hiro.things.Thing;
 
 public class ArmorMethod {
@@ -12,12 +10,11 @@ public class ArmorMethod {
      * wear:
      *	The player wants to wear something, so let him/her put it on.
      */
-    public static void wear() {
-        Thing obj;
-        if ((obj = Pack.get_item("wear", ObjectType.ARMOR)) == null) {
+    public static void wear(Player player, Thing obj) {
+        if (obj == null) {
             return;
         }
-        if (Human.instance.isEquippedArmor()) {
+        if (player.isEquippedArmor()) {
             IOUtil.addmsg("you are already wearing some");
             if (!Global.terse) {
                 IOUtil.addmsg(".  You'll have to take it off first");
@@ -35,7 +32,7 @@ public class ArmorMethod {
         waste_time();
         obj.add_o_flags(Const.ISKNOW);
         String sp = ThingMethod.inventoryName(armor, true);
-        Human.instance.putOnArmor(armor);
+        player.putOnArmor(armor);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
