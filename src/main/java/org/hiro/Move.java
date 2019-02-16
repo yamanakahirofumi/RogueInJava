@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -41,7 +42,7 @@ public class Move {
      *	Check to see that a move is legal.  If it is handle the
      * consequences (fighting, picking up, etc.)
      */
-    public static void do_move(int dy, int dx) {
+    public static void do_move(Player player, int dy, int dx) {
         ObjectType ch;
         char fl;
         Coordinate nh = new Coordinate();
@@ -55,7 +56,7 @@ public class Move {
         /*
          * Do a confused move (maybe)
          */
-        if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
+        if (player.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
             nh = rndmove(Global.player);
             if (nh.equals(Global.player._t_pos)) {
                 Global.after = false;
@@ -86,11 +87,11 @@ public class Move {
         fl = (char) Util.flat(nh);
         ch = Util.winat(nh);
         if ((fl & Const.F_REAL) == 0 && ch == ObjectType.FLOOR) {
-            if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
+            if (!player.containsState(StateEnum.ISLEVIT)) {
                 Util.getPlace(nh).p_ch = ch = ObjectType.TRAP;
                 Util.getPlace(nh).p_flags |= Const.F_REAL;
             }
-        } else if (Human.instance.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
+        } else if (player.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
             IOUtil.msg("you are being held");
             return;
         }
@@ -100,7 +101,7 @@ public class Move {
             case Horizon:
                 hit_bound:
                 if (Global.passgo && Global.running && Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
-                        && !Human.instance.containsState(StateEnum.ISBLIND)) {
+                        && !player.containsState(StateEnum.ISBLIND)) {
                     boolean b1, b2;
                     switch (Global.runch) {
                         case 'h':
@@ -173,7 +174,7 @@ public class Move {
             default:
                 Global.running = false;
                 if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
-                    Fight.fight(nh, Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null, false);
+                    Fight.fight(nh, player.getWeapons().size() > 0 ? player.getWeapons().get(0) : null, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
                         Global.take = ch;
