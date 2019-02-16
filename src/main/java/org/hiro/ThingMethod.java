@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.Armor;
@@ -397,7 +398,7 @@ public class ThingMethod {
      * drop:
      *	Put something down
      */
-    public static void drop() {
+    public static void drop(Player player) {
         ThingImp obj = Pack.get_item("drop", ObjectType.Initial);
         if (obj == null || !isDrop(obj)) {
             return;

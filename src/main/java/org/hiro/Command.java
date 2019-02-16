@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.input.keyboard.ChangeWizardModeCommand;
 import org.hiro.input.keyboard.DefaultCommand;
@@ -275,7 +276,7 @@ public class Command {
         Daemon.do_daemons(Const.AFTER);
         Daemon.do_fuses(Const.AFTER);
         if (SearchingRing.isInclude(Human.instance.getRings())) {
-            search();
+            search(Human.instance);
         } else if (TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0) {
             Wizard.teleport();
         }
@@ -357,12 +358,12 @@ public class Command {
      * search:
      *	player gropes about him to find hidden things.
      */
-    public static void search() {
+    public static void search(Player player) {
 
         int ey = Global.player._t_pos.y + 1;
         int ex = Global.player._t_pos.x + 1;
-        int probinc = (Human.instance.containsState(StateEnum.ISHALU) ? 3 : 0);
-        probinc += (Human.instance.containsState(StateEnum.ISBLIND) ? 2 : 0);
+        int probinc = (player.containsState(StateEnum.ISHALU) ? 3 : 0);
+        probinc += (player.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
         for (int y = Global.player._t_pos.y - 1; y <= ey; y++)
             for (int x = Global.player._t_pos.x - 1; x <= ex; x++) {
@@ -390,7 +391,7 @@ public class Command {
                             if (!Global.terse) {
                                 IOUtil.addmsg("you found ");
                             }
-                            if (Human.instance.containsState(StateEnum.ISHALU)) {
+                            if (player.containsState(StateEnum.ISHALU)) {
                                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
                             } else {
                                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
