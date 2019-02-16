@@ -1,6 +1,7 @@
 package org.hiro.things.scrolltype;
 
 import org.hiro.IOUtil;
+import org.hiro.character.Player;
 import org.hiro.things.Scroll;
 
 public class Scare extends Scroll {
@@ -9,7 +10,7 @@ public class Scare extends Scroll {
     }
 
     @Override
-    public void read() {
+    public void read(Player player) {
         /*
          * Reading it is a mistake and produces laughter at her
          * poor boo boo.

@@ -5,7 +5,7 @@ import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Init;
 import org.hiro.Util;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.things.Scroll;
 import org.hiro.things.Weapon;
 
@@ -15,11 +15,11 @@ public class EnchantWeapon extends Scroll {
     }
 
     @Override
-    public void read() {
-        if (Human.instance.getWeapons().size() < 1 || Human.instance.getWeapons().get(0) instanceof Weapon) {
+    public void read(Player player) {
+        if (player.getWeapons().size() < 1 || !(player.getWeapons().get(0) instanceof Weapon)) {
             IOUtil.msg("you feel a strange sense of loss");
         } else {
-            Weapon w = Human.instance.getWeapons().get(0);
+            Weapon w = player.getWeapons().get(0);
             w.delete_o_flags(Const.ISCURSED);
             if (Util.rnd(2) == 0) {
                 w._o_hplus++;

@@ -4,6 +4,7 @@ import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Util;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Scroll;
@@ -15,7 +16,7 @@ public class HoldMonster extends Scroll {
     }
 
     @Override
-    public void read() {
+    public void read(Player player) {
         /*
          * Hold monster scroll.  Stop all monsters within two spaces
          * from chasing after the hero.

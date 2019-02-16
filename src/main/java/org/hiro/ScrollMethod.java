@@ -31,7 +31,7 @@ public class ScrollMethod {
          * Get rid of the thing
          */
         Pack.leave_pack(scroll, false, false);
-        scroll.read();
+        scroll.read(player);
         Misc.look(true);    /* put the result of the scroll on the screen */
         IOUtil.status(player);
 

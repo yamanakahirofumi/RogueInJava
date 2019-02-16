@@ -4,7 +4,7 @@ import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Place;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Scroll;
@@ -17,7 +17,7 @@ public class MapScroll extends Scroll {
     }
 
     @Override
-    public void read() {
+    public void read(Player player) {
         /*
          * Scroll of magic mapping.
          */
@@ -92,7 +92,7 @@ public class MapScroll extends Scroll {
                 if (monst != null) {
                     monst._t_oldch = chp.getValue();
                 }
-                if (monst == null || !Human.instance.containsState(StateEnum.SEEMONST)) {
+                if (monst == null || !player.containsState(StateEnum.SEEMONST)) {
                     // Display.mvaddch(y,x, chp.getValue());
                 }
             }

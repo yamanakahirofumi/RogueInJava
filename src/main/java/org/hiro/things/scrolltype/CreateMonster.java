@@ -5,6 +5,7 @@ import org.hiro.IOUtil;
 import org.hiro.Misc;
 import org.hiro.Monst;
 import org.hiro.Util;
+import org.hiro.character.Player;
 import org.hiro.map.Coordinate;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Scroll;
@@ -17,7 +18,7 @@ public class CreateMonster extends Scroll {
     }
 
     @Override
-    public void read() {
+    public void read(Player player) {
         /*
          * Create a monster:
          * First look in a circle around him, next try his room
