@@ -658,7 +658,7 @@ public class Fight {
             Mach_dep.flush_type();
         }
         Global.count = 0;
-        IOUtil.status();
+        IOUtil.status(Human.instance);
         if (mp == null)
             return (-1);
         else

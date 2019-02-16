@@ -120,7 +120,7 @@ public class Command {
             if (!Global.running) {
                 Global.door_stop = false;
             }
-            IOUtil.status();
+            IOUtil.status(Human.instance);
             Global.lastscore = Global.purse;
             Display.move(Global.player._t_pos);
             if (!((Global.running || Global.count != 0) && Global.jump)) {

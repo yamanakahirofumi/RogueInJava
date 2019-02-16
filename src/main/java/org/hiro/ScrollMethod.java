@@ -1,7 +1,6 @@
 package org.hiro;
 
 import org.hiro.character.Player;
-import org.hiro.things.ObjectType;
 import org.hiro.things.Scroll;
 import org.hiro.things.Thing;
 
@@ -34,7 +33,7 @@ public class ScrollMethod {
         Pack.leave_pack(scroll, false, false);
         scroll.read();
         Misc.look(true);    /* put the result of the scroll on the screen */
-        IOUtil.status();
+        IOUtil.status(player);
 
 
     }

@@ -241,7 +241,7 @@ public class Potions {
                     return;
                 }
         }
-        IOUtil.status();
+        IOUtil.status(player);
         /*
          * Throw the item away
          */

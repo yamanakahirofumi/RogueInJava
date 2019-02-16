@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.output.Display;
 
 public class Main2 {
@@ -67,7 +68,7 @@ public class Main2 {
         } else {
             Display.move(0, 0);
             Display.clrtoeol();
-            IOUtil.status();
+            IOUtil.status(Human.instance);
             // Display.move(oy, ox);
             Display.refresh();
             Global.mpos = 0;
