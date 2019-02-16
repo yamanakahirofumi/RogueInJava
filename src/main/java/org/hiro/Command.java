@@ -63,6 +63,7 @@ import org.hiro.input.keyboard.print.PrintStatusCommand;
 import org.hiro.input.keyboard.print.PrintVersionCommand;
 import org.hiro.input.keyboard.print.RedrawScreenCommand;
 import org.hiro.input.keyboard.print.RepeatLastMessageCommand;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -360,54 +361,48 @@ public class Command {
      */
     public static void search(Player player) {
 
-        int ey = Global.player._t_pos.y + 1;
-        int ex = Global.player._t_pos.x + 1;
         int probinc = (player.containsState(StateEnum.ISHALU) ? 3 : 0);
         probinc += (player.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
-        for (int y = Global.player._t_pos.y - 1; y <= ey; y++)
-            for (int x = Global.player._t_pos.x - 1; x <= ex; x++) {
-                Coordinate target = new Coordinate(x, y);
-                if (Global.player._t_pos.equals(target)) {
-                    continue;
-                }
-                int fp = Util.flat(target);
-                if ((fp & Const.F_REAL) == 0) {
-                    switch (Util.getPlace(target).p_ch) {
-                        case Vert:
-                        case Horizon:
-                            if (Util.rnd(5 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.DOOR;
-                            IOUtil.msg("a secret door");
-                            found = foundone(target);
+        for (AbstractCoordinate c : Global.player._t_pos.near()) {
+            Coordinate target = (Coordinate) c;
+            int fp = Util.flat(target);
+            if ((fp & Const.F_REAL) == 0) {
+                switch (Util.getPlace(target).p_ch) {
+                    case Vert:
+                    case Horizon:
+                        if (Util.rnd(5 + probinc) != 0) {
                             break;
-                        case FLOOR:
-                            if (Util.rnd(2 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.TRAP;
-                            if (!Global.terse) {
-                                IOUtil.addmsg("you found ");
-                            }
-                            if (player.containsState(StateEnum.ISHALU)) {
-                                IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
-                            } else {
-                                IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
-                                Util.getPlace(target).p_flags |= Const.F_SEEN;
-                            }
-                            found = foundone(target);
+                        }
+                        Util.getPlace(target).p_ch = ObjectType.DOOR;
+                        IOUtil.msg("a secret door");
+                        found = foundone(target);
+                        break;
+                    case FLOOR:
+                        if (Util.rnd(2 + probinc) != 0) {
                             break;
-                        case Blank:
-                            if (Util.rnd(3 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.PASSAGE;
-                            found = foundone(target);
-                    }
+                        }
+                        Util.getPlace(target).p_ch = ObjectType.TRAP;
+                        if (!Global.terse) {
+                            IOUtil.addmsg("you found ");
+                        }
+                        if (player.containsState(StateEnum.ISHALU)) {
+                            IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
+                        } else {
+                            IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
+                            Util.getPlace(target).p_flags |= Const.F_SEEN;
+                        }
+                        found = foundone(target);
+                        break;
+                    case Blank:
+                        if (Util.rnd(3 + probinc) != 0) {
+                            break;
+                        }
+                        Util.getPlace(target).p_ch = ObjectType.PASSAGE;
+                        found = foundone(target);
                 }
             }
+        }
         if (found) {
             Misc.look(false);
         }

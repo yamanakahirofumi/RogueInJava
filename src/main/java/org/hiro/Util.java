@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
@@ -22,8 +23,11 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
-    public static Place getPlace(Coordinate c){
-        return Global.places.get((c.getX() << 5) + c.getY());
+    public static Place getPlace(AbstractCoordinate c){
+        if(c instanceof Coordinate) {
+            return Global.places.get((((Coordinate) c).getX() << 5) + ((Coordinate) c).getY());
+        }
+        return new Place();
     }
 
     public static Place INDEX(int y, int x) {
@@ -75,12 +79,13 @@ public class Util {
 //		return Global.places.get((x << 5) + y).p_ch
 //	}
 
-    public static ObjectType winat(Coordinate coordinate) {
-        if (getPlace(coordinate).p_monst != null) {
-            return ObjectType.get((char) getPlace(coordinate).p_monst._t_disguise);
+    public static ObjectType winat(AbstractCoordinate coordinate) {
+        Place place = getPlace(coordinate);
+        if (place.p_monst != null) {
+            return ObjectType.get((char) place.p_monst._t_disguise);
 
         } else {
-            return getPlace(coordinate).p_ch;
+            return place.p_ch;
         }
     }
 

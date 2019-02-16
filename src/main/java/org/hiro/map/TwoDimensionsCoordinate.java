@@ -2,6 +2,9 @@ package org.hiro.map;
 
 import org.hiro.Util;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /*
  * Coordinate data type
  * 座標
@@ -62,5 +65,19 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
     public void setDimensions(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public List<AbstractCoordinate> near() {
+        List<AbstractCoordinate> result = new LinkedList<>();
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y));
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y + 1));
+        result.add(new TwoDimensionsCoordinate(this.x, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x, this.y + 1));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y + 1));
+        return result;
     }
 }

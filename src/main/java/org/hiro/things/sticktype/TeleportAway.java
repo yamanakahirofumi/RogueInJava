@@ -7,6 +7,7 @@ import org.hiro.IOUtil;
 import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.things.Stick;
 import org.hiro.things.ThingImp;
@@ -18,7 +19,7 @@ public class TeleportAway extends Stick {
 
     @Override
     public void shake(Player player) {
-        Coordinate tmp = new Coordinate(Global.player._t_pos);
+        AbstractCoordinate tmp = new Coordinate(Global.player._t_pos);
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
         }
