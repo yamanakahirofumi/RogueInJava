@@ -13,7 +13,7 @@ import org.hiro.things.StickEnum;
 public class LightUp extends Stick {
     public LightUp(){
         super();
-        this._o_arm = Util.rnd(10) + 10;
+        this.setTimes( Util.rnd(10) + 10);
     }
 
     @Override

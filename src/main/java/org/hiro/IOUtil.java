@@ -186,7 +186,7 @@ public class IOUtil {
          * If nothing has changed since the last status, don't
          * bother.
          */
-        int temp = (Human.instance.isEquippedArmor() ? Human.instance.getArmor()._o_arm : Global.player._t_stats.s_arm);
+        int temp = (Human.instance.isEquippedArmor() ? Human.instance.getArmor().getDefence() : Global.player._t_stats.s_arm);
         if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
                 && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Human.instance.getLevel()
                 && s_hungry == Global.hungry_state && !Global.stat_msg) {

@@ -373,14 +373,14 @@ public class Fight {
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
                 if (Global.cur_ring[Const.LEFT] instanceof AddDamageRing) {
-                    dplus += Global.cur_ring[Const.LEFT]._o_arm;
+                    dplus += ((AddDamageRing)Global.cur_ring[Const.LEFT]).getDamage();
                 } else if (Global.cur_ring[Const.LEFT] instanceof DexterityRing) {
-                    hplus += Global.cur_ring[Const.LEFT]._o_arm;
+                    hplus += ((DexterityRing)Global.cur_ring[Const.LEFT]).getDexterity();
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddDamageRing) {
-                    dplus += Global.cur_ring[Const.RIGHT]._o_arm;
+                    dplus += ((AddDamageRing)Global.cur_ring[Const.RIGHT]).getDamage();
                 } else if (Global.cur_ring[Const.RIGHT] instanceof DexterityRing) {
-                    hplus += Global.cur_ring[Const.RIGHT]._o_arm;
+                    hplus += ((DexterityRing)Global.cur_ring[Const.RIGHT]).getDexterity();
                 }
             }
             cp = weap.getDamage();
@@ -404,13 +404,13 @@ public class Fight {
         int def_arm = def.s_arm;
         if (def == Global.player._t_stats) {
             if (Human.instance.isEquippedArmor()) {
-                def_arm = Human.instance.getArmor()._o_arm;
+                def_arm = Human.instance.getArmor().getDefence();
             }
             if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing) {
-                def_arm -= Global.cur_ring[Const.LEFT]._o_arm;
+                def_arm -= ((ProtectionRing)Global.cur_ring[Const.LEFT]).getDefence();
             }
             if (Global.cur_ring[Const.RIGHT] instanceof ProtectionRing) {
-                def_arm -= Global.cur_ring[Const.RIGHT]._o_arm;
+                def_arm -= ((ProtectionRing)Global.cur_ring[Const.RIGHT]).getDefence();
             }
         }
         boolean MASTER = false;

@@ -72,4 +72,12 @@ public class Stick extends ThingImp {
     public boolean isUse(){
         return this.times > 0;
     }
+
+    public int getTimes(){
+        return this.times;
+    }
+
+    public void setTimes(int charge){
+        this.times = charge;
+    }
 }

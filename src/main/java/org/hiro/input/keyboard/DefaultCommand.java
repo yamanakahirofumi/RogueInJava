@@ -13,7 +13,8 @@ import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Stick;
+import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 
@@ -67,9 +68,9 @@ public class DefaultCommand implements KeyboardCommand {
                     Potions.turn_see(Human.instance.containsState(StateEnum.SEEMONST));
                     break;
                 case '~': {
-                    ThingImp item;
+                    Thing item;
                     if ((item = Pack.get_item("charge", ObjectType.STICK)) != null) {
-                        item._o_arm = 10000;
+                        ((Stick)item).setTimes(10000);
                     }
                 }
                 break;

@@ -49,7 +49,6 @@ public class ThingImp implements OriginalMonster, Thing {
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
     public int _o_hplus;            /* Plusses to hit */
     public int _o_dplus;            /* Plusses to damage */
-    public int _o_arm;            /* ArmorEnum protection */
     private HashSet<Integer> _o_flags;            /* information about objects */
     public int _o_group;            /* group number for this object */  // もしかして要らない
     public char _o_label;            /* Label for object */
@@ -125,7 +124,6 @@ public class ThingImp implements OriginalMonster, Thing {
         this.bag = new Bag();
         this._o_hplus = 0;
         this._o_dplus = 0;
-        this._o_arm = 11;
         this._o_count = 1;
         this._o_group = 0;
         this._o_flags = new HashSet<>();

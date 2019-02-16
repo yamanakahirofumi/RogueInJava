@@ -42,7 +42,7 @@ public class Util {
         return x; // A_CHARTEXTは、文字を取り出すためのビットマスク
     }
 
-    static boolean ISRING(int h, RingEnum r) {
+    private static boolean ISRING(int h, RingEnum r) {
         return Global.cur_ring[h] != null && Global.cur_ring[h]._o_which == r.getValue();
     }
 

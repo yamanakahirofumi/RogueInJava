@@ -213,19 +213,19 @@ public class Potions {
                 break;
             case P_RESTORE:
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
                 }
                 if (player.getCurrentStrength() < player.getMaxStrength()) {
                     Global.player._t_stats.s_str = player.getMaxStrength();
                 }
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), Global.cur_ring[Const.LEFT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), Global.cur_ring[Const.RIGHT]._o_arm);
+                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
                 break;

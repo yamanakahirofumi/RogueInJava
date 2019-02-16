@@ -36,4 +36,7 @@ public class AddDamageRing extends Ring {
         return worth;
     }
 
+    public int getDamage(){
+        return this.damage;
+    }
 }

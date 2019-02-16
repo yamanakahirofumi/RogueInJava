@@ -322,10 +322,10 @@ public class Misc {
         Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
         int comp = Human.instance.getCurrentStrength();
         if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-            comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
+            comp = add_str(comp, -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
         }
         if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
-            comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
+            comp = add_str(comp, -((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
         }
         if (comp > Human.instance.getMaxStrength()) {
             Global.max_stats.s_str = comp;

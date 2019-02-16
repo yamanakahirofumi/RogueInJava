@@ -201,10 +201,10 @@ public class Monst {
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {
             if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing ) {
-                which -= Global.cur_ring[Const.LEFT]._o_arm;
+                which -= ((ProtectionRing)Global.cur_ring[Const.LEFT]).getDefence();
             }
             if (Global.cur_ring[Const.RIGHT] instanceof  ProtectionRing) {
-                which -= Global.cur_ring[Const.RIGHT]._o_arm;
+                which -= ((ProtectionRing)Global.cur_ring[Const.RIGHT]).getDefence();
             }
         }
         return save_throw(which, Global.player);

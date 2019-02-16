@@ -3,11 +3,13 @@ package org.hiro;
 import org.hiro.character.Player;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
-import org.hiro.things.RingEnum;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.ringtype.AddDamageRing;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.AggravateMonsterRing;
+import org.hiro.things.ringtype.DexterityRing;
+import org.hiro.things.ringtype.ProtectionRing;
 import org.hiro.things.ringtype.SeeInvisibleRing;
 import org.hiro.things.ringtype.SlowDigestionRing;
 
@@ -18,22 +20,29 @@ public class RingMethod {
      *	Print ring bonuses
      */
     static String ring_num(Ring obj) {
-        String buf;
-
         if (!(obj.contains_o_flags(Const.ISKNOW))) {
             return "";
         }
-        switch (RingEnum.valueOf(String.valueOf(obj._o_which))) {
-            case Protection:
-            case AddStrength:
-            case AddDamage:
-            case Dexterity:
-                buf = " [" + WeaponMethod.num(obj._o_arm, 0, ObjectType.RING) + "]";
-                break;
-            default:
-                buf = "";
+
+        StringBuilder buf = new StringBuilder();
+        if (obj instanceof AddStrengthRing) {
+            buf.append("[")
+                    .append(WeaponMethod.num(((AddStrengthRing) obj).getStrength(), 0, ObjectType.RING))
+                    .append("]");
+        } else if (obj instanceof AddDamageRing) {
+            buf.append("[")
+                    .append(WeaponMethod.num(((AddDamageRing) obj).getDamage(), 0, ObjectType.RING))
+                    .append("]");
+        } else if (obj instanceof ProtectionRing) {
+            buf.append("[")
+                    .append(WeaponMethod.num(((ProtectionRing) obj).getDefence(), 0, ObjectType.RING))
+                    .append("]");
+        } else if (obj instanceof DexterityRing) {
+            buf.append("[")
+                    .append(WeaponMethod.num(((DexterityRing) obj).getDexterity(), 0, ObjectType.RING))
+                    .append("]");
         }
-        return buf;
+        return buf.toString();
     }
 
     /*
@@ -95,7 +104,7 @@ public class RingMethod {
 
 
         boolean result = player.putOnRing(ringObject);
-        if(!result) {
+        if (!result) {
             if (!Global.terse) {
                 IOUtil.msg("you already have a ring on each hand");
             } else {
@@ -107,11 +116,11 @@ public class RingMethod {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        if( ringObject instanceof AddStrengthRing){
-            Misc.chg_str(((AddStrengthRing)ringObject).getStrength());
-        }else if(ringObject instanceof SeeInvisibleRing){
+        if (ringObject instanceof AddStrengthRing) {
+            Misc.chg_str(((AddStrengthRing) ringObject).getStrength());
+        } else if (ringObject instanceof SeeInvisibleRing) {
             Potions.invis_on();
-        }else if(ringObject instanceof AggravateMonsterRing){
+        } else if (ringObject instanceof AggravateMonsterRing) {
             Misc.aggravate();
         }
 
@@ -138,9 +147,9 @@ public class RingMethod {
             return;
         } else if (Global.cur_ring[Const.LEFT] == null) {
             ring = Const.RIGHT;
-        }else if (Global.cur_ring[Const.RIGHT] == null) {
+        } else if (Global.cur_ring[Const.RIGHT] == null) {
             ring = Const.LEFT;
-        }else if ((ring = gethand()) < 0) {
+        } else if ((ring = gethand()) < 0) {
             return;
         }
         Global.mpos = 0;

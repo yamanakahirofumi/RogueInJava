@@ -6,12 +6,10 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
-import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
-import org.hiro.things.ringtype.MaintainArmorRing;
 import org.hiro.things.ringtype.SustainStrengthRing;
 import org.hiro.things.scrolltype.Scare;
 
@@ -67,7 +65,7 @@ public class Move {
             }
         } else {
             over:
-            nh = Global.player._t_pos.add(new Coordinate(dx,dy));
+            nh = Global.player._t_pos.add(new Coordinate(dx, dy));
         }
 
         /*
@@ -384,17 +382,11 @@ public class Move {
      *	aren't wearing a magic ring.
      *  錆びた鎧
      */
-    static void rust_armor(ThingImp arm) {
-        if (!(arm instanceof Armor) ||
-                arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
-            return;
-        }
-        if (arm.contains_o_flags(Const.ISPROT) || MaintainArmorRing.isInclude(Human.instance.getRings())) {
-            if (!Global.to_death) {
-                IOUtil.msg("the rust vanishes instantly");
-            }
+    static void rust_armor(Armor arm) {
+        boolean result = arm.rust(Human.instance);
+        if (result && !Global.to_death) {
+            IOUtil.msg("the rust vanishes instantly");
         } else {
-            arm._o_arm++;
             if (!Global.terse) {
                 IOUtil.msg("your armor appears to be weaker now. Oh my!");
             } else {

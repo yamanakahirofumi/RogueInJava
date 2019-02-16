@@ -24,13 +24,13 @@ public class StickMethod {
      * charge_str:
      *	Return an appropriate string for a wand charge
      */
-    static String charge_str(ThingImp obj) {
+    static String charge_str(Stick obj) {
         String buf = "";
 
         if (obj.contains_o_flags(Const.ISKNOW) && Global.terse) {
-            buf = " [" + obj._o_arm + "]";
+            buf = " [" + obj.getTimes() + "]";
         } else if(obj.contains_o_flags(Const.ISKNOW)) {
-            buf = " [" + obj._o_arm + " charges]";
+            buf = " [" + obj.getTimes() + " charges]";
         }
         return buf;
     }

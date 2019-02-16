@@ -182,7 +182,7 @@ public class ThingMethod {
 
     private static void inventoryName(Stick obj) throws NoSuchMethodException {
         int which = obj._o_which;
-        Method m = StickMethod.class.getMethod("charge_str", ThingImp.class);
+        Method m = StickMethod.class.getMethod("charge_str", Stick.class);
         nameit(obj, Global.ws_type[which], Global.ws_made[which], Global.ws_info[which], m);
     }
 
@@ -242,12 +242,12 @@ public class ThingMethod {
         int which = obj._o_which;
         String sp = Global.arm_info[which].getName();
         if (obj.contains_o_flags(Const.ISKNOW)) {
-            Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj._o_arm, 0, ObjectType.ARMOR)
+            Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj.getDefence(), 0, ObjectType.ARMOR)
                     + " " + sp + " [";
             if (!Global.terse) {
                 Global.prbuf = Global.prbuf + "protection ";
             }
-            Global.prbuf = Global.prbuf + (10 - obj._o_arm) + "]";
+            Global.prbuf = Global.prbuf + (10 - obj.getDefence()) + "]";
         } else {
             Global.prbuf = sp;
         }
