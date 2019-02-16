@@ -25,7 +25,7 @@ public class TeleportAway extends Stick {
         }
         ThingImp tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
-            int monster = tp._t_type;
+            int monster = tp.getType();
             if (monster == 'F') {
                 player.removeState(StateEnum.ISHELD);
             }

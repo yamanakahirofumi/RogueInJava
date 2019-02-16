@@ -46,7 +46,7 @@ public class Wizard {
             player.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
             for (ThingImp mp : Global.mlist) {
-                if (mp._t_type == 'F')
+                if (mp.getType() == 'F')
                     mp._t_stats.s_dmg = "0x0";
             }
         }

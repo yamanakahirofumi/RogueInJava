@@ -68,7 +68,7 @@ public class Monst {
         tp._t_oldch = Util.CCHAR(Display.inch());
         tp.t_room = Chase.roomin(cp);
         Util.getPlace(cp).p_monst = tp;
-        mp = Global.monsters[tp._t_type - 'A'];
+        mp = Global.monsters[tp.getType() - 'A'];
         tp._t_stats.s_lvl = mp.m_stats.s_lvl + lev_add;
         tp._t_stats.s_maxhp = tp._t_stats.s_hpt = Dice.roll(tp._t_stats.s_lvl, 8);
         tp._t_stats.s_arm = mp.m_stats.s_arm - lev_add;
@@ -118,7 +118,7 @@ public class Monst {
 
     static void give_pack(ThingImp tp) {
         if (Human.instance.getLevel() >= Global.max_level
-                && Util.rnd(100) < Global.monsters[tp._t_type - 'A'].m_carry) {
+                && Util.rnd(100) < Global.monsters[tp.getType() - 'A'].m_carry) {
             tp.addItem(new ThingImp());
         }
     }
@@ -141,7 +141,7 @@ public class Monst {
             return null;
         }
 
-        ch = tp._t_type;
+        ch = tp.getType();
         /*
          * Every time he sees mean monster, it might start chasing him
          */

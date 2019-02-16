@@ -114,7 +114,7 @@ public class StickMethod {
                             if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                                 bolt._o_pos = pos;
                                 used = true;
-                                if (tp._t_type == 'D' && name.equals("flame")) {
+                                if (tp.getType() == 'D' && name.equals("flame")) {
                                     IOUtil.addmsg("the flame bounces");
                                     if (!Global.terse) {
                                         IOUtil.addmsg(" off the dragon");
@@ -140,7 +140,7 @@ public class StickMethod {
                                     if (Global.player._t_pos.equals(start)) {
                                         Rip.death('b');
                                     } else {
-                                        Rip.death(Util.getPlace(start).p_monst._t_type);
+                                        Rip.death(Util.getPlace(start).p_monst.getType());
                                     }
                                 }
                                 used = true;
@@ -177,7 +177,7 @@ public class StickMethod {
                         if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                             bolt._o_pos = pos;
                             used = true;
-                            if (tp._t_type == 'D' && name.equals("flame")) {
+                            if (tp.getType() == 'D' && name.equals("flame")) {
                                 IOUtil.addmsg("the flame bounces");
                                 if (!Global.terse) {
                                     IOUtil.addmsg(" off the dragon");
@@ -203,7 +203,7 @@ public class StickMethod {
                                 if (Global.player._t_pos.equals(start)) {
                                     Rip.death('b');
                                 } else {
-                                    Rip.death(Util.getPlace(start).p_monst._t_type);
+                                    Rip.death(Util.getPlace(start).p_monst.getType());
                                 }
                             }
                             used = true;

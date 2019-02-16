@@ -45,7 +45,7 @@ public class Daemons {
         for (ThingImp tp : Global.mlist) {
             Display.move(tp._t_pos);
             if (Chase.see_monst(tp)) {
-                if (tp._t_type == 'X' && tp._t_disguise != 'X') {
+                if (tp.getType() == 'X' && tp._t_disguise != 'X') {
                     Display.addch(Misc.rnd_thing().getValue());
                 } else {
                     Display.addch((char) (Util.rnd(26) + 'A'));
@@ -147,7 +147,7 @@ public class Daemons {
                 }
             } else if (seemonst) {
                 Display.standout();
-                Display.addch((char) tp._t_type);
+                Display.addch((char) tp.getType());
                 Display.standend();
             }
         }

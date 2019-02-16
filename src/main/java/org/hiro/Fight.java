@@ -39,7 +39,7 @@ public class Fight {
             }
             mname = Global.monsters[ch].m_name;
         } else {
-            mname = Global.monsters[tp._t_type - 'A'].m_name;
+            mname = Global.monsters[tp.getType() - 'A'].m_name;
         }
         return tbuf + mname;
     }
@@ -84,7 +84,7 @@ public class Fight {
          * Let him know it was really a xeroc (if it was one).
          */
         char ch = '\0';
-        if (tp._t_type == 'X' && tp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
+        if (tp.getType() == 'X' && tp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
             tp._t_disguise = 'X';
             if (Human.instance.containsState(StateEnum.ISHALU)) {
                 ch = (char) (Util.rnd(26) + 'A');
@@ -195,7 +195,7 @@ public class Fight {
         /*
          * If the monster was a venus flytrap, un-hold him
          */
-        switch (tp._t_type) {
+        switch (tp.getType()) {
             case 'F':
                 Human.instance.removeState(StateEnum.ISHELD);
                 Global.vf_hit = 0;
@@ -244,14 +244,11 @@ public class Fight {
     static void remove_mon(Coordinate mp, ThingImp tp, boolean waskill) {
         ThingImp nexti;
 
-        for (ThingImp obj = tp._t_pack; obj != null; obj = nexti) {
-            nexti = obj._l_next;
+        for (ThingImp obj : tp.getBaggage()){
             obj._o_pos = tp._t_pos;
             tp.removeItem(obj);
             if (waskill) {
                 WeaponMethod.fall(obj, false);
-            } else {
-                tp._t_pack.removeItem(obj); // TODO: エラー
             }
         }
         Util.getPlace(mp).p_monst = null;
@@ -477,10 +474,10 @@ public class Fight {
             Global.to_death = false;
             Global.kamikaze = false;
         }
-        if (mp._t_type == 'F') {
+        if (mp.getType() == 'F') {
             Global.vf_hit = Integer.valueOf(mp._t_stats.s_dmg);
         }
-        if (mp._t_type == 'X' && mp._t_disguise != 'X' && !player.containsState(StateEnum.ISBLIND)) {
+        if (mp.getType() == 'X' && mp._t_disguise != 'X' && !player.containsState(StateEnum.ISBLIND)) {
             mp._t_disguise = 'X';
             if (player.containsState(StateEnum.ISHALU)) {
                 Display.mvaddch(mp._t_pos, (char) (Util.rnd(26) + 'A'));
@@ -489,7 +486,7 @@ public class Fight {
         mname = set_mname(mp);
         oldhp = player.getHp();
         if (roll_em(mp, Global.player, null, false)) {
-            if (mp._t_type != 'I') {
+            if (mp.getType() != 'I') {
                 if (Global.has_hit) {
                     IOUtil.addmsg(".  ");
                 }
@@ -499,7 +496,7 @@ public class Fight {
             }
             Global.has_hit = false;
             if (player.getHp() <= 0) {
-                Rip.death(mp._t_type);    /* Bye bye life ... */
+                Rip.death(mp.getType());    /* Bye bye life ... */
             } else if (!Global.kamikaze) {
                 oldhp -= player.getHp();
                 if (oldhp > Global.max_hit) {
@@ -510,7 +507,7 @@ public class Fight {
                 }
             }
             if (!mp.containsState(StateEnum.ISCANC)) {
-                switch (mp._t_type) {
+                switch (mp.getType()) {
                     case 'A':
                         /*
                          * If an aquator hits, you can lose armor class.
@@ -560,10 +557,10 @@ public class Fight {
                          * Wraiths might drain energy levels, and Vampires
                          * can steal max_hp
                          */
-                        if (Util.rnd(100) < (mp._t_type == 'W' ? 15 : 30)) {
+                        if (Util.rnd(100) < (mp.getType() == 'W' ? 15 : 30)) {
                             int fewer;
 
-                            if (mp._t_type == 'W') {
+                            if (mp.getType() == 'W') {
                                 if (Global.player._t_stats.s_exp == 0) {
                                     Rip.death('W');        /* All levels gone */
                                 }
@@ -581,7 +578,7 @@ public class Fight {
                                 Global.player._t_stats.s_hpt = 1;
                             }
                             if (player.getMaxHp() <= 0) {
-                                Rip.death(mp._t_type);
+                                Rip.death(mp.getType());
                             }
                             IOUtil.msg("you suddenly feel weaker");
                         }
@@ -643,15 +640,15 @@ public class Fight {
                         break;
                 }
             }
-        } else if (mp._t_type != 'I') {
+        } else if (mp.getType() != 'I') {
             if (Global.has_hit) {
                 IOUtil.addmsg(".  ");
                 Global.has_hit = false;
             }
-            if (mp._t_type == 'F') {
+            if (mp.getType() == 'F') {
                 player.deleteHp(Global.vf_hit);
                 if (player.getHp() <= 0) {
-                    Rip.death(mp._t_type);    /* Bye bye life ... */
+                    Rip.death(mp.getType());    /* Bye bye life ... */
                 }
             }
             miss(mname, null, false);

@@ -78,7 +78,7 @@ public class Chase {
     static Coordinate find_dest(ThingImp tp) {
         int prob;
 
-        if ((prob = Global.monsters[tp._t_type - 'A'].m_carry) <= 0
+        if ((prob = Global.monsters[tp.getType() - 'A'].m_carry) <= 0
                 || tp.t_room == Global.player.t_room
                 || see_monst(tp)) {
             return Global.player._t_pos;
@@ -202,7 +202,7 @@ public class Chase {
             Display.addch((char) th._t_disguise);
         } else if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Display.standout();
-            Display.addch((char) th._t_type);
+            Display.addch((char) th.getType());
             Display.standend();
         }
     }
@@ -337,7 +337,7 @@ public class Chase {
                  * line from it, and (b) that it is within shooting distance,
                  * but outside of striking range.
                  */
-                if (th._t_type == 'D' && (th._t_pos.y == Global.player._t_pos.y || th._t_pos.x == Global.player._t_pos.x
+                if (th.getType() == 'D' && (th._t_pos.y == Global.player._t_pos.y || th._t_pos.x == Global.player._t_pos.x
                         || Math.abs(th._t_pos.y - Global.player._t_pos.y) == Math.abs(th._t_pos.x - Global.player._t_pos.x))
                         && dist_cp(th._t_pos, Global.player._t_pos) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
                         && !th.containsState(StateEnum.ISCANC) && Util.rnd(DRAGONSHOT) == 0) {
@@ -380,12 +380,12 @@ public class Chase {
                         break;
                     }
                 }
-                if (th._t_type != 'F') {
+                if (th.getType() != 'F') {
                     stoprun = true;
                 }
             }
         } else {
-            if (th._t_type == 'F') {
+            if (th.getType() == 'F') {
                 return (0);
             }
         }
@@ -415,8 +415,8 @@ public class Chase {
          * Stalkers are slightly confused all of the time, and bats are
          * quite confused all the time
          */
-        if ((tp.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) || (tp._t_type == 'P' && Util.rnd(5) == 0)
-                || (tp._t_type == 'B' && Util.rnd(2) == 0)) {
+        if ((tp.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) || (tp.getType() == 'P' && Util.rnd(5) == 0)
+                || (tp.getType() == 'B' && Util.rnd(2) == 0)) {
             /*
              * get a valid random move
              */

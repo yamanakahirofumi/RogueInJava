@@ -24,14 +24,14 @@ public class InvalidateEffect extends Stick {
         }
         ThingImp tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
-            int monster = tp._t_type;
+            int monster = tp.getType();
             if (monster == 'F') {
                 player.removeState(StateEnum.ISHELD);
             }
             tp.addState(StateEnum.ISCANC);
             tp.removeState(StateEnum.ISINVIS);
             tp.removeState(StateEnum.CANHUH);
-            tp._t_disguise = tp._t_type;
+            tp._t_disguise = tp.getType();
             if (Chase.see_monst(tp)) {
                 Display.mvaddch(tmp, (char) tp._t_disguise);
             }

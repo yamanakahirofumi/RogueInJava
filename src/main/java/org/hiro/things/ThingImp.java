@@ -35,7 +35,7 @@ public class ThingImp implements OriginalMonster, Thing {
     public Stats _t_stats;        /* Physical description */  //
     public Room t_room;        /* Current room for thing */
     @Deprecated
-    public ThingImp _t_pack;        /* What the thing is carrying */  // 配列
+    private ThingImp _t_pack;        /* What the thing is carrying */  // 配列
     private List<ThingImp> baggage = new ArrayList<>();
     private Bag bag;
     public int _t_reserved;

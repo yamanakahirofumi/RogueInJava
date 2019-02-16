@@ -41,7 +41,7 @@ public class Potions {
                     Display.standout();
                 }
                 if (!Human.instance.containsState(StateEnum.ISHALU)) {
-                    Display.addch((char) mp._t_type);
+                    Display.addch((char) mp.getType());
                 } else {
                     Display.addch((char) (Util.rnd(26) + 'A'));
                 }
