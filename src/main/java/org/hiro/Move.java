@@ -1,12 +1,10 @@
 package org.hiro;
 
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
@@ -149,7 +147,7 @@ public class Move {
                 }
                 move_stuff(fl, nh);
             case TRAP:
-                ch = ObjectType.get((char) be_trapped(nh));
+                ch = ObjectType.get((char) be_trapped(player, nh));
                 if (ch.getValue() == Const.T_DOOR || ch.getValue() == Const.T_TELEP) {
                     return;
                 }
@@ -165,7 +163,7 @@ public class Move {
                 move_stuff(fl, nh);
             case FLOOR:
                 if ((fl & Const.F_REAL) == 0) {
-                    be_trapped(Global.player._t_pos);
+                    be_trapped(player, Global.player._t_pos);
                 }
                 move_stuff(fl, nh);
             case STAIRS:
@@ -265,12 +263,12 @@ public class Move {
      * be_trapped:
      *	The guy stepped on a trap.... Make him pay.
      */
-    static int be_trapped(Coordinate tc) {
+    static int be_trapped(Player player, Coordinate tc) {
         Place pp;
         ThingImp arrow;
         ObjectType tr;
 
-        if (Human.instance.containsState(StateEnum.ISLEVIT)) {
+        if (player.containsState(StateEnum.ISLEVIT)) {
             return Const.T_RUST;    /* anything that's not a door or teleport */
         }
         Global.running = false;
@@ -281,8 +279,8 @@ public class Move {
         pp.p_flags |= Const.F_SEEN;
         switch ((int) tr.getValue()) {
             case Const.T_DOOR:
-                Human.instance.upstairs();
-                New_Level.new_level(Human.instance);
+                player.upstairs();
+                New_Level.new_level(player);
                 IOUtil.msg("you fell into a trap!");
                 break;
             case Const.T_BEAR:
@@ -327,13 +325,13 @@ public class Move {
                 break;
             case Const.T_SLEEP:
                 Global.no_command += Const.SLEEPTIME;
-                Human.instance.removeState(StateEnum.ISRUN);
+                player.removeState(StateEnum.ISRUN);
                 IOUtil.msg("a strange white mist envelops you and you fall asleep");
                 break;
             case Const.T_ARROW:
                 if (Fight.swing(Global.player._t_stats.s_lvl - 1, Global.player._t_stats.s_arm, 1)) {
-                    Human.instance.deleteHp(Dice.roll(1, 6));
-                    if (Human.instance.getHp() <= 0) {
+                    player.deleteHp(Dice.roll(1, 6));
+                    if (player.getHp() <= 0) {
                         IOUtil.msg("an arrow killed you");
                         Rip.death('a');
                     } else
@@ -351,26 +349,26 @@ public class Move {
                  * since the hero's leaving, look() won't put a TRAP
                  * down for us, so we have to do it ourself
                  */
-                Wizard.teleport();
+                Wizard.teleport(player);
                 Display.mvaddch(tc, ObjectType.TRAP.getValue());
                 break;
             case Const.T_DART:
                 if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {
                     IOUtil.msg("a small dart whizzes by your ear and vanishes");
                 } else {
-                    Human.instance.deleteHp(Dice.roll(1, 4));
-                    if (Human.instance.getHp() <= 0) {
+                    player.deleteHp(Dice.roll(1, 4));
+                    if (player.getHp() <= 0) {
                         IOUtil.msg("a poisoned dart killed you");
                         Rip.death('d');
                     }
-                    if (!SustainStrengthRing.isInclude(Human.instance.getRings()) && !Monst.save(Const.VS_POISON))
+                    if (!SustainStrengthRing.isInclude(player.getRings()) && !Monst.save(Const.VS_POISON))
                         Misc.chg_str(-1);
                     IOUtil.msg("a small dart just hit you in the shoulder");
                 }
                 break;
             case Const.T_RUST:
                 IOUtil.msg("a gush of water hits you on the head");
-                rust_armor(Human.instance.getArmor());
+                rust_armor(player);
         }
         Mach_dep.flush_type();
         return tr.getValue();
@@ -383,8 +381,8 @@ public class Move {
      *	aren't wearing a magic ring.
      *  錆びた鎧
      */
-    static void rust_armor(Armor arm) {
-        boolean result = arm.rust(Human.instance);
+    static void rust_armor(Player player) {
+        boolean result = player.getArmor().rust(player);
         if (result && !Global.to_death) {
             IOUtil.msg("the rust vanishes instantly");
         } else {

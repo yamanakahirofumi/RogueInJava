@@ -366,7 +366,7 @@ public class Chase {
         boolean stoprun = false;
         if (!chase(th, thisTmp)) {
             if (thisTmp.equals(Global.player._t_pos)) {
-                return (Fight.attack(th));
+                return (Fight.attack(Human.instance, th));
             } else if (thisTmp.equals(th._t_dest)) {
                 for (ThingImp obj : Global.lvl_obj) {
                     if (th._t_dest.equals(obj._o_pos)) {

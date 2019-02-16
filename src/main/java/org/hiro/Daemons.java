@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -105,10 +106,10 @@ public class Daemons {
      * come_down:
      *	Take the hero down off her acid trip.
      */
-    static void come_down() {
+    static void come_down(Player player) {
         boolean seemonst;
 
-        if (!Human.instance.containsState(StateEnum.ISHALU)) {
+        if (!player.containsState(StateEnum.ISHALU)) {
             return;
         }
         try {
@@ -117,9 +118,9 @@ public class Daemons {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        Human.instance.removeState(StateEnum.ISHALU);
+        player.removeState(StateEnum.ISHALU);
 
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+        if (player.containsState(StateEnum.ISBLIND)) {
             return;
         }
 
@@ -135,11 +136,11 @@ public class Daemons {
         /*
          * undo the monsters
          */
-        seemonst = Human.instance.containsState(StateEnum.SEEMONST);
+        seemonst = player.containsState(StateEnum.SEEMONST);
         for (ThingImp tp : Global.mlist) {
             Display.move(tp._t_pos);
             if (Chase.isSee(tp._t_pos)) {
-                if (!tp.containsState(StateEnum.ISINVIS) || Human.instance.containsState(StateEnum.CANSEE))
+                if (!tp.containsState(StateEnum.ISINVIS) || player.containsState(StateEnum.CANSEE))
                     Display.addch((char) tp._t_disguise);
                 else {
                     Display.addch(Util.getPlace(tp._t_pos).p_ch.getValue());
@@ -166,28 +167,28 @@ public class Daemons {
      * doctor:
      *	A healing daemon that restors hit points after rest
      */
-    void doctor() {
+    void doctor(Player player) {
         int lv, ohp;
 
         lv = Global.player._t_stats.s_lvl;
-        ohp = Human.instance.getHp();
+        ohp = player.getHp();
         Global.quiet++;
         if (lv < 8) {
             if (Global.quiet + (lv << 1) > 20) {
-                Human.instance.addHp(1);
+                player.addHp(1);
             }
         } else if (Global.quiet >= 3) {
-            Human.instance.addHp(Util.rnd(lv - 7) + 1);
+            player.addHp(Util.rnd(lv - 7) + 1);
         }
         if (Global.cur_ring[Const.LEFT] instanceof RegenerationRing) {
-            Human.instance.addHp(1);
+            player.addHp(1);
         }
         if (Global.cur_ring[Const.RIGHT] instanceof RegenerationRing) {
-            Human.instance.addHp(1);
+            player.addHp(1);
         }
-        if (ohp != Human.instance.getHp()) {
-            if (Human.instance.getHp() > Human.instance.getMaxHp()) {
-                Global.player._t_stats.s_hpt = Human.instance.getMaxHp();
+        if (ohp != player.getHp()) {
+            if (player.getHp() > player.getMaxHp()) {
+                Global.player._t_stats.s_hpt = player.getMaxHp();
             }
             Global.quiet = 0;
         }

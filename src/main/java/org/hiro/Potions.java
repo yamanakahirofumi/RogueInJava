@@ -100,7 +100,7 @@ public class Potions {
                 } else {
                     Misc.chg_str(-(Util.rnd(3) + 1));
                     IOUtil.msg("you feel very sick now");
-                    Daemons.come_down();
+                    Daemons.come_down(player);
                 }
                 break;
             case P_HEALING:
@@ -202,7 +202,7 @@ public class Potions {
                     Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
                 }
                 Daemons.sight();
-                Daemons.come_down();
+                Daemons.come_down(player);
                 IOUtil.msg("you begin to feel much better");
                 break;
             case P_HASTE:

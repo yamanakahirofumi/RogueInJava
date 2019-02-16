@@ -8,6 +8,7 @@ import org.hiro.Pack;
 import org.hiro.Potions;
 import org.hiro.Wizard;
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
@@ -24,8 +25,8 @@ public class DefaultCommand implements KeyboardCommand {
     public void execute() {
     }
 
-    public void execute(int ch) {
-    Global.after = false;
+    public void execute(Player player, int ch) {
+        Global.after = false;
         // #ifdef MASTER
         if (Global.wizard) {
             switch (ch) {
@@ -56,7 +57,7 @@ public class DefaultCommand implements KeyboardCommand {
                     // show_map(); // TODO: 後で
                     break;
                 case ('T' & 037):
-                    Wizard.teleport();
+                    Wizard.teleport(player);
                     break;
                 case ('E' & 037):
                     IOUtil.msg("food left: %d", Global.food_left);
@@ -70,7 +71,7 @@ public class DefaultCommand implements KeyboardCommand {
                 case '~': {
                     Thing item;
                     if ((item = Pack.get_item("charge", ObjectType.STICK)) != null) {
-                        ((Stick)item).setTimes(10000);
+                        ((Stick) item).setTimes(10000);
                     }
                 }
                 break;

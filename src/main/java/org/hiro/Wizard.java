@@ -1,6 +1,6 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -22,7 +22,7 @@ public class Wizard {
      * telport:
      *	Bamf the hero someplace else
      */
-    public static void teleport() {
+    public static void teleport(Player player) {
         Coordinate c = new Coordinate();
 
         Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
@@ -40,9 +40,9 @@ public class Wizard {
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap
          */
-        if (Human.instance.containsState(StateEnum.ISHELD)) {
+        if (player.containsState(StateEnum.ISHELD)) {
 
-            Human.instance.removeState(StateEnum.ISHELD);
+            player.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
             for (ThingImp mp : Global.mlist) {
                 if (mp._t_type == 'F')

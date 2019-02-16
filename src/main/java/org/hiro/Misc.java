@@ -500,7 +500,7 @@ public class Misc {
             Global.food_left = 0;
         }
         if ((Global.food_left += Const.HUNGERTIME - 200 + Util.rnd(400)) > player.getStomachSize()) {
-            Global.food_left = Human.instance.getStomachSize();
+            Global.food_left = player.getStomachSize();
         }
         Global.hungry_state = 0;
         // 装備している武器を食べる場合

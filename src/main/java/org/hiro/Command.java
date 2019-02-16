@@ -248,7 +248,7 @@ public class Command {
                 } else {
                     // デフォルト処理
                     DefaultCommand defaultCommand = new DefaultCommand();
-                    defaultCommand.execute(ch);
+                    defaultCommand.execute(Human.instance, ch);
                 }
                 /*
                  * turn off flags if no longer needed
@@ -278,7 +278,7 @@ public class Command {
         if (SearchingRing.isInclude(Human.instance.getRings())) {
             search(Human.instance);
         } else if (TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0) {
-            Wizard.teleport();
+            Wizard.teleport(Human.instance);
         }
         // rightもね
     }

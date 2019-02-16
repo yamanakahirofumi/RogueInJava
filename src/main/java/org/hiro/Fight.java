@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -460,7 +461,7 @@ public class Fight {
      * attack:
      *	The monster attacks the player
      */
-    static int attack(ThingImp mp) {
+    static int attack(Player player, ThingImp mp) {
         String mname;
         int oldhp;
 
@@ -478,14 +479,14 @@ public class Fight {
         if (mp._t_type == 'F') {
             Global.vf_hit = Integer.valueOf(mp._t_stats.s_dmg);
         }
-        if (mp._t_type == 'X' && mp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
+        if (mp._t_type == 'X' && mp._t_disguise != 'X' && !player.containsState(StateEnum.ISBLIND)) {
             mp._t_disguise = 'X';
-            if (Human.instance.containsState(StateEnum.ISHALU)) {
+            if (player.containsState(StateEnum.ISHALU)) {
                 Display.mvaddch(mp._t_pos, (char) (Util.rnd(26) + 'A'));
             }
         }
         mname = set_mname(mp);
-        oldhp = Human.instance.getHp();
+        oldhp = player.getHp();
         if (roll_em(mp, Global.player, null, false)) {
             if (mp._t_type != 'I') {
                 if (Global.has_hit) {
@@ -496,14 +497,14 @@ public class Fight {
                 IOUtil.endmsg();
             }
             Global.has_hit = false;
-            if (Human.instance.getHp() <= 0) {
+            if (player.getHp() <= 0) {
                 Rip.death(mp._t_type);    /* Bye bye life ... */
             } else if (!Global.kamikaze) {
-                oldhp -= Human.instance.getHp();
+                oldhp -= player.getHp();
                 if (oldhp > Global.max_hit) {
                     Global.max_hit = oldhp;
                 }
-                if (Human.instance.getHp() <= Global.max_hit) {
+                if (player.getHp() <= Global.max_hit) {
                     Global.to_death = false;
                 }
             }
@@ -513,13 +514,13 @@ public class Fight {
                         /*
                          * If an aquator hits, you can lose armor class.
                          */
-                        Move.rust_armor(Human.instance.getArmor());
+                        Move.rust_armor(player);
                         break;
                     case 'I':
                         /*
                          * The ice monster freezes you
                          */
-                        Human.instance.removeState(StateEnum.ISRUN);
+                        player.removeState(StateEnum.ISRUN);
                         if (Global.no_command == 0) {
                             IOUtil.addmsg("you are frozen");
                             if (!Global.terse) {
@@ -536,7 +537,7 @@ public class Fight {
                          * Rattlesnakes have poisonous bites
                          */
                         if (!Monst.save(Const.VS_POISON)) {
-                            if (!SustainStrengthRing.isInclude(Human.instance.getRings())) {
+                            if (!SustainStrengthRing.isInclude(player.getRings())) {
                                 Misc.chg_str(-1);
                                 if (!Global.terse) {
                                     IOUtil.msg("you feel a bite in your leg and now feel weaker");
@@ -573,12 +574,12 @@ public class Fight {
                                 fewer = Dice.roll(1, 10);
                             } else
                                 fewer = Dice.roll(1, 3);
-                            Human.instance.deleteHp(fewer);
+                            player.deleteHp(fewer);
                             Global.player._t_stats.s_maxhp -= fewer;
-                            if (Human.instance.getHp() <= 0) {
+                            if (player.getHp() <= 0) {
                                 Global.player._t_stats.s_hpt = 1;
                             }
-                            if (Human.instance.getMaxHp() <= 0) {
+                            if (player.getMaxHp() <= 0) {
                                 Rip.death(mp._t_type);
                             }
                             IOUtil.msg("you suddenly feel weaker");
@@ -588,7 +589,7 @@ public class Fight {
                         /*
                          * Venus Flytrap stops the poor guy from moving
                          */
-                        Human.instance.addState(StateEnum.ISHELD);
+                        player.addState(StateEnum.ISHELD);
                         mp._t_stats.s_dmg = ++Global.vf_hit + "x1";
                         if (--Global.player._t_stats.s_hpt <= 0) {
                             Rip.death('F');
@@ -624,7 +625,7 @@ public class Fight {
                          */
                         steal = null;
                         for (ThingImp obj : Global.player.getBaggage()) {
-                            if (!Human.instance.isEquipped(obj)
+                            if (!player.isEquipped(obj)
                                     && obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
                             }
@@ -647,8 +648,8 @@ public class Fight {
                 Global.has_hit = false;
             }
             if (mp._t_type == 'F') {
-                Human.instance.deleteHp(Global.vf_hit);
-                if (Human.instance.getHp() <= 0) {
+                player.deleteHp(Global.vf_hit);
+                if (player.getHp() <= 0) {
                     Rip.death(mp._t_type);    /* Bye bye life ... */
                 }
             }
@@ -658,7 +659,7 @@ public class Fight {
             Mach_dep.flush_type();
         }
         Global.count = 0;
-        IOUtil.status(Human.instance);
+        IOUtil.status(player);
         if (mp == null)
             return (-1);
         else

@@ -19,7 +19,7 @@ public class Teleportation extends Scroll {
          * Make him dissapear and reappear
          */
         Room cur_room = Global.player.t_room;
-        Wizard.teleport();
+        Wizard.teleport(player);
         if (cur_room != Global.player.t_room) {
             Global.scr_info[ScrollEnum.Teleportation.getValue()].know();
         }
