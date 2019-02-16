@@ -107,8 +107,7 @@ public class DrawRoom {
              * Put the monster in
              */
             if (Util.rnd(100) < (rp.r_goldval > 0 ? 80 : 25)) {
-                ThingImp tp;
-                tp = new ThingImp();
+                ThingImp tp = new ThingImp();
                 find_floor(rp, mp, false, true);
                 Monst.new_monster(tp, Monst.randmonster(false), mp);
                 Monst.give_pack(tp);

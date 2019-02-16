@@ -5,6 +5,7 @@ import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Thing;
@@ -137,7 +138,7 @@ public class Potions {
                 show = false;
                 if (Global.lvl_obj.size() != 0) {
                     // wclear(hw);
-                    for (ThingImp tp : Global.lvl_obj) {
+                    for (Thing tp : Global.lvl_obj) {
                         if (tp.isMagic()) {
                             show = true;
                             // wmove(hw, tp._o_pos.y, tp._o_pos.x);
@@ -145,8 +146,8 @@ public class Potions {
                             Global.pot_info[p.getValue()].know();
                         }
                     }
-                    for (ThingImp mp : Global.mlist) {
-                        for (ThingImp tp : mp.getBaggage()) {
+                    for (OriginalMonster mp : Global.mlist) {
+                        for (Thing tp : mp.getBaggage()) {
                             if (tp.isMagic()) {
                                 show = true;
                                 // wmove(hw, mp._t_pos.y, mp._t_pos.x);

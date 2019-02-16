@@ -6,6 +6,8 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.scrolltype.Scare;
 
@@ -463,7 +465,7 @@ public class Chase {
                          * If it is a scroll, it might be a scare monster scroll
                          * so we need to look it up to see what type it is.
                          */
-                        ThingImp obj2 = null;
+                        Thing obj2 = null;
                         if (ch == ObjectType.SCROLL) {
                             for (ThingImp obj : Global.lvl_obj) {
                                 obj2 = obj;
@@ -478,7 +480,8 @@ public class Chase {
                         /*
                          * It can also be a Xeroc, which we shouldn't step on
                          */
-                        if ((obj2 = Util.getPlace(tryp).p_monst) != null && obj2._t_type == 'X') {
+                        OriginalMonster obj3;
+                        if ((obj3 = Util.getPlace(tryp).p_monst) != null && obj3.getType() == 'X') {
                             continue;
                         }
                         /*

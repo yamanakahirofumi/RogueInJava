@@ -7,6 +7,7 @@ import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.scrolltype.Scare;
 
@@ -58,8 +59,8 @@ public class Pack {
                     }
                     continue;
                 }
-                ThingImp obj = null;
-                for (ThingImp obj2 : Global.player.getBaggage()) {
+                Thing obj = null;
+                for (Thing obj2 : Global.player.getBaggage()) {
                     obj = obj2;
                     if (Human.instance.getPositionOfContent(obj2) == ch) {
                         break;
@@ -69,7 +70,7 @@ public class Pack {
                     IOUtil.msg("'%s' is not a valid item", String.valueOf(Display.unctrl(ch)));
                 } else {
                     IOUtil.msg("");
-                    return obj;
+                    return (ThingImp) obj;
                 }
             }
         }
@@ -96,7 +97,7 @@ public class Pack {
         String inv_temp;
 
         Global.n_objs = 0;
-        for (ThingImp th : list) {
+        for (Thing th : list) {
             if (type != ObjectType.Initial && type != th.getDisplay()) {
                 continue;
             }
@@ -257,7 +258,7 @@ public class Pack {
      *	See if there's room in the pack.  If not, print out an
      *	appropriate message
      */
-    static boolean pack_room(boolean from_floor, ThingImp obj) {
+    static boolean pack_room(boolean from_floor, Thing obj) {
         boolean b = Human.instance.addContent(obj);
         if (!b && from_floor) {
             move_msg(obj);
@@ -276,7 +277,7 @@ public class Pack {
      * move_msg:
      *	Print out the message if you are just moving onto an object
      */
-    static void move_msg(ThingImp obj) {
+    static void move_msg(Thing obj) {
         if (!Global.terse) {
             IOUtil.addmsg("you ");
         }
@@ -292,7 +293,7 @@ public class Pack {
             return;
         }
 
-        ThingImp obj = Misc.find_obj(Global.player._t_pos);
+        Thing obj = Misc.find_obj(Global.player._t_pos);
         if (Global.move_on) {
             move_msg(obj);
         } else {
@@ -345,7 +346,7 @@ public class Pack {
                 IOUtil.msg("");
                 return;
             }
-            for (ThingImp obj : Global.player.getBaggage()) {
+            for (Thing obj : Global.player.getBaggage()) {
                 if (mch == Human.instance.getPositionOfContent(obj)) {
                     IOUtil.msg("%c) %s", mch, ThingMethod.inventoryName(obj, false));
                     return;

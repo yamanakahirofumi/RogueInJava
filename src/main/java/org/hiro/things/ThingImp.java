@@ -75,6 +75,11 @@ public class ThingImp implements OriginalMonster, Thing {
     }
 
     @Override
+    public int getType() {
+        return this._t_type;
+    }
+
+    @Override
     public void addItem(ThingImp th) {
         this.baggage.add(th);
     }

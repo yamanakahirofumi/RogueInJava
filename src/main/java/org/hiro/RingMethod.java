@@ -4,7 +4,6 @@ import org.hiro.character.Player;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Ring;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AddDamageRing;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.AggravateMonsterRing;
@@ -50,7 +49,7 @@ public class RingMethod {
      *	How much food does this ring use up?
      */
     static int ring_eat(int hand) {
-        ThingImp ring;
+        Ring ring;
 
         if ((ring = Global.cur_ring[hand]) == null) {
             return 0;

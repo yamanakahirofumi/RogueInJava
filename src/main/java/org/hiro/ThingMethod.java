@@ -264,7 +264,7 @@ public class ThingMethod {
      * Return the name of something as it would appear in an
      * inventory.
      */
-    static String inventoryName(ThingImp obj, boolean drop) {
+    static String inventoryName(Thing obj, boolean drop) {
         try {
             if (obj instanceof Potion) {
                 inventoryName((Potion) obj);

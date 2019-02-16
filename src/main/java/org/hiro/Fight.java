@@ -6,6 +6,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Gold;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.ringtype.AddDamageRing;
@@ -616,7 +617,7 @@ public class Fight {
                     }
                     break;
                     case 'N': {
-                        ThingImp steal;
+                        Thing steal;
                         int nobj = 0;
 
                         /*
@@ -624,7 +625,7 @@ public class Fight {
                          * and pick out one we like.
                          */
                         steal = null;
-                        for (ThingImp obj : Global.player.getBaggage()) {
+                        for (Thing obj : Global.player.getBaggage()) {
                             if (!player.isEquipped(obj)
                                     && obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
@@ -633,7 +634,7 @@ public class Fight {
                         if (steal != null) {
                             remove_mon(mp._t_pos, Util.getPlace(mp._t_pos).p_monst, false);
                             mp = null;
-                            steal = Pack.leave_pack(steal, true, false);
+                            steal = Pack.leave_pack((ThingImp) steal, true, false);
                             IOUtil.msg("she stole %s!", ThingMethod.inventoryName(steal, true));
                         }
                     }

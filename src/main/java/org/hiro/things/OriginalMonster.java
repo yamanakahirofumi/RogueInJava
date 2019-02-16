@@ -9,6 +9,7 @@ public interface OriginalMonster {
     void removeState(StateEnum se);
     boolean containsState(StateEnum se);
     void setState(int flags);
+    int getType();
 
     void addItem(ThingImp th);
     void removeItem(ThingImp th);

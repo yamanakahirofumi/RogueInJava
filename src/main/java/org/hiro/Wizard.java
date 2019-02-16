@@ -10,6 +10,7 @@ import org.hiro.things.Potion;
 import org.hiro.things.Ring;
 import org.hiro.things.Scroll;
 import org.hiro.things.Stick;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 
@@ -66,7 +67,7 @@ public class Wizard {
             return;
         }
 
-        ThingImp obj;
+        Thing obj;
         for (; ; ) {
             obj = Pack.get_item("identify", ObjectType.get((char) type));
             if (insist) {
@@ -107,8 +108,8 @@ public class Wizard {
      * set_know:
      *	Set things up when we really know what a thing is
      */
-    static void set_know(ThingImp obj, Obj_info[] info) {
-        info[obj._o_which].know();
+    static void set_know(Thing obj, Obj_info[] info) {
+        info[((ThingImp)obj)._o_which].know();
         obj.add_o_flags(Const.ISKNOW);
     }
 

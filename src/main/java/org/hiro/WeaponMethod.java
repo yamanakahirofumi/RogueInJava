@@ -5,6 +5,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 
@@ -173,7 +174,7 @@ public class WeaponMethod {
             return;
         }
         player.putOnWeapon(oweapon);
-        ThingImp obj = Pack.get_item("wield", ObjectType.WEAPON);
+        Thing obj = Pack.get_item("wield", ObjectType.WEAPON);
         if (obj == null) {
             Global.after = false;
             return;
