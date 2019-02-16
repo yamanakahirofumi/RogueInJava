@@ -462,8 +462,8 @@ public class Command {
      *	Check to see if she's levitating, and if she is, print an
      *	appropriate message.
      */
-    public static boolean levit_check() {
-        if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
+    public static boolean levit_check(Player player) {
+        if (!player.containsState(StateEnum.ISLEVIT)) {
             return false;
         }
         IOUtil.msg("You can't.  You're floating off the ground!");

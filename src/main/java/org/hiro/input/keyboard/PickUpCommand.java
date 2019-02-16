@@ -4,6 +4,7 @@ import org.hiro.Command;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Pack;
+import org.hiro.character.Human;
 import org.hiro.things.ThingImp;
 
 public class PickUpCommand implements KeyboardCommand {
@@ -19,7 +20,7 @@ public class PickUpCommand implements KeyboardCommand {
         }
 
         if (found != 0) {
-            if (Command.levit_check()) {
+            if (Command.levit_check(Human.instance)) {
                 ;
             } else {
                 Pack.pick_up();

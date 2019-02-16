@@ -8,6 +8,7 @@ import org.hiro.New_Level;
 import org.hiro.Rip;
 import org.hiro.Util;
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.input.keyboard.KeyboardCommand;
 import org.hiro.things.ObjectType;
 
@@ -15,8 +16,9 @@ public class UpFloorCommand implements KeyboardCommand {
 
     @Override
     public void execute() {
+        Player player = Human.instance;
         Global.after = false;
-        if (Command.levit_check()) {
+        if (Command.levit_check(player)) {
             return;
         }
         if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.STAIRS) {
@@ -25,7 +27,7 @@ public class UpFloorCommand implements KeyboardCommand {
                 if (Human.instance.getLevel() == 0) {
                     Rip.total_winner();
                 }
-                New_Level.new_level();
+                New_Level.new_level(player);
                 IOUtil.msg("you feel a wrenching sensation in your gut");
             } else {
                 IOUtil.msg("your way is magically blocked");

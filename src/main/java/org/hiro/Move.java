@@ -282,7 +282,7 @@ public class Move {
         switch ((int) tr.getValue()) {
             case Const.T_DOOR:
                 Human.instance.upstairs();
-                New_Level.new_level();
+                New_Level.new_level(Human.instance);
                 IOUtil.msg("you fell into a trap!");
                 break;
             case Const.T_BEAR:

@@ -46,11 +46,11 @@ public class DefaultCommand implements KeyboardCommand {
                     break;
                 case ('D' & 037):
                     Human.instance.upstairs();
-                    New_Level.new_level();
+                    New_Level.new_level(Human.instance);
                     break;
                 case ('A' & 037):
                     Human.instance.downstairs();
-                    New_Level.new_level();
+                    New_Level.new_level(Human.instance);
                     break;
                 case ('F' & 037):
                     // show_map(); // TODO: 後で
