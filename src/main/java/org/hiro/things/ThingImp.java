@@ -42,13 +42,10 @@ public class ThingImp implements OriginalMonster, Thing {
     public Coordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
-    // public int _o_packch;            /* What character it is in the pack */
     public int _o_count;            /* count for plural objects */
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
-    // public int _o_hplus;            /* Plusses to hit */
-    // public int _o_dplus;            /* Plusses to damage */
     private HashSet<Integer> _o_flags;            /* information about objects */
-    public int _o_group;            /* group number for this object */  // もしかして要らない
+    int _o_group;            /* group number for this object */  // もしかして要らない
     public char _o_label;            /* Label for object */
 
     @Override
