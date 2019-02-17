@@ -26,7 +26,7 @@ public class ThingImp implements OriginalMonster, Thing {
     public ThingImp _l_next, _l_prev; /* Next pointer in link */
     public Coordinate _t_pos;            /* Position */
     public boolean _t_turn;            /* If slowed, is it a turn to move */
-    public int _t_type;            /* What it is */
+    private int _t_type;            /* What it is */
     public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
     public Coordinate _t_dest;        /* Where it is running to */
@@ -77,6 +77,11 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public int getType() {
         return this._t_type;
+    }
+
+    @Override
+    public void setType(int type){
+        this._t_type = type;
     }
 
     @Override

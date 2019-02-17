@@ -61,7 +61,7 @@ public class Monst {
             lev_add = 0;
         }
         Global.mlist.add(tp);
-        tp._t_type = type;
+        tp.setType(type);
         tp._t_disguise = type;
         tp._t_pos = cp;
         Display.move(cp); //ncursesライブラリ move()
