@@ -86,7 +86,7 @@ public class DefaultCommand implements KeyboardCommand {
                      * Give him a sword (+1,+1)
                      */
                     obj = new Weapon(WeaponEnum.TWOSWORD, 1);
-                    obj._o_dplus = 1;
+                    obj.addDamagePlus();
                     Pack.add_pack(obj, true);
                     Human.instance.putOnWeapon(obj);
                     /*

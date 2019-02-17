@@ -7,7 +7,7 @@ public class Magic extends Weapon {
         this._o_which = '*';
         this._o_hurldmg = "1x4";
         this.hitPlus = 100;
-        this._o_dplus = 1;
+        this.damagePlus = 1;
         this.set_o_flags(Const.ISMISL);
     }
 }

@@ -22,9 +22,9 @@ public class EnchantWeapon extends Scroll {
             Weapon w = player.getWeapons().get(0);
             w.delete_o_flags(Const.ISCURSED);
             if (Util.rnd(2) == 0) {
-                w.addHit();
+                w.addHitPlus();
             } else {
-                w._o_dplus++;
+                w.addDamagePlus();
             }
             IOUtil.msg("your %s glows %s for a moment",
                     Global.weap_info[w._o_which].getName(), Init.pick_color("blue"));
