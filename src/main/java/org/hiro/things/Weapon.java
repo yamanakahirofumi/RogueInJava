@@ -11,6 +11,15 @@ import java.util.Arrays;
 public class Weapon extends ThingImp {
     private String power; // = new char[8];        /* Damage if used like sword */
     public String _o_hurldmg; // = new char[8];        /* Damage if thrown */
+    int hitPlus;
+
+    public void addHit(){
+        this.hitPlus++;
+    }
+
+    public int getHit(){
+        return this.hitPlus;
+    }
 
     Weapon() {
         super();
@@ -19,9 +28,9 @@ public class Weapon extends ThingImp {
         int r = Util.rnd(100);
         if (r < 10) {
             this.add_o_flags(Const.ISCURSED);
-            this._o_hplus -= Util.rnd(3) + 1;
+            this.hitPlus -= Util.rnd(3) + 1;
         } else if (r < 15) {
-            this._o_hplus += Util.rnd(3) + 1;
+            this.hitPlus += Util.rnd(3) + 1;
         }
     }
 
@@ -29,18 +38,18 @@ public class Weapon extends ThingImp {
         super();
         this._o_which =weaponEnum.getValue();
         initWeapon();
-        this._o_hplus = hplus;
+        this.hitPlus = hplus;
     }
 
     @Override
     public boolean isMagic(){
-        return (this._o_hplus != 0 || this._o_dplus != 0);
+        return (this.hitPlus != 0 || this._o_dplus != 0);
     }
 
     @Override
     public int getWorth(){
         int worth = Global.weap_info[this._o_which].getWorth();
-        worth *= 3 * (this._o_hplus + this._o_dplus) + this.getCount();
+        worth *= 3 * (this.hitPlus + this._o_dplus) + this.getCount();
         this.add_o_flags(Const.ISKNOW);
 
         return worth;
@@ -57,7 +66,7 @@ public class Weapon extends ThingImp {
         this._o_hurldmg = iwp.iw_hrl;
         this._o_launch = iwp.iw_launch;
         this.set_o_flags(iwp.iw_flags);
-        this._o_hplus = 0;
+        this.hitPlus = 0;
         this._o_dplus = 0;
         if (this._o_which == WeaponEnum.DAGGER.getValue()) {
             this._o_count = Util.rnd(4) + 2;

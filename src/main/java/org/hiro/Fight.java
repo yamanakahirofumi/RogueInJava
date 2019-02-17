@@ -367,7 +367,7 @@ public class Fight {
         Stats def = thdef._t_stats;
         String cp = att.s_dmg;
         if (weap != null) {
-            hplus = weap._o_hplus;
+            hplus = weap.getHit();
             dplus = weap._o_dplus;
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
@@ -387,7 +387,7 @@ public class Fight {
                 if (weap.contains_o_flags(Const.ISMISL) && curWeapons.size() > 0 &&
                         curWeapons.get(0)._o_which == weap._o_launch) {
                     cp = weap._o_hurldmg;
-                    hplus += curWeapons.get(0)._o_hplus;
+                    hplus += curWeapons.get(0).getHit();
                     dplus += curWeapons.get(0)._o_dplus;
                 } else if (weap._o_launch < 0) {
                     cp = weap._o_hurldmg;

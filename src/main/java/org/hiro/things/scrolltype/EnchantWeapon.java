@@ -22,7 +22,7 @@ public class EnchantWeapon extends Scroll {
             Weapon w = player.getWeapons().get(0);
             w.delete_o_flags(Const.ISCURSED);
             if (Util.rnd(2) == 0) {
-                w._o_hplus++;
+                w.addHit();
             } else {
                 w._o_dplus++;
             }

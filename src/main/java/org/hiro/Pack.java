@@ -145,8 +145,6 @@ public class Pack {
             if (newobj) {
                 nobj = new ThingImp();
                 nobj = obj;
-                nobj._l_next = null;
-                nobj._l_prev = null;
                 nobj.addCount(1);
             }
         } else {

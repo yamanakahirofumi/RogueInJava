@@ -23,7 +23,6 @@ import java.util.Optional;
 public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
-    public ThingImp _l_next, _l_prev; /* Next pointer in link */
     public Coordinate _t_pos;            /* Position */
     public boolean _t_turn;            /* If slowed, is it a turn to move */
     private int _t_type;            /* What it is */
@@ -38,7 +37,6 @@ public class ThingImp implements OriginalMonster, Thing {
     private ThingImp _t_pack;        /* What the thing is carrying */  // 配列
     private List<ThingImp> baggage = new ArrayList<>();
     private Bag bag;
-    public int _t_reserved;
 
     // これでアクセスされるパターン２
     public Coordinate _o_pos;            /* Where it lives on the screen */
@@ -47,7 +45,7 @@ public class ThingImp implements OriginalMonster, Thing {
     // public int _o_packch;            /* What character it is in the pack */
     public int _o_count;            /* count for plural objects */
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
-    public int _o_hplus;            /* Plusses to hit */
+    // public int _o_hplus;            /* Plusses to hit */
     public int _o_dplus;            /* Plusses to damage */
     private HashSet<Integer> _o_flags;            /* information about objects */
     public int _o_group;            /* group number for this object */  // もしかして要らない
@@ -132,7 +130,6 @@ public class ThingImp implements OriginalMonster, Thing {
      */
     public ThingImp() {
         this.bag = new Bag();
-        this._o_hplus = 0;
         this._o_dplus = 0;
         this._o_count = 1;
         this._o_group = 0;

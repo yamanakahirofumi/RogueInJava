@@ -242,11 +242,9 @@ public class Chase {
      *	Make all the running monsters move.
      */
     static void runners() {
-        ThingImp next;
 
-        for (ThingImp tp = Global.mlist.get(0); tp != null; tp = next) {
+        for(ThingImp tp : Global.mlist){
             /* remember this in case the monster's "next" is changed */
-            next = tp._l_next;
             if (!tp.containsState(StateEnum.ISHELD) && tp.containsState(StateEnum.ISRUN)) {
                 Coordinate orig_pos = tp._t_pos;
                 boolean wastarget = tp.containsState(StateEnum.ISTARGET);

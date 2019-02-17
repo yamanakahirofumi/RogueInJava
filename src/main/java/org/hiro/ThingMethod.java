@@ -226,7 +226,7 @@ public class ThingMethod {
             Global.prbuf = "A" + Misc.vowelstr(sp) + " ";
         }
         if (obj.contains_o_flags(Const.ISKNOW)) {
-            Global.prbuf = Global.prbuf + WeaponMethod.num(obj._o_hplus, obj._o_dplus, ObjectType.WEAPON)
+            Global.prbuf = Global.prbuf + WeaponMethod.num(obj.getHit(), obj._o_dplus, ObjectType.WEAPON)
                     + " " + sp;
         } else {
             Global.prbuf = Global.prbuf + sp;
