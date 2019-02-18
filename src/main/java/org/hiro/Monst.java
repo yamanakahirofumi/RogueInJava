@@ -79,7 +79,7 @@ public class Monst {
         if (Human.instance.getLevel() > 29) {
             tp.addState(StateEnum.ISHASTE);
         }
-        tp._t_turn = true;
+        tp.slow();
         tp.setBaggage(new ArrayList<>());
         if (AggravateMonsterRing.isInclude(Human.instance.getRings())) {
             Chase.runto(cp);

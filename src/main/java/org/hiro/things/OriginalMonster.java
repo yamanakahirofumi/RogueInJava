@@ -11,6 +11,9 @@ public interface OriginalMonster {
     void setState(int flags);
     int getType();
     void setType(int type);
+    boolean isSlow();
+    void slow();
+    void changeSlow();
 
     void addItem(ThingImp th);
     void removeItem(ThingImp th);

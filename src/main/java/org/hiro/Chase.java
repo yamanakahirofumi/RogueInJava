@@ -269,7 +269,7 @@ public class Chase {
      *	Execute a single turn of running for a monster
      */
     static int move_monst(ThingImp tp) {
-        if (!tp.containsState(StateEnum.ISSLOW) || tp._t_turn) {
+        if (!tp.containsState(StateEnum.ISSLOW) || tp.isSlow()) {
             if (do_chase(tp) == -1) {
                 return -1;
             }
@@ -279,7 +279,7 @@ public class Chase {
                 return -1;
             }
         }
-        tp._t_turn ^= true;
+        tp.changeSlow();
         return 0;
     }
 

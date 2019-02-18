@@ -7,8 +7,8 @@ import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
 
 public class SlowMonster extends Stick {
     public SlowMonster() {
@@ -21,14 +21,14 @@ public class SlowMonster extends Stick {
         while (IOUtil.step_ok(Util.winat(tmp2))) {
             tmp2 = Global.delta.add(tmp2);
         }
-        ThingImp tp = Util.getPlace(tmp2).p_monst;
+        OriginalMonster tp = Util.getPlace(tmp2).p_monst;
         if (tp != null) {
             if (tp.containsState(StateEnum.ISHASTE)) {
                 tp.removeState(StateEnum.ISHASTE);
             } else {
                 tp.addState(StateEnum.ISSLOW);
             }
-            tp._t_turn = true;
+            tp.slow();
             Global.delta = new Coordinate(tmp2);
             Chase.runto(Global.delta);
         }
