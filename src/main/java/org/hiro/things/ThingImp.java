@@ -24,7 +24,7 @@ public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
     public Coordinate _t_pos;            /* Position */
-    public boolean slow;            /* If slowed, is it a turn to move */
+    private boolean slow;            /* If slowed, is it a turn to move */
     private int _t_type;            /* What it is */
     public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
