@@ -91,4 +91,16 @@ public class Room {
 		return c.x <= r_pos.x + r_max.x && r_pos.x <= c.x && c.y <= r_pos.y + r_max.y && r_pos.y <= c.y;
 	}
 
+	@Override
+	public int hashCode() {
+		return r_pos.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Room)){
+			return false;
+		}
+		return r_pos.equals(((Room) obj).r_pos);
+	}
 }

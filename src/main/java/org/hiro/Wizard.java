@@ -28,7 +28,7 @@ public class Wizard {
 
         Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
-        if (Chase.roomin(c) != Global.player.t_room) {
+        if (!Chase.roomin(c).equals(Global.player.t_room)) {
             Rooms.leave_room(Global.player._t_pos);
             Global.player._t_pos = c;
             Rooms.enter_room(Global.player._t_pos);

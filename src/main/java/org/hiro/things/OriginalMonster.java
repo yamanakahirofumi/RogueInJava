@@ -1,5 +1,6 @@
 package org.hiro.things;
 
+import org.hiro.Room;
 import org.hiro.character.StateEnum;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public interface OriginalMonster {
     boolean isSlow();
     void slow();
     void changeSlow();
+    Room getRoom();
 
     void addItem(ThingImp th);
     void removeItem(ThingImp th);

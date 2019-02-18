@@ -20,7 +20,7 @@ public class Teleportation extends Scroll {
          */
         Room cur_room = Global.player.t_room;
         Wizard.teleport(player);
-        if (cur_room != Global.player.t_room) {
+        if (!cur_room.equals(Global.player.t_room)) {
             Global.scr_info[ScrollEnum.Teleportation.getValue()].know();
         }
 

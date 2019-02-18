@@ -24,7 +24,11 @@ public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
     public Coordinate _t_pos;            /* Position */
-    private boolean slow;            /* If slowed, is it a turn to move */
+    /*
+     * If slowed, is it a turn to move
+     * 旧_t_turn
+     */
+    private boolean slow;
     private int _t_type;            /* What it is */
     public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
     public int _t_oldch; //ObjectType??            /* Character that was where it was */
@@ -92,6 +96,11 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public void changeSlow(){
         this.slow = !this.slow;
+    }
+
+    @Override
+    public Room getRoom(){
+        return this.t_room;
     }
 
     @Override

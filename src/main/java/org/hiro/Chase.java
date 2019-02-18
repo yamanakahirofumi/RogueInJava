@@ -79,7 +79,7 @@ public class Chase {
         int prob;
 
         if ((prob = Global.monsters[tp.getType() - 'A'].m_carry) <= 0
-                || tp.t_room == Global.player.t_room
+                || tp.getRoom().equals(Global.player.t_room)
                 || see_monst(tp)) {
             return Global.player._t_pos;
         }
@@ -87,7 +87,7 @@ public class Chase {
             if (obj instanceof Scare) {
                 continue;
             }
-            if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
+            if (tp.getRoom().equals(roomin(obj._o_pos)) && Util.rnd(100) < prob) {
                 for (ThingImp tp2 : Global.mlist) {
                     tp = tp2;
                     if (tp._t_dest.equals(obj._o_pos)) {
@@ -121,10 +121,10 @@ public class Chase {
                     || IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch)
                     || IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch);
         }
-        if (mp.t_room != Global.player.t_room) {
+        if (!mp.getRoom().equals(Global.player.t_room)) {
             return false;
         }
-        return !mp.t_room.containInfo(RoomInfoEnum.ISDARK);
+        return !mp.getRoom().containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
@@ -159,7 +159,7 @@ public class Chase {
          * the coordinate and the room is lit or if it is close.
          */
         Room rer = roomin(c);
-        return rer == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK);
+        return rer.equals(Global.player.t_room) && !rer.containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
@@ -188,10 +188,10 @@ public class Chase {
             Display.mvaddch(th._t_pos, (char) th._t_oldch);
             th.t_room = roomin(new_loc);
             set_oldch(th, new_loc);
-            Room oroom = th.t_room;
+            Room oroom = th.getRoom();
             Util.getPlace(th._t_pos).p_monst = null;
 
-            if (oroom != th.t_room) {
+            if (!oroom.equals(th.getRoom())) {
                 th._t_dest = find_dest(th);
             }
             th._t_pos = new_loc;
@@ -221,7 +221,7 @@ public class Chase {
         tp._t_oldch = Util.CCHAR(Display.mvinch(cp));
         if (!Human.instance.containsState(StateEnum.ISBLIND)) {
             if ((sch == ObjectType.FLOOR.getValue() || tp._t_oldch == ObjectType.FLOOR.getValue()) &&
-                    tp.t_room.containInfo(RoomInfoEnum.ISDARK)) {
+                    tp.getRoom().containInfo(RoomInfoEnum.ISDARK)) {
                 tp._t_oldch = ' ';
             } else if (dist_cp(cp, Global.player._t_pos) <= Const.LAMPDIST && Global.see_floor) {
                 tp._t_oldch = Util.getPlace(cp).p_ch.getValue();
@@ -294,7 +294,7 @@ public class Chase {
 
         /* Find room of chaser */
         /* room of chaser, room of chasee */
-        Room rer = th.t_room;
+        Room rer = th.getRoom();
         if (th.containsState(StateEnum.ISGREED) && rer.r_goldval == 0) {
             th._t_dest = Global.player._t_pos;    /* If gold has been taken, run after hero */
         }
@@ -373,7 +373,7 @@ public class Chase {
                         Global.lvl_obj.remove(obj);
                         th.addItem(obj);
                         Util.getPlace(obj._o_pos).p_ch =
-                                th.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                                th.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
                         th._t_dest = find_dest(th);
                         break;
                     }

@@ -201,7 +201,7 @@ public class Fight {
                 Global.vf_hit = 0;
                 break;
             case 'L': {
-                if (WeaponMethod.fallpos(tp._t_pos, tp.t_room.r_gold) && Human.instance.getLevel() >= Global.max_level) {
+                if (WeaponMethod.fallpos(tp._t_pos, tp.getRoom().r_gold) && Human.instance.getLevel() >= Global.max_level) {
                     Gold gold = new Gold(Human.instance.getLevel());
                     if (Monst.save(Const.VS_MAGIC)) {
                         gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
