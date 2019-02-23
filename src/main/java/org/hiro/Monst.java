@@ -154,7 +154,7 @@ public class Monst {
         if (ch == 'M' && !Human.instance.containsState(StateEnum.ISBLIND) && !Human.instance.containsState(StateEnum.ISHALU)
                 && !tp.containsState(StateEnum.ISFOUND) && !tp.containsState(StateEnum.ISCANC)
                 && tp.containsState(StateEnum.ISRUN)) {
-            rp = Global.player.t_room;
+            rp = Human.instance.getRoom();
             if (rp == null || rp.containInfo(RoomInfoEnum.ISDARK)
                     || Chase.dist_cp(new Coordinate(x, y), Global.player._t_pos) < Const.LAMPDIST) {
                 tp.addState(StateEnum.ISFOUND);
@@ -184,8 +184,8 @@ public class Monst {
          */
         if (tp.containsState(StateEnum.ISGREED) && !tp.containsState(StateEnum.ISRUN)) {
             tp.addState(StateEnum.ISRUN);
-            if (Global.player.t_room.r_goldval != 0) {
-                tp._t_dest = Global.player.t_room.r_gold;
+            if (Human.instance.getRoom().r_goldval != 0) {
+                tp._t_dest = Human.instance.getRoom().r_gold;
             } else {
                 tp._t_dest = Global.player._t_pos;
             }

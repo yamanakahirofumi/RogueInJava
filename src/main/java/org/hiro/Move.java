@@ -98,7 +98,7 @@ public class Move {
             case Vert:
             case Horizon:
                 hit_bound:
-                if (Global.passgo && Global.running && Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
+                if (Global.passgo && Global.running && player.getRoom().containInfo(RoomInfoEnum.ISGONE)
                         && !player.containsState(StateEnum.ISBLIND)) {
                     boolean b1, b2;
                     switch (Global.runch) {

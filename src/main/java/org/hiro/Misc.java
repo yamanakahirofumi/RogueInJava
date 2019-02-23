@@ -94,7 +94,7 @@ public class Misc {
             done = true;
         } /* DEBUG */
         passcount = 0;
-        Room rp = Global.player.t_room;
+        Room rp = Human.instance.getRoom();
         if (!Global.oldpos.equals(Global.player._t_pos)) {
             erase_lamp(Global.oldpos, Global.oldrp);
             Global.oldpos = Global.player._t_pos;
@@ -172,7 +172,7 @@ public class Misc {
 
                     Display.move(y, x);
 
-                    if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK) &&
+                    if (Human.instance.getRoom().containInfo(RoomInfoEnum.ISDARK) &&
                             !Global.see_floor && ch == ObjectType.FLOOR) {
                         ch = ObjectType.Blank;
                     }
@@ -410,8 +410,8 @@ public class Misc {
      *	Should we show the floor in her room at this time?
      */
     static boolean show_floor() {
-        if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK)
-                && !Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
+        if (Human.instance.getRoom().containInfo(RoomInfoEnum.ISDARK)
+                && !Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)
                 && !Human.instance.containsState(StateEnum.ISBLIND)) {
             return Global.see_floor;
         } else {

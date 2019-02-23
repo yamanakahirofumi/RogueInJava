@@ -54,7 +54,7 @@ public class Rooms {
      *	Code for when we exit a room
      */
     static void leave_room(Coordinate cp) {
-        Room rp = Global.player.t_room;
+        Room rp = Human.instance.getRoom();
 
         if (rp.containInfo(RoomInfoEnum.ISMAZE)) {
             return;

@@ -49,12 +49,12 @@ public class Drain extends Stick {
         } else {
             corp = null;
         }
-        boolean pass = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE);
+        boolean pass = player.getRoom().containInfo(RoomInfoEnum.ISGONE);
         List<ThingImp> drainList = new ArrayList<>();
         for (ThingImp mp : Global.mlist) {
-            if (mp.getRoom().equals(Global.player.t_room) || mp.getRoom().equals(corp) ||
+            if (mp.getRoom().equals(player.getRoom()) || mp.getRoom().equals(corp) ||
                     (pass && Util.getPlace(mp._t_pos).p_ch == ObjectType.DOOR &&
-                            Global.passages[Util.flat(mp._t_pos) & Const.F_PNUM].equals(Global.player.t_room))) {
+                            Global.passages[Util.flat(mp._t_pos) & Const.F_PNUM].equals(player.getRoom()))) {
                 drainList.add(mp);
             }
         }

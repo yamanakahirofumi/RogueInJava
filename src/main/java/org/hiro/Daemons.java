@@ -84,7 +84,7 @@ public class Daemons {
                 e.printStackTrace();
             }
             Human.instance.removeState(StateEnum.ISBLIND);
-            if (!Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
+            if (!Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
                 Rooms.enter_room(Global.player._t_pos);
             }
             IOUtil.msg(Misc.choose_str("far out!  Everything is all cosmic again",

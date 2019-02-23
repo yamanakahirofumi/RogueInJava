@@ -1,5 +1,6 @@
 package org.hiro.character;
 
+import org.hiro.Room;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Armor;
 import org.hiro.things.Ring;
@@ -26,6 +27,8 @@ public interface Player {
     AbstractCoordinate getPosition();
 
     void setPosition(AbstractCoordinate position);
+
+    Room getRoom();
 
     /**
      * ダンジョン内の現在の階層数を返す

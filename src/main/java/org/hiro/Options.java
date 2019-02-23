@@ -1,5 +1,7 @@
 package org.hiro;
 
+import org.hiro.character.Human;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -249,7 +251,7 @@ public class Options {
         if (was_sf != Global.see_floor) {
             if (!Global.see_floor) {
                 Global.see_floor = true;
-                Misc.erase_lamp(Global.player._t_pos, Global.player.t_room);
+                Misc.erase_lamp(Global.player._t_pos, Human.instance.getRoom());
                 Global.see_floor = false;
             } else
                 Misc.look(false);

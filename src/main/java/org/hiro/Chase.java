@@ -79,7 +79,7 @@ public class Chase {
         int prob;
 
         if ((prob = Global.monsters[tp.getType() - 'A'].m_carry) <= 0
-                || tp.getRoom().equals(Global.player.t_room)
+                || tp.getRoom().equals(Human.instance.getRoom())
                 || see_monst(tp)) {
             return Global.player._t_pos;
         }
@@ -121,7 +121,7 @@ public class Chase {
                     || IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch)
                     || IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch);
         }
-        if (!mp.getRoom().equals(Global.player.t_room)) {
+        if (!mp.getRoom().equals(Human.instance.getRoom())) {
             return false;
         }
         return !mp.getRoom().containInfo(RoomInfoEnum.ISDARK);
@@ -159,7 +159,7 @@ public class Chase {
          * the coordinate and the room is lit or if it is close.
          */
         Room rer = roomin(c);
-        return rer.equals(Global.player.t_room) && !rer.containInfo(RoomInfoEnum.ISDARK);
+        return rer.equals(Human.instance.getRoom()) && !rer.containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
@@ -300,7 +300,7 @@ public class Chase {
         }
         Room ree;
         if (th._t_dest == Global.player._t_pos) {    /* Find room of chasee */
-            ree = Global.player.t_room;
+            ree = Human.instance.getRoom();
         } else {
             ree = roomin(th._t_dest);
         }

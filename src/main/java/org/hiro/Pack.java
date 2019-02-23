@@ -173,7 +173,7 @@ public class Pack {
      *	Return the appropriate floor character for her room
      */
     static ObjectType floor_ch() {
-        if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
+        if (Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
             return ObjectType.PASSAGE;
         }
         return (Misc.show_floor() ? ObjectType.FLOOR : ObjectType.Blank);
@@ -203,7 +203,7 @@ public class Pack {
             // TODO:o_flagとt_flag共有を考えないと
             Global.lvl_obj.remove(obj);
             Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
-            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
             update_mdest(obj);
             IOUtil.msg("the scroll turns to dust as you pick it up");
             return;
@@ -265,7 +265,7 @@ public class Pack {
         if (from_floor) {
             Global.lvl_obj.remove(obj);
             Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
-            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         }
 
         return true;
@@ -301,7 +301,7 @@ public class Pack {
                 Global.lvl_obj.remove(gold);
                 update_mdest(gold);
                 Global.lvl_obj.remove(gold);
-                Global.player.t_room.r_goldval = 0;
+                Human.instance.getRoom().r_goldval = 0;
             } else {
                 add_pack(null, false);
             }
@@ -316,7 +316,7 @@ public class Pack {
         Global.purse += value;
         Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
         Util.getPlace(Global.player._t_pos).p_ch =
-                Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         if (value > 0) {
             if (!Global.terse) {
                 IOUtil.addmsg("you found ");

@@ -22,10 +22,10 @@ public class LightUp extends Stick {
          * Reddy Kilowat wand.  Light up the room
          */
         Global.ws_info[StickEnum.LightUp.getValue()].know();
-        if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
+        if (player.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
             IOUtil.msg("the corridor glows and then fades");
         } else {
-            Global.player.t_room.removeInfo(RoomInfoEnum.ISDARK);
+            player.getRoom().removeInfo(RoomInfoEnum.ISDARK);
             /*
              * Light the room and put the player back up
              */
