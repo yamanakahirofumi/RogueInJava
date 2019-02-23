@@ -36,7 +36,7 @@ public class ThingImp implements OriginalMonster, Thing {
     // private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
     public Stats _t_stats;        /* Physical description */  //
-    public Room t_room;        /* Current room for thing */
+    private Room room;        /* Current room for thing */
     @Deprecated
     private ThingImp _t_pack;        /* What the thing is carrying */  // 配列
     private List<ThingImp> baggage = new ArrayList<>();
@@ -100,7 +100,12 @@ public class ThingImp implements OriginalMonster, Thing {
 
     @Override
     public Room getRoom(){
-        return this.t_room;
+        return this.room;
+    }
+
+    @Override
+    public void setRoom(Room room){
+        this.room = room;
     }
 
     @Override

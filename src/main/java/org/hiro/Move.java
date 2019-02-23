@@ -159,7 +159,7 @@ public class Move {
                  * if you're leaving a maze room, so it is necessary to
                  * always recalculate proom.
                  */
-                Global.player.t_room = Chase.roomin(Global.player._t_pos);
+                player.setRoom(Chase.roomin(Global.player._t_pos));
                 move_stuff(fl, nh);
             case FLOOR:
                 if ((fl & Const.F_REAL) == 0) {

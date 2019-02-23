@@ -29,6 +29,7 @@ public interface Player {
     void setPosition(AbstractCoordinate position);
 
     Room getRoom();
+    void setRoom(Room room);
 
     /**
      * ダンジョン内の現在の階層数を返す

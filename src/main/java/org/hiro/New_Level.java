@@ -84,7 +84,7 @@ public class New_Level {
         Global.seenstairs = false;
 
         for (ThingImp tp : Global.mlist) {
-            tp.t_room = Chase.roomin(tp._t_pos);
+            tp.setRoom(Chase.roomin(tp._t_pos));
         }
 
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);

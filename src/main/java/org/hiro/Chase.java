@@ -186,7 +186,7 @@ public class Chase {
 
         if (!new_loc.equals(th._t_pos)) {
             Display.mvaddch(th._t_pos, (char) th._t_oldch);
-            th.t_room = roomin(new_loc);
+            th.setRoom(roomin(new_loc));
             set_oldch(th, new_loc);
             Room oroom = th.getRoom();
             Util.getPlace(th._t_pos).p_monst = null;

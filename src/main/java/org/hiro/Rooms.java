@@ -15,7 +15,8 @@ public class Rooms {
      */
     public static void enter_room(Coordinate cp) {
 
-        Room rp = Global.player.t_room = Chase.roomin(cp);
+        Room rp = Chase.roomin(cp);
+        Human.instance.setRoom(rp);
         Move.door_open(rp);
         if (!rp.containInfo(RoomInfoEnum.ISDARK) && !Human.instance.containsState(StateEnum.ISBLIND))
             for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++) {
@@ -69,7 +70,7 @@ public class Rooms {
             floor = ObjectType.Blank;
         }
 
-        Global.player.t_room = Global.passages[Util.flat(cp) & Const.F_PNUM];
+        Human.instance.setRoom(Global.passages[Util.flat(cp) & Const.F_PNUM]);
         for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++)
             for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
                 Display.move(y, x);

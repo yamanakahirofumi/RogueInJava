@@ -66,7 +66,7 @@ public class Monst {
         tp._t_pos = cp;
         Display.move(cp); //ncursesライブラリ move()
         tp._t_oldch = Util.CCHAR(Display.inch());
-        tp.t_room = Chase.roomin(cp);
+        tp.setRoom(Chase.roomin(cp));
         Util.getPlace(cp).p_monst = tp;
         mp = Global.monsters[tp.getType() - 'A'];
         tp._t_stats.s_lvl = mp.m_stats.s_lvl + lev_add;

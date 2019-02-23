@@ -16,6 +16,7 @@ public interface OriginalMonster {
     void slow();
     void changeSlow();
     Room getRoom();
+    void setRoom(Room room);
 
     void addItem(ThingImp th);
     void removeItem(ThingImp th);
