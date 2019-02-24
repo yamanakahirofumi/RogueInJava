@@ -7,7 +7,7 @@ import org.hiro.Misc;
 import org.hiro.Util;
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
 
 public class FightingCommand implements KeyboardCommand {
 
@@ -19,7 +19,7 @@ public class FightingCommand implements KeyboardCommand {
             return;
         }
         Global.delta = Global.player._t_pos.add(Global.delta);
-        ThingImp mp = Util.getPlace(Global.delta).p_monst;
+        OriginalMonster mp = Util.getPlace(Global.delta).p_monst;
         if (mp == null || (!Chase.see_monst(mp) && !Human.instance.containsState(StateEnum.SEEMONST))) {
             if (!Global.terse) {
                 IOUtil.addmsg("I see ");

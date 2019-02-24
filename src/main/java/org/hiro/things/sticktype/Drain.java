@@ -10,8 +10,8 @@ import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +50,11 @@ public class Drain extends Stick {
             corp = null;
         }
         boolean pass = player.getRoom().containInfo(RoomInfoEnum.ISGONE);
-        List<ThingImp> drainList = new ArrayList<>();
-        for (ThingImp mp : Global.mlist) {
+        List<OriginalMonster> drainList = new ArrayList<>();
+        for (OriginalMonster mp : Global.mlist) {
             if (mp.getRoom().equals(player.getRoom()) || mp.getRoom().equals(corp) ||
-                    (pass && Util.getPlace(mp._t_pos).p_ch == ObjectType.DOOR &&
-                            Global.passages[Util.flat(mp._t_pos) & Const.F_PNUM].equals(player.getRoom()))) {
+                    (pass && Util.getPlace(mp.getPosition()).p_ch == ObjectType.DOOR &&
+                            Global.passages[Util.flat(mp.getPosition()) & Const.F_PNUM].equals(player.getRoom()))) {
                 drainList.add(mp);
             }
         }
@@ -62,16 +62,16 @@ public class Drain extends Stick {
             IOUtil.msg("you have a tingling feeling");
             return;
         }
-        Global.player._t_stats.s_hpt /= 2;
+        Global.player.getStatus().s_hpt /= 2;
         int cnt = player.getHp() / drainList.size();
         /*
          * Now zot all of the monsters
          */
-        for (ThingImp dp : drainList) {
-            if ((dp._t_stats.s_hpt -= cnt) <= 0) {
+        for (OriginalMonster dp : drainList) {
+            if ((dp.getStatus().s_hpt -= cnt) <= 0) {
                 Fight.killed(dp, Chase.see_monst(dp));
             } else {
-                Chase.runto(dp._t_pos);
+                Chase.runto(dp.getPosition());
             }
         }
         this.use();

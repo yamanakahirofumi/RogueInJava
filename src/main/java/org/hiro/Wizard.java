@@ -6,6 +6,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Potion;
 import org.hiro.things.Ring;
 import org.hiro.things.Scroll;
@@ -45,9 +46,9 @@ public class Wizard {
 
             player.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
-            for (ThingImp mp : Global.mlist) {
+            for (OriginalMonster mp : Global.mlist) {
                 if (mp.getType() == 'F')
-                    mp._t_stats.s_dmg = "0x0";
+                    mp.getStatus().s_dmg = "0x0";
             }
         }
         Global.no_move = 0;

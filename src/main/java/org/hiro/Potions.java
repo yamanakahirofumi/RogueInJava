@@ -9,7 +9,6 @@ import org.hiro.things.OriginalMonster;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.SustainStrengthRing;
 
@@ -29,12 +28,12 @@ public class Potions {
     public static int turn_see(boolean turn_off) {
 
         int add_new = 0;
-        for (ThingImp mp : Global.mlist) {
-            Display.move(mp._t_pos);
+        for (OriginalMonster mp : Global.mlist) {
+            Display.move(mp.getPosition());
             boolean can_see = Chase.see_monst(mp);
             if (turn_off) {
                 if (!can_see) {
-                    Display.addch((char) mp._t_oldch);
+                    Display.addch((char) mp.getFloorTile());
                 }
             } else {
                 if (!can_see) {
@@ -106,9 +105,9 @@ public class Potions {
                 break;
             case P_HEALING:
                 Global.pot_info[p.getValue()].know();
-                player.addHp(Dice.roll(Global.player._t_stats.s_lvl, 4));
+                player.addHp(Dice.roll(Global.player.getStatus().s_lvl, 4));
                 if (player.getHp() > player.getMaxHp()) {
-                    Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
+                    Global.player.getStatus().s_hpt = ++Global.player.getStatus().s_maxhp;
                 }
                 Daemons.sight();
                 IOUtil.msg("you begin to feel better");
@@ -195,12 +194,12 @@ public class Potions {
                 break;
             case P_XHEAL:
                 Global.pot_info[p.getValue()].know();
-                player.addHp(Dice.roll(Global.player._t_stats.s_lvl, 8));
+                player.addHp(Dice.roll(Global.player.getStatus().s_lvl, 8));
                 if (player.getHp() > player.getMaxHp()) {
-                    if (player.getHp() > player.getMaxHp() + Global.player._t_stats.s_lvl + 1) {
-                        ++Global.player._t_stats.s_maxhp;
+                    if (player.getHp() > player.getMaxHp() + Global.player.getStatus().s_lvl + 1) {
+                        ++Global.player.getStatus().s_maxhp;
                     }
-                    Global.player._t_stats.s_hpt = ++Global.player._t_stats.s_maxhp;
+                    Global.player.getStatus().s_hpt = ++Global.player.getStatus().s_maxhp;
                 }
                 Daemons.sight();
                 Daemons.come_down(player);
@@ -214,19 +213,19 @@ public class Potions {
                 break;
             case P_RESTORE:
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
+                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
+                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
                 }
                 if (player.getCurrentStrength() < player.getMaxStrength()) {
-                    Global.player._t_stats.s_str = player.getMaxStrength();
+                    Global.player.getStatus().s_str = player.getMaxStrength();
                 }
                 if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
+                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
-                    Global.player._t_stats.s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
+                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
                 }
                 IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
                 break;
@@ -358,7 +357,7 @@ public class Potions {
      *	The guy just magically went up a level.
      */
     public static void raise_level() {
-        Global.player._t_stats.s_exp = Global.e_levels[Global.player._t_stats.s_lvl - 1] + 1L;
+        Global.player.getStatus().s_exp = Global.e_levels[Global.player.getStatus().s_lvl - 1] + 1L;
         Misc.check_level();
     }
 
@@ -375,10 +374,10 @@ public class Potions {
      */
     static void invis_on() {
         Human.instance.addState(StateEnum.CANSEE);
-        for (ThingImp mp : Global.mlist) {
+        for (OriginalMonster mp : Global.mlist) {
             if (mp.containsState(StateEnum.ISINVIS) && Chase.see_monst(mp)
                     && !Human.instance.containsState(StateEnum.ISHALU)) {
-                Display.mvaddch(mp._t_pos, (char) mp._t_disguise);
+                Display.mvaddch(mp.getPosition(), (char) mp.getDisplayTile());
             }
         }
     }
@@ -400,7 +399,7 @@ public class Potions {
         /*
          * if a monster is on the stairs, this gets hairy
          */
-        ThingImp tp = Util.getPlace(Global.stairs).p_monst;
+        OriginalMonster tp = Util.getPlace(Global.stairs).p_monst;
         if (tp != null) {
             if (Chase.see_monst(tp) && tp.containsState(StateEnum.ISRUN)) {    /* if it's visible and awake */
                 return true;            /* it must have moved there */
@@ -410,7 +409,7 @@ public class Potions {
             /* and there once were stairs */
             /* it must have moved there */
             return Human.instance.containsState(StateEnum.SEEMONST)
-                    && tp._t_oldch == ObjectType.STAIRS.getValue();
+                    && tp.getFloorTile() == ObjectType.STAIRS.getValue();
         }
         return false;
     }

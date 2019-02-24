@@ -8,8 +8,8 @@ import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
 
 public class InvisibleSeeing extends Stick {
     public InvisibleSeeing(){
@@ -21,7 +21,7 @@ public class InvisibleSeeing extends Stick {
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
         }
-        ThingImp tp = Util.getPlace(tmp).p_monst;
+        OriginalMonster tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
             int monster = tp.getType();
             if (monster == 'F') {
@@ -29,7 +29,7 @@ public class InvisibleSeeing extends Stick {
             }
             tp.addState(StateEnum.ISINVIS);
             if (Chase.isSee(tmp)) {
-                Display.mvaddch(tmp, (char) tp._t_oldch);
+                Display.mvaddch(tmp, (char) tp.getFloorTile());
             }
 
         }

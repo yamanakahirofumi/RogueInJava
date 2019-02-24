@@ -6,7 +6,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
 
 public class Rooms {
     /*
@@ -22,7 +22,7 @@ public class Rooms {
             for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++) {
                 Display.move(y, rp.r_pos.x);
                 for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
-                    ThingImp tp = Util.INDEX(y, x).p_monst;
+                    OriginalMonster tp = Util.INDEX(y, x).p_monst;
                     // chtype ch;
                     ObjectType ch = Util.INDEX(y, x).p_ch;
                     if (tp == null) {
@@ -32,17 +32,17 @@ public class Rooms {
                             Display.move(y, x + 1);
                         }
                     } else {
-                        tp._t_oldch = ch.getValue();
+                        tp.setFloorTile(ch.getValue());
                         if (!Chase.see_monst(tp)) {
                             if (Human.instance.containsState(StateEnum.SEEMONST)) {
                                 Display.standout();
-                                Display.addch((char) tp._t_disguise);
+                                Display.addch((char) tp.getDisplayTile());
                                 Display.standend();
                             } else {
                                 Display.addch(ch.getValue());
                             }
                         } else {
-                            Display.addch((char) tp._t_disguise);
+                            Display.addch((char) tp.getDisplayTile());
                         }
                     }
                 }

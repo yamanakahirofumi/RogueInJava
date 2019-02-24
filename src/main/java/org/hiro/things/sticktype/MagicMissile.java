@@ -8,6 +8,7 @@ import org.hiro.Util;
 import org.hiro.WeaponMethod;
 import org.hiro.character.Player;
 import org.hiro.things.Magic;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
 import org.hiro.things.StickEnum;
 import org.hiro.things.ThingImp;
@@ -24,7 +25,7 @@ public class MagicMissile extends Stick {
         if (player.getWeapons().size() > 0) {
             bolt._o_launch = player.getWeapons().get(0)._o_which;
         }
-        ThingImp tp = Util.getPlace(bolt._o_pos).p_monst;
+        OriginalMonster tp = Util.getPlace(bolt._o_pos).p_monst;
         WeaponMethod.do_motion(bolt, Global.delta);
         if (tp != null && !Monst.save_throw(Const.VS_MAGIC, tp)) {
             WeaponMethod.hit_monster(bolt._o_pos, bolt);

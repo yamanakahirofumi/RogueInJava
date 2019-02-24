@@ -30,13 +30,19 @@ public class ThingImp implements OriginalMonster, Thing {
      */
     private boolean slow;
     private int _t_type;            /* What it is */
-    public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
-    public int _t_oldch; //ObjectType??            /* Character that was where it was */
-    public Coordinate _t_dest;        /* Where it is running to */
+    private int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
+
+    private int _t_oldch; //ObjectType??            /* Character that was where it was */
+    private Coordinate _t_dest;        /* Where it is running to */
     // private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
-    public Stats _t_stats;        /* Physical description */  //
-    private Room room;        /* Current room for thing */
+    private Stats _t_stats;        /* Physical description */  //
+    /**
+     * Current room for Monster
+     *
+     * 旧t_room
+     */
+    private Room room;
     @Deprecated
     private ThingImp _t_pack;        /* What the thing is carrying */  // 配列
     private List<ThingImp> baggage = new ArrayList<>();
@@ -99,6 +105,16 @@ public class ThingImp implements OriginalMonster, Thing {
     }
 
     @Override
+    public Stats getStatus(){
+        return  this._t_stats;
+    }
+
+    @Override
+    public void setStatus(Stats status){
+        this._t_stats = status;
+    }
+
+    @Override
     public Room getRoom(){
         return this.room;
     }
@@ -107,6 +123,47 @@ public class ThingImp implements OriginalMonster, Thing {
     public void setRoom(Room room){
         this.room = room;
     }
+
+    @Override
+    public Coordinate getPosition(){
+        return this._t_pos;
+    }
+
+    @Override
+    public void setPosition(Coordinate coordinate){
+        this._t_pos = coordinate;
+    }
+
+    @Override
+    public Coordinate getRunPosition(){
+        return  this._t_dest;
+    }
+
+    @Override
+    public void setRunPosition(Coordinate coordinate){
+        this._t_dest = coordinate;
+    }
+
+    @Override
+    public int getFloorTile(){
+        return this._t_oldch;
+    }
+
+    @Override
+    public void setFloorTile(int tile){
+        this._t_oldch = tile;
+    }
+
+    @Override
+    public int getDisplayTile(){
+        return this._t_disguise;
+    }
+
+    @Override
+    public void setDisplayTile(int tile){
+        this._t_disguise = tile;
+    }
+
 
     @Override
     public void addItem(ThingImp th) {

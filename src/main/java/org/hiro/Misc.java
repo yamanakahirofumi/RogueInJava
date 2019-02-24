@@ -9,6 +9,7 @@ import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AddStrengthRing;
@@ -148,7 +149,7 @@ public class Misc {
                         }
                     }
 
-                    ThingImp tp;
+                    OriginalMonster tp;
                     if ((tp = pp.p_monst) == null) {
                         ch = trip_ch(target, ch);
                     } else if (Human.instance.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
@@ -163,7 +164,7 @@ public class Misc {
                             if (Human.instance.containsState(StateEnum.ISHALU))
                                 ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
                             else
-                                ch = ObjectType.get((char) tp._t_disguise);
+                                ch = ObjectType.get((char) tp.getDisplayTile());
                         }
                     }
                     if (Human.instance.containsState(StateEnum.ISBLIND) && (!Global.player._t_pos.equals(target))) {
@@ -319,7 +320,7 @@ public class Misc {
         if (amt == 0) {
             return;
         }
-        Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
+        Global.player.getStatus().s_str = add_str(Human.instance.getCurrentStrength(), amt);
         int comp = Human.instance.getCurrentStrength();
         if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
             comp = add_str(comp, -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
@@ -362,16 +363,16 @@ public class Misc {
         int i;
 
         for (i = 0; Global.e_levels[i] != 0; i++) {
-            if (Global.e_levels[i] > Global.player._t_stats.s_exp) {
+            if (Global.e_levels[i] > Global.player.getStatus().s_exp) {
                 break;
             }
         }
         i++;
-        int olevel = Global.player._t_stats.s_lvl;
-        Global.player._t_stats.s_lvl = i;
+        int olevel = Global.player.getStatus().s_lvl;
+        Global.player.getStatus().s_lvl = i;
         if (i > olevel) {
             int add = Dice.roll(i - olevel, 10);
-            Global.player._t_stats.s_maxhp += add;
+            Global.player.getStatus().s_maxhp += add;
             Human.instance.addHp(add);
             IOUtil.msg("welcome to level %d", String.valueOf(i));
         }
@@ -442,8 +443,8 @@ public class Misc {
      *	Aggravate all the monsters on this level
      */
     public static void aggravate() {
-        for (ThingImp mp : Global.mlist) {
-            Chase.runto(mp._t_pos);
+        for (OriginalMonster mp : Global.mlist) {
+            Chase.runto(mp.getPosition());
         }
     }
 

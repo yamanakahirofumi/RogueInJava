@@ -7,6 +7,7 @@ import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.scrolltype.Scare;
@@ -243,9 +244,9 @@ public class Pack {
      *	get mad and run at the hero
      */
     static void update_mdest(ThingImp obj) {
-        for (ThingImp mp : Global.mlist) {
-            if (mp._t_dest.equals(obj._o_pos)) {
-                mp._t_dest = Global.player._t_pos;
+        for (OriginalMonster mp : Global.mlist) {
+            if (mp.getRunPosition().equals(obj._o_pos)) {
+                mp.setRunPosition(Global.player._t_pos);
             }
         }
     }

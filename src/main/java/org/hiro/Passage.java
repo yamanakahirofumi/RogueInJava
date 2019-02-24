@@ -421,7 +421,7 @@ public class Passage {
                     pp.p_flags |= Const.F_SEEN;
                     Display.move(y, x);
                     if (pp.p_monst != null) {
-                        pp.p_monst._t_oldch = pp.p_ch.getValue();
+                        pp.p_monst.setFloorTile(pp.p_ch.getValue());
                     } else if ((pp.p_flags & Const.F_REAL) != 0) {
                         Display.addch(ch.getValue());
                     } else {

@@ -6,6 +6,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
@@ -194,19 +195,19 @@ public class Move {
      * rndmove:
      *	Move in a random direction if the monster/person is confused
      */
-    static Coordinate rndmove(ThingImp who) {
-        Coordinate ret = who._t_pos.add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
+    static Coordinate rndmove(OriginalMonster who) {
+        Coordinate ret = who.getPosition().add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
 
         /*
          * Now check to see if that's a legal move.  If not, don't move.
          * (I.e., bump into the wall or whatever)
          */
-        if (who._t_pos.equals(ret)) {
+        if (who.getPosition().equals(ret)) {
             return ret;
         }
         bad:
         {
-            if (!Chase.diag_ok(who._t_pos, ret)) {
+            if (!Chase.diag_ok(who.getPosition(), ret)) {
                 break bad;
             } else {
                 ObjectType ch = Util.winat(ret);
@@ -229,7 +230,7 @@ public class Move {
             return ret;
 
         }
-        ret = who._t_pos;
+        ret = who.getPosition();
         return ret;
     }
 
@@ -329,7 +330,7 @@ public class Move {
                 IOUtil.msg("a strange white mist envelops you and you fall asleep");
                 break;
             case Const.T_ARROW:
-                if (Fight.swing(Global.player._t_stats.s_lvl - 1, Global.player._t_stats.s_arm, 1)) {
+                if (Fight.swing(Global.player.getStatus().s_lvl - 1, Global.player.getStatus().s_arm, 1)) {
                     player.deleteHp(Dice.roll(1, 6));
                     if (player.getHp() <= 0) {
                         IOUtil.msg("an arrow killed you");
@@ -353,7 +354,7 @@ public class Move {
                 Display.mvaddch(tc, ObjectType.TRAP.getValue());
                 break;
             case Const.T_DART:
-                if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {
+                if (!Fight.swing(Global.player.getStatus().s_lvl + 1, Global.player.getStatus().s_arm, 1)) {
                     IOUtil.msg("a small dart whizzes by your ear and vanishes");
                 } else {
                     player.deleteHp(Dice.roll(1, 4));

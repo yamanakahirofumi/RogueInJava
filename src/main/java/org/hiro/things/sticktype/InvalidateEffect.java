@@ -8,8 +8,8 @@ import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
 
 public class InvalidateEffect extends Stick {
     public InvalidateEffect() {
@@ -22,7 +22,7 @@ public class InvalidateEffect extends Stick {
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
         }
-        ThingImp tp = Util.getPlace(tmp).p_monst;
+        OriginalMonster tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
             int monster = tp.getType();
             if (monster == 'F') {
@@ -31,9 +31,9 @@ public class InvalidateEffect extends Stick {
             tp.addState(StateEnum.ISCANC);
             tp.removeState(StateEnum.ISINVIS);
             tp.removeState(StateEnum.CANHUH);
-            tp._t_disguise = tp.getType();
+            tp.setDisplayTile(tp.getType());
             if (Chase.see_monst(tp)) {
-                Display.mvaddch(tmp, (char) tp._t_disguise);
+                Display.mvaddch(tmp, (char) tp.getDisplayTile());
             }
         }
         this.use();

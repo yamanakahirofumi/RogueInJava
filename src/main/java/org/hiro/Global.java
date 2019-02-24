@@ -2,6 +2,7 @@ package org.hiro;
 
 import org.hiro.map.Coordinate;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Ring;
 import org.hiro.things.ScrollEnum;
@@ -120,7 +121,7 @@ public class Global {
     static String fruit = "slime-mold";  /* Favorite fruit */
 
     public static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
-    public static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
+    public static List<OriginalMonster> mlist = new ArrayList<>();  /* List of monsters on the level */
     public static Ring cur_ring[];
     @Deprecated
     public static ThingImp player;

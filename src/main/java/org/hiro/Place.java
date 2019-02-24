@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
 
 /*
  * describe a place on the level map
@@ -9,5 +9,5 @@ import org.hiro.things.ThingImp;
 public class Place {
     public ObjectType p_ch;
     public int p_flags;  // charかも
-    public ThingImp p_monst;
+    public OriginalMonster p_monst;
 }

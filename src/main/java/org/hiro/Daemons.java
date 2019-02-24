@@ -5,6 +5,7 @@ import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.RegenerationRing;
 
@@ -42,10 +43,10 @@ public class Daemons {
          * change the monsters
          */
         boolean seemonst = Human.instance.containsState(StateEnum.SEEMONST);
-        for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos);
+        for (OriginalMonster tp : Global.mlist) {
+            Display.move(tp.getPosition());
             if (Chase.see_monst(tp)) {
-                if (tp.getType() == 'X' && tp._t_disguise != 'X') {
+                if (tp.getType() == 'X' && tp.getDisplayTile() != 'X') {
                     Display.addch(Misc.rnd_thing().getValue());
                 } else {
                     Display.addch((char) (Util.rnd(26) + 'A'));
@@ -63,9 +64,9 @@ public class Daemons {
      *	Turn off the ability to see invisible
      */
     static void unsee() {
-        for (ThingImp th : Global.mlist) {
+        for (OriginalMonster th : Global.mlist) {
             if (th.containsState(StateEnum.ISINVIS) && Chase.see_monst(th)) {
-                Display.mvaddch(th._t_pos, (char) th._t_oldch);
+                Display.mvaddch(th.getPosition(), (char) th.getFloorTile());
             }
         }
         Human.instance.removeState(StateEnum.CANSEE);
@@ -137,13 +138,13 @@ public class Daemons {
          * undo the monsters
          */
         seemonst = player.containsState(StateEnum.SEEMONST);
-        for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos);
-            if (Chase.isSee(tp._t_pos)) {
+        for (OriginalMonster tp : Global.mlist) {
+            Display.move(tp.getPosition());
+            if (Chase.isSee(tp.getPosition())) {
                 if (!tp.containsState(StateEnum.ISINVIS) || player.containsState(StateEnum.CANSEE))
-                    Display.addch((char) tp._t_disguise);
+                    Display.addch((char) tp.getDisplayTile());
                 else {
-                    Display.addch(Util.getPlace(tp._t_pos).p_ch.getValue());
+                    Display.addch(Util.getPlace(tp.getPosition()).p_ch.getValue());
                 }
             } else if (seemonst) {
                 Display.standout();
@@ -170,7 +171,7 @@ public class Daemons {
     void doctor(Player player) {
         int lv, ohp;
 
-        lv = Global.player._t_stats.s_lvl;
+        lv = Global.player.getStatus().s_lvl;
         ohp = player.getHp();
         Global.quiet++;
         if (lv < 8) {
@@ -188,7 +189,7 @@ public class Daemons {
         }
         if (ohp != player.getHp()) {
             if (player.getHp() > player.getMaxHp()) {
-                Global.player._t_stats.s_hpt = player.getMaxHp();
+                Global.player.getStatus().s_hpt = player.getMaxHp();
             }
             Global.quiet = 0;
         }

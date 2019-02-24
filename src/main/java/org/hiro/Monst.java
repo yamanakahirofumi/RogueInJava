@@ -5,7 +5,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Thing;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AggravateMonsterRing;
 import org.hiro.things.ringtype.ProtectionRing;
@@ -53,7 +53,7 @@ public class Monst {
      * new_monster:
      *	Pick a new monster and add it to the list
      */
-    public static void new_monster(ThingImp tp, int type, Coordinate cp) {
+    public static void new_monster(OriginalMonster tp, int type, Coordinate cp) {
         Monster mp;
         int lev_add;
 
@@ -62,19 +62,19 @@ public class Monst {
         }
         Global.mlist.add(tp);
         tp.setType(type);
-        tp._t_disguise = type;
-        tp._t_pos = cp;
+        tp.setDisplayTile(type);
+        tp.setPosition(cp);
         Display.move(cp); //ncursesライブラリ move()
-        tp._t_oldch = Util.CCHAR(Display.inch());
+        tp.setFloorTile(Util.CCHAR(Display.inch()));
         tp.setRoom(Chase.roomin(cp));
         Util.getPlace(cp).p_monst = tp;
         mp = Global.monsters[tp.getType() - 'A'];
-        tp._t_stats.s_lvl = mp.m_stats.s_lvl + lev_add;
-        tp._t_stats.s_maxhp = tp._t_stats.s_hpt = Dice.roll(tp._t_stats.s_lvl, 8);
-        tp._t_stats.s_arm = mp.m_stats.s_arm - lev_add;
-        tp._t_stats.s_dmg = mp.m_stats.s_dmg; //  strcpy(tp._t_stats.s_dmg, mp.m_stats.s_dmg);
-        tp._t_stats.s_str = mp.m_stats.s_str;
-        tp._t_stats.s_exp = mp.m_stats.s_exp + lev_add * 10 + exp_add(tp);
+        tp.getStatus().s_lvl = mp.m_stats.s_lvl + lev_add;
+        tp.getStatus().s_maxhp = tp.getStatus().s_hpt = Dice.roll(tp.getStatus().s_lvl, 8);
+        tp.getStatus().s_arm = mp.m_stats.s_arm - lev_add;
+        tp.getStatus().s_dmg = mp.m_stats.s_dmg; //  strcpy(tp._t_stats.s_dmg, mp.m_stats.s_dmg);
+        tp.getStatus().s_str = mp.m_stats.s_str;
+        tp.getStatus().s_exp = mp.m_stats.s_exp + lev_add * 10 + exp_add(tp);
         tp.setState(mp.m_flags);  // TODO:o_flagとt_flag共有を考えないと
         if (Human.instance.getLevel() > 29) {
             tp.addState(StateEnum.ISHASTE);
@@ -85,7 +85,7 @@ public class Monst {
             Chase.runto(cp);
         }
         if (type == 'X') {
-            tp._t_disguise = Misc.rnd_thing().getValue();
+            tp.setDisplayTile(Misc.rnd_thing().getValue());
         }
     }
 
@@ -93,18 +93,18 @@ public class Monst {
      * expadd:
      *	Experience to add for this monster's level/hit points
      */
-    static int exp_add(ThingImp tp) {
+    static int exp_add(OriginalMonster tp) {
         int mod;
 
-        if (tp._t_stats.s_lvl == 1) {
-            mod = tp._t_stats.s_maxhp / 8;
+        if (tp.getStatus().s_lvl == 1) {
+            mod = tp.getStatus().s_maxhp / 8;
         } else {
-            mod = tp._t_stats.s_maxhp / 6;
+            mod = tp.getStatus().s_maxhp / 6;
         }
 
-        if (tp._t_stats.s_lvl > 9) {
+        if (tp.getStatus().s_lvl > 9) {
             mod *= 20;
-        } else if (tp._t_stats.s_lvl > 6) {
+        } else if (tp.getStatus().s_lvl > 6) {
             mod *= 4;
         }
         return mod;
@@ -127,8 +127,8 @@ public class Monst {
      * wake_monster:
      *	What to do when the hero steps next to a monster
      */
-    static Thing wake_monster(int y, int x) {
-        ThingImp tp;
+    static OriginalMonster wake_monster(int y, int x) {
+        OriginalMonster tp;
         Room rp;
         int ch;
         String mname;
@@ -148,7 +148,7 @@ public class Monst {
         if (!tp.containsState(StateEnum.ISRUN) && Util.rnd(3) != 0
                 && tp.containsState(StateEnum.ISMEAN) && !tp.containsState(StateEnum.ISHELD)
                 && !StealthRing.isInclude(Human.instance.getRings()) && !Human.instance.containsState(StateEnum.ISLEVIT)) {
-            tp._t_dest = Global.player._t_pos;
+            tp.setRunPosition(Global.player._t_pos);
             tp.addState(StateEnum.ISRUN);
         }
         if (ch == 'M' && !Human.instance.containsState(StateEnum.ISBLIND) && !Human.instance.containsState(StateEnum.ISHALU)
@@ -185,9 +185,9 @@ public class Monst {
         if (tp.containsState(StateEnum.ISGREED) && !tp.containsState(StateEnum.ISRUN)) {
             tp.addState(StateEnum.ISRUN);
             if (Human.instance.getRoom().r_goldval != 0) {
-                tp._t_dest = Human.instance.getRoom().r_gold;
+                tp.setRunPosition(Human.instance.getRoom().r_gold);
             } else {
-                tp._t_dest = Global.player._t_pos;
+                tp.setRunPosition( Global.player._t_pos);
             }
         }
         return tp;
@@ -215,10 +215,10 @@ public class Monst {
      * save_throw:
      *	See if a creature save against something
      */
-    public static boolean save_throw(int which, ThingImp tp) {
+    public static boolean save_throw(int which, OriginalMonster tp) {
         int need;
 
-        need = 14 + which - tp._t_stats.s_lvl / 2;
+        need = 14 + which - tp.getStatus().s_lvl / 2;
         return (Dice.roll(1, 20) >= need);
     }
 

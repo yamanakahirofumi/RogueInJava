@@ -82,7 +82,7 @@ public class Util {
     public static ObjectType winat(AbstractCoordinate coordinate) {
         Place place = getPlace(coordinate);
         if (place.p_monst != null) {
-            return ObjectType.get((char) place.p_monst._t_disguise);
+            return ObjectType.get((char) place.p_monst.getDisplayTile());
 
         } else {
             return place.p_ch;

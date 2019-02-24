@@ -152,7 +152,7 @@ public class Rip {
                     return;
                 }
             }
-            logmessage = OffsetDateTime.now() + " " + amount + " " + Global.whoami + " " + Global.player._t_stats.s_lvl + " ";
+            logmessage = OffsetDateTime.now() + " " + amount + " " + Global.whoami + " " + Global.player.getStatus().s_lvl + " ";
             if (flags == 0) /* dead */ {
                 ltemp = "killed by " + killname(monst, true) + " on level " + Human.instance.getLevel() + "¥n";
                 logmessage = logmessage + ltemp;

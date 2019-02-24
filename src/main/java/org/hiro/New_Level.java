@@ -6,6 +6,7 @@ import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
 
@@ -83,8 +84,8 @@ public class New_Level {
         Util.getPlace(Global.stairs).p_ch = ObjectType.STAIRS;
         Global.seenstairs = false;
 
-        for (ThingImp tp : Global.mlist) {
-            tp.setRoom(Chase.roomin(tp._t_pos));
+        for (OriginalMonster tp : Global.mlist) {
+            tp.setRoom(Chase.roomin(tp.getPosition()));
         }
 
         DrawRoom.find_floor(null, Global.player._t_pos, false, true);

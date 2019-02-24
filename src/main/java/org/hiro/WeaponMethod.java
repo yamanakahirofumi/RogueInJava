@@ -64,7 +64,7 @@ public class WeaponMethod {
             obj._o_pos = fpos;
             if (Chase.isSee(fpos)) {
                 if (pp.p_monst != null) {
-                    pp.p_monst._t_oldch = obj.getDisplay().getValue();
+                    pp.p_monst.setFloorTile(obj.getDisplay().getValue());
                 } else
                     Display.mvaddch(fpos, obj.getDisplay().getValue());
             }

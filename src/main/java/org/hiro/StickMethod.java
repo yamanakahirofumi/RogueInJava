@@ -5,9 +5,9 @@ import org.hiro.character.Player;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 
@@ -97,7 +97,7 @@ public class StickMethod {
             pos = dir.add(pos);
             c1 = pos;
             ObjectType ch = Util.winat(pos);
-            ThingImp tp;
+            OriginalMonster tp;
             switch (ch) {
                 case DOOR:
                     /*
@@ -110,7 +110,7 @@ public class StickMethod {
                         if (!hit_hero && (tp = Util.getPlace(pos).p_monst) != null) {
                             hit_hero = true;
                             changed = !changed;
-                            tp._t_oldch = Util.getPlace(pos).p_ch.getValue();
+                            tp.setFloorTile(Util.getPlace(pos).p_ch.getValue());
                             if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                                 bolt._o_pos = pos;
                                 used = true;
@@ -122,7 +122,7 @@ public class StickMethod {
                                     IOUtil.endmsg();
                                 } else
                                     WeaponMethod.hit_monster(pos, bolt);
-                            } else if (ch.getValue() != 'M' || tp._t_disguise == 'M') {
+                            } else if (ch.getValue() != 'M' || tp.getDisplayTile() == 'M') {
                                 if (Global.player._t_pos.equals(start))
                                     Chase.runto(pos);
                                 if (Global.terse) {
@@ -173,7 +173,7 @@ public class StickMethod {
                     if (!hit_hero && (tp = Util.getPlace(pos).p_monst) != null) {
                         hit_hero = true;
                         changed = !changed;
-                        tp._t_oldch = Util.getPlace(pos).p_ch.getValue();
+                        tp.setFloorTile(Util.getPlace(pos).p_ch.getValue());
                         if (!Monst.save_throw(Const.VS_MAGIC, tp)) {
                             bolt._o_pos = pos;
                             used = true;
@@ -185,7 +185,7 @@ public class StickMethod {
                                 IOUtil.endmsg();
                             } else
                                 WeaponMethod.hit_monster(pos, bolt);
-                        } else if (ch.getValue() != 'M' || tp._t_disguise == 'M') {
+                        } else if (ch.getValue() != 'M' || tp.getDisplayTile() == 'M') {
                             if (Global.player._t_pos.equals(start))
                                 Chase.runto(pos);
                             if (Global.terse) {
