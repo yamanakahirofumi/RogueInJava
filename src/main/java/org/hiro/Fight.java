@@ -196,20 +196,18 @@ public class Fight {
         /*
          * If the monster was a venus flytrap, un-hold him
          */
-        switch (tp.getType()) {
-            case 'F':
-                Human.instance.removeState(StateEnum.ISHELD);
-                Global.vf_hit = 0;
-                break;
-            case 'L': {
-                if (WeaponMethod.fallpos(tp.getPosition(), tp.getRoom().r_gold) && Human.instance.getLevel() >= Global.max_level) {
-                    Gold gold = new Gold(Human.instance.getLevel());
-                    if (Monst.save(Const.VS_MAGIC)) {
-                        gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
-                    }
-                    tp.addItem(gold);
+        if (tp.getType() == 'F') {
+            Human.instance.removeState(StateEnum.ISHELD);
+            Global.vf_hit = 0;
+        } else if (tp.getType() == 'L') {
+            if (WeaponMethod.fallpos(tp.getPosition(), tp.getRoom().r_gold) && Human.instance.getLevel() >= Global.max_level) {
+                Gold gold = new Gold(Human.instance.getLevel());
+                if (Monst.save(Const.VS_MAGIC)) {
+                    gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
                 }
+                tp.addItem(gold);
             }
+
         }
         /*
          * Get rid of the monster.
@@ -245,7 +243,7 @@ public class Fight {
     static void remove_mon(Coordinate mp, OriginalMonster tp, boolean waskill) {
         ThingImp nexti;
 
-        for (ThingImp obj : tp.getBaggage()){
+        for (ThingImp obj : tp.getBaggage()) {
             obj._o_pos = tp.getPosition();
             tp.removeItem(obj);
             if (waskill) {
@@ -361,7 +359,7 @@ public class Fight {
                 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6
         };
         boolean did_hit = false;
-        int hplus= 0;
+        int hplus = 0;
         int dplus = 0;
 
         Stats att = thatt.getStatus();
@@ -373,14 +371,14 @@ public class Fight {
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
                 if (Global.cur_ring[Const.LEFT] instanceof AddDamageRing) {
-                    dplus += ((AddDamageRing)Global.cur_ring[Const.LEFT]).getDamage();
+                    dplus += ((AddDamageRing) Global.cur_ring[Const.LEFT]).getDamage();
                 } else if (Global.cur_ring[Const.LEFT] instanceof DexterityRing) {
-                    hplus += ((DexterityRing)Global.cur_ring[Const.LEFT]).getDexterity();
+                    hplus += ((DexterityRing) Global.cur_ring[Const.LEFT]).getDexterity();
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddDamageRing) {
-                    dplus += ((AddDamageRing)Global.cur_ring[Const.RIGHT]).getDamage();
+                    dplus += ((AddDamageRing) Global.cur_ring[Const.RIGHT]).getDamage();
                 } else if (Global.cur_ring[Const.RIGHT] instanceof DexterityRing) {
-                    hplus += ((DexterityRing)Global.cur_ring[Const.RIGHT]).getDexterity();
+                    hplus += ((DexterityRing) Global.cur_ring[Const.RIGHT]).getDexterity();
                 }
             }
             cp = weap.getDamage();
@@ -407,10 +405,10 @@ public class Fight {
                 def_arm = Human.instance.getArmor().getDefence();
             }
             if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing) {
-                def_arm -= ((ProtectionRing)Global.cur_ring[Const.LEFT]).getDefence();
+                def_arm -= ((ProtectionRing) Global.cur_ring[Const.LEFT]).getDefence();
             }
             if (Global.cur_ring[Const.RIGHT] instanceof ProtectionRing) {
-                def_arm -= ((ProtectionRing)Global.cur_ring[Const.RIGHT]).getDefence();
+                def_arm -= ((ProtectionRing) Global.cur_ring[Const.RIGHT]).getDefence();
             }
         }
         boolean MASTER = false;
