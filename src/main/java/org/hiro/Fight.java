@@ -241,7 +241,6 @@ public class Fight {
      *	Remove a monster from the screen
      */
     static void remove_mon(Coordinate mp, OriginalMonster tp, boolean waskill) {
-        ThingImp nexti;
 
         for (ThingImp obj : tp.getBaggage()) {
             obj._o_pos = tp.getPosition();

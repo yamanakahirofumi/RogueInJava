@@ -85,7 +85,6 @@ public class Misc {
      */
     static void look(boolean wakeup) {
         boolean DEBUG = false;
-        int passcount;
         if (DEBUG) {
             boolean done = false;
 
@@ -94,7 +93,7 @@ public class Misc {
             }
             done = true;
         } /* DEBUG */
-        passcount = 0;
+        int passcount = 0;
         Room rp = Human.instance.getRoom();
         if (!Global.oldpos.equals(Global.player._t_pos)) {
             erase_lamp(Global.oldpos, Global.oldrp);
