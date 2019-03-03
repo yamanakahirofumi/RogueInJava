@@ -11,10 +11,9 @@ import org.hiro.things.Magic;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
 import org.hiro.things.StickEnum;
-import org.hiro.things.ThingImp;
 
 public class MagicMissile extends Stick {
-    public MagicMissile(){
+    public MagicMissile() {
         super();
     }
 

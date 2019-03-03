@@ -42,9 +42,6 @@ public class Move {
      * consequences (fighting, picking up, etc.)
      */
     public static void do_move(Player player, int dy, int dx) {
-        ObjectType ch;
-        char fl;
-        Coordinate nh = new Coordinate();
 
         Global.firstmove = false;
         if (Global.no_move != 0) {
@@ -52,6 +49,7 @@ public class Move {
             IOUtil.msg("you are still stuck in the bear trap");
             return;
         }
+        Coordinate nh = new Coordinate();
         /*
          * Do a confused move (maybe)
          */
@@ -83,6 +81,8 @@ public class Move {
         if (Global.running && Global.player._t_pos.equals(nh)) {
             Global.after = Global.running = false;
         }
+        ObjectType ch;
+        char fl;
         fl = (char) Util.flat(nh);
         ch = Util.winat(nh);
         if ((fl & Const.F_REAL) == 0 && ch == ObjectType.FLOOR) {
@@ -322,6 +322,8 @@ public class Move {
                         break;
                     case 10:
                         // IOUtil.msg("you pack turns %s!", rainbow[rnd(cNCOLORS)]);
+                    default:
+                        break;
                 }
                 break;
             case Const.T_SLEEP:
