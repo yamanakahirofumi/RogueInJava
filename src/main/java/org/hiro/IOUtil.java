@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -159,7 +160,7 @@ public class IOUtil {
         // ch = Mdport.md_readchar(stdscr);
 
         if (ch == 3) {
-            Main2.quit(0);
+            Main2.quit(Human.instance, 0);
             return (27);
         }
 

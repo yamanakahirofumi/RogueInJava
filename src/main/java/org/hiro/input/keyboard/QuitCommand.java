@@ -10,7 +10,7 @@ public class QuitCommand implements KeyboardCommand {
     public void execute(Player player) {
         Global.after = false;
         Global.q_comm = true;
-        Main2.quit(0);
+        Main2.quit(player,0);
         Global.q_comm = false;
     }
 }

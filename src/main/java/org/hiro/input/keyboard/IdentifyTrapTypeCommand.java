@@ -5,7 +5,6 @@ import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Misc;
 import org.hiro.Util;
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.things.ObjectType;
@@ -23,7 +22,7 @@ public class IdentifyTrapTypeCommand implements KeyboardCommand {
             }
             if (Util.getPlace(Global.delta).p_ch != ObjectType.TRAP) {
                 IOUtil.msg("no trap there");
-            } else if (Human.instance.containsState(StateEnum.ISHALU)) {
+            } else if (player.containsState(StateEnum.ISHALU)) {
                 IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
             } else {
                 IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
