@@ -7,7 +7,6 @@ import org.hiro.New_Level;
 import org.hiro.Pack;
 import org.hiro.Potions;
 import org.hiro.Wizard;
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.output.Display;
@@ -37,7 +36,7 @@ public class DefaultCommand implements KeyboardCommand {
                     // create_obj(); //TODO: 後で
                     break;
                 case '$':
-                    IOUtil.msg("inpack = %d", Human.instance.getBaggageSize());
+                    IOUtil.msg("inpack = %d", player.getBaggageSize());
                     break;
                 case ('G' & 037):
                     Pack.inventory(Global.lvl_obj, ObjectType.Initial);
@@ -46,12 +45,12 @@ public class DefaultCommand implements KeyboardCommand {
                     Wizard.whatis(false, 0);
                     break;
                 case ('D' & 037):
-                    Human.instance.upstairs();
-                    New_Level.new_level(Human.instance);
+                    player.upstairs();
+                    New_Level.new_level(player);
                     break;
                 case ('A' & 037):
-                    Human.instance.downstairs();
-                    New_Level.new_level(Human.instance);
+                    player.downstairs();
+                    New_Level.new_level(player);
                     break;
                 case ('F' & 037):
                     // show_map(); // TODO: 後で
@@ -66,34 +65,30 @@ public class DefaultCommand implements KeyboardCommand {
                     // add_pass();  // TODO: 後で
                     break;
                 case ('X' & 037):
-                    Potions.turn_see(Human.instance.containsState(StateEnum.SEEMONST));
+                    Potions.turn_see(player.containsState(StateEnum.SEEMONST));
                     break;
-                case '~': {
+                case '~':
                     Thing item;
                     if ((item = Pack.get_item("charge", ObjectType.STICK)) != null) {
                         ((Stick) item).setTimes(10000);
                     }
-                }
-                break;
+                    break;
                 case ('I' & 037): {
-                    int i;
-                    Weapon obj;
-
-                    for (i = 0; i < 9; i++) {
+                    for (int i = 0; i < 9; i++) {
                         Potions.raise_level();
                     }
                     /*
                      * Give him a sword (+1,+1)
                      */
-                    obj = new Weapon(WeaponEnum.TWOSWORD, 1);
+                    Weapon obj = new Weapon(WeaponEnum.TWOSWORD, 1);
                     obj.addDamagePlus();
                     Pack.add_pack(obj, true);
-                    Human.instance.putOnWeapon(obj);
+                    player.putOnWeapon(obj);
                     /*
                      * And his suit of armor
                      */
                     Armor armor = new Armor(ArmorEnum.PLATE_MAIL, -5, Const.ISKNOW);
-                    Human.instance.putOnArmor(armor);
+                    player.putOnArmor(armor);
                     Pack.add_pack(armor, true);
                 }
                 break;
