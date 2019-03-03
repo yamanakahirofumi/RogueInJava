@@ -27,8 +27,8 @@ public class CreateMonster extends Scroll {
         int i = 0;
         Coordinate mp = new Coordinate();
         ObjectType cho;
-        for (int y = Global.player._t_pos.y - 1; y <= Global.player._t_pos.y + 1; y++) {
-            for (int x = Global.player._t_pos.x - 1; x <= Global.player._t_pos.x + 1; x++) {
+        for (int y = player.getPositionY() - 1; y <= player.getPositionY() + 1; y++) {
+            for (int x = player.getPositionX() - 1; x <= player.getPositionX() + 1; x++) {
                 Coordinate tmp = new Coordinate(x, y);
                 /*
                  * Don't put a monster in top of the player.

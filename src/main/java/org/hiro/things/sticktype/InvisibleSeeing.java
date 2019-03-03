@@ -28,7 +28,7 @@ public class InvisibleSeeing extends Stick {
                 player.removeState(StateEnum.ISHELD);
             }
             tp.addState(StateEnum.ISINVIS);
-            if (Chase.isSee(tmp)) {
+            if (Chase.isSee(player, tmp)) {
                 Display.mvaddch(tmp, (char) tp.getFloorTile());
             }
 

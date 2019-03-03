@@ -26,12 +26,19 @@ public class Coordinate implements AbstractCoordinate {
         this.y = c.y;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
+    }
+
+    @Override
+    public int getZ() {
+        return 0;
     }
 
     @Override

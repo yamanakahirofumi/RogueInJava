@@ -26,6 +26,9 @@ public interface Player {
      */
     AbstractCoordinate getPosition();
 
+    int getPositionX();
+    int getPositionY();
+
     void setPosition(AbstractCoordinate position);
 
     Room getRoom();

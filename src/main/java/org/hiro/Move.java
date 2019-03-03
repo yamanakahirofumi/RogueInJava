@@ -105,8 +105,8 @@ public class Move {
                     switch (Global.runch) {
                         case 'h':
                         case 'l':
-                            b1 = (Global.player._t_pos.y != 1 && turn_ok(Global.player._t_pos.y - 1, Global.player._t_pos.x));
-                            b2 = (Global.player._t_pos.y != Const.NUMLINES - 2 && turn_ok(Global.player._t_pos.y + 1, Global.player._t_pos.x));
+                            b1 = (player.getPositionY() != 1 && turn_ok(player.getPositionY() - 1, player.getPositionX()));
+                            b2 = (player.getPositionY() != Const.NUMLINES - 2 && turn_ok(player.getPositionY() + 1, player.getPositionX()));
                             if (b1 == b2) {
                                 break;
                             }
@@ -121,8 +121,8 @@ public class Move {
                             turnref();
                         case 'j':
                         case 'k':
-                            b1 = (Global.player._t_pos.x != 0 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x - 1));
-                            b2 = (Global.player._t_pos.x != Const.NUMCOLS - 1 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x + 1));
+                            b1 = (player.getPositionX() != 0 && turn_ok(player.getPositionY(), player.getPositionX() - 1));
+                            b2 = (player.getPositionX() != Const.NUMCOLS - 1 && turn_ok(player.getPositionY(), player.getPositionX() + 1));
                             if (b1 == b2) {
                                 break;
                             }

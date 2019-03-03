@@ -169,7 +169,7 @@ public class Potions {
                         turn_see(false);
                     }
                     try {
-                        Method m = Daemons.class.getMethod("visuals");
+                        Method m = Daemons.class.getMethod("visuals", Player.class);
                         Daemon.start_daemon(m, 0, Const.BEFORE);
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();

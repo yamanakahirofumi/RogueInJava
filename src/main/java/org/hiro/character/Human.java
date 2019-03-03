@@ -78,6 +78,16 @@ public class Human implements Player {
     }
 
     @Override
+    public int getPositionX() {
+        return this.position.getX();
+    }
+
+    @Override
+    public int getPositionY() {
+        return this.position.getY();
+    }
+
+    @Override
     public void setPosition(AbstractCoordinate position) {
         this.position = position;
     }

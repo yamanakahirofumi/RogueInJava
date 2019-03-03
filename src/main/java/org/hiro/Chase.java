@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
@@ -117,9 +118,9 @@ public class Chase {
         int y = mp.getPosition().y;
         int x = mp.getPosition().x;
         if (dist_cp(mp.getPosition(), Global.player._t_pos) < Const.LAMPDIST) {
-            return y == Global.player._t_pos.y || x == Global.player._t_pos.x
-                    || IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch)
-                    || IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch);
+            return y == Human.instance.getPositionY() || x == Human.instance.getPositionX()
+                    || IOUtil.step_ok(Util.INDEX(y, Human.instance.getPositionX()).p_ch)
+                    || IOUtil.step_ok(Util.INDEX(Human.instance.getPositionY(), x).p_ch);
         }
         if (!mp.getRoom().equals(Human.instance.getRoom())) {
             return false;
@@ -143,15 +144,15 @@ public class Chase {
      * 昔はcan_see()
      *	Returns true if the hero can see a certain coordinate.
      */
-    public static boolean isSee(Coordinate c) {
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+    public static boolean isSee(Player player, Coordinate c) {
+        if (player.containsState(StateEnum.ISBLIND)) {
             return false;
         }
         if (dist_cp(c, Global.player._t_pos) < Const.LAMPDIST) {
             if ((Util.flat(c) & Const.F_PASS) != 0) {
-                return c.y == Global.player._t_pos.y || c.x == Global.player._t_pos.x ||
-                        IOUtil.step_ok(Util.INDEX(c.y, Global.player._t_pos.x).p_ch) ||
-                        IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, c.x).p_ch);
+                return c.y == player.getPositionY() || c.x == player.getPositionX() ||
+                        IOUtil.step_ok(Util.INDEX(c.y, player.getPositionX()).p_ch) ||
+                        IOUtil.step_ok(Util.INDEX(player.getPositionY(), c.x).p_ch);
             }
         }
         /*
@@ -335,12 +336,12 @@ public class Chase {
                  * line from it, and (b) that it is within shooting distance,
                  * but outside of striking range.
                  */
-                if (th.getType() == 'D' && (th.getPosition().y == Global.player._t_pos.y || th.getPosition().x == Global.player._t_pos.x
-                        || Math.abs(th.getPosition().y - Global.player._t_pos.y) == Math.abs(th.getPosition().x - Global.player._t_pos.x))
+                if (th.getType() == 'D' && (th.getPosition().y == Human.instance.getPositionY() || th.getPosition().x == Human.instance.getPositionX()
+                        || Math.abs(th.getPosition().y - Human.instance.getPositionY()) == Math.abs(th.getPosition().x - Human.instance.getPositionX()))
                         && dist_cp(th.getPosition(), Global.player._t_pos) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
                         && !th.containsState(StateEnum.ISCANC) && Util.rnd(DRAGONSHOT) == 0) {
-                    Global.delta = new Coordinate(Misc.sign(Global.player._t_pos.x - th.getPosition().x),
-                            Misc.sign(Global.player._t_pos.y - th.getPosition().y));
+                    Global.delta = new Coordinate(Misc.sign(Human.instance.getPositionX() - th.getPosition().x),
+                            Misc.sign(Human.instance.getPositionY() - th.getPosition().y));
                     if (Global.has_hit) {
                         IOUtil.endmsg();
                     }

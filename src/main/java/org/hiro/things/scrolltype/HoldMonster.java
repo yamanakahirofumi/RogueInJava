@@ -23,9 +23,9 @@ public class HoldMonster extends Scroll {
          */
 
         int ch = 0;
-        for (int x = Global.player._t_pos.x - 2; x <= Global.player._t_pos.x + 2; x++) {
+        for (int x = player.getPositionX() - 2; x <= player.getPositionX() + 2; x++) {
             if (x >= 0 && x < Const.NUMCOLS) {
-                for (int y = Global.player._t_pos.y - 2; y <= Global.player._t_pos.y + 2; y++) {
+                for (int y = player.getPositionY() - 2; y <= player.getPositionY() + 2; y++) {
                     if (y >= 0 && y <= Const.NUMLINES - 1) {
                         OriginalMonster obj2 = Util.INDEX(y, x).p_monst;
                         if (obj2  != null && obj2.containsState(StateEnum.ISRUN)) {

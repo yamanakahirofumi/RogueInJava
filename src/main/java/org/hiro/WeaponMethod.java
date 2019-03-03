@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
@@ -62,7 +63,7 @@ public class WeaponMethod {
             Place pp = Util.getPlace(fpos);
             pp.p_ch = obj.getDisplay();
             obj._o_pos = fpos;
-            if (Chase.isSee(fpos)) {
+            if (Chase.isSee(Human.instance, fpos)) {
                 if (pp.p_monst != null) {
                     pp.p_monst.setFloorTile(obj.getDisplay().getValue());
                 } else
@@ -131,7 +132,7 @@ public class WeaponMethod {
             /*
              * Erase the old one
              */
-            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.isSee(obj._o_pos) && !Global.terse) {
+            if (!obj._o_pos.equals(Global.player._t_pos) && Chase.isSee(Human.instance, obj._o_pos) && !Global.terse) {
                 ch = Util.getPlace(obj._o_pos).p_ch;
                 if (ch == ObjectType.FLOOR && !Misc.show_floor())
                     ch = ObjectType.Blank;
@@ -149,7 +150,7 @@ public class WeaponMethod {
                  * It hasn't hit anything yet, so display it
                  * If it alright.
                  */
-                if (Chase.isSee(obj._o_pos) && !Global.terse) {
+                if (Chase.isSee(Human.instance, obj._o_pos) && !Global.terse) {
                     Display.mvaddch(obj._o_pos, obj.getDisplay().getValue());
                     Display.refresh();
                 }

@@ -80,4 +80,19 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
         result.add(new TwoDimensionsCoordinate(this.x + 1, this.y + 1));
         return result;
     }
+
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public int getZ() {
+        return 0;
+    }
 }

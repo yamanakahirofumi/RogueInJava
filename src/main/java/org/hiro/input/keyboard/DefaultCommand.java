@@ -30,7 +30,7 @@ public class DefaultCommand implements KeyboardCommand {
         if (Global.wizard) {
             switch (ch) {
                 case '|':
-                    IOUtil.msg("@ %d,%d", String.valueOf(Global.player._t_pos.y), String.valueOf(Global.player._t_pos.x));
+                    IOUtil.msg("@ %d,%d", String.valueOf(player.getPositionY()), String.valueOf(player.getPositionX()));
                     break;
                 case 'C':
                     // create_obj(); //TODO: 後で

@@ -84,6 +84,7 @@ public class Misc {
      *	A quick glance all around the player
      */
     static void look(boolean wakeup) {
+        Player player = Human.instance;
         boolean DEBUG = false;
         if (DEBUG) {
             boolean done = false;
@@ -94,21 +95,21 @@ public class Misc {
             done = true;
         } /* DEBUG */
         int passcount = 0;
-        Room rp = Human.instance.getRoom();
+        Room rp = player.getRoom();
         if (!Global.oldpos.equals(Global.player._t_pos)) {
             erase_lamp(Global.oldpos, Global.oldrp);
             Global.oldpos = Global.player._t_pos;
             Global.oldrp = rp;
         }
-        int ey = Global.player._t_pos.y + 1;
-        int ex = Global.player._t_pos.x + 1;
-        int sx = Global.player._t_pos.x - 1;
-        int sy = Global.player._t_pos.y - 1;
+        int ey = player.getPositionY() + 1;
+        int ex = player.getPositionX() + 1;
+        int sx = player.getPositionX() - 1;
+        int sy = player.getPositionY() - 1;
         int sumhero = 0;
         int diffhero = 0;
         if (Global.door_stop && !Global.firstmove && Global.running) {
-            sumhero = Global.player._t_pos.y + Global.player._t_pos.x;
-            diffhero = Global.player._t_pos.y - Global.player._t_pos.x;
+            sumhero = player.getPositionY() + player.getPositionX();
+            diffhero = player.getPositionY() - player.getPositionX();
         }
         Place pp = Util.getPlace(Global.player._t_pos);
         ObjectType pch = pp.p_ch;
@@ -141,9 +142,9 @@ public class Misc {
                     }
                     if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
                             ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
-                        if (Global.player._t_pos.x != x && Global.player._t_pos.y != y &&
-                                !IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch) &&
-                                !IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch)) {
+                        if (player.getPositionX() != x && player.getPositionY() != y &&
+                                !IOUtil.step_ok(Util.INDEX(y, player.getPositionX()).p_ch) &&
+                                !IOUtil.step_ok(Util.INDEX(player.getPositionY(), x).p_ch)) {
                             continue;
                         }
                     }
@@ -225,12 +226,12 @@ public class Misc {
                         }
                         switch (ch) {
                             case DOOR:
-                                if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
+                                if (x == player.getPositionX() || y == player.getPositionY()) {
                                     Global.running = false;
                                 }
                                 break;
                             case PASSAGE:
-                                if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
+                                if (x == player.getPositionX() || y == player.getPositionY()) {
                                     passcount++;
                                 }
                                 break;

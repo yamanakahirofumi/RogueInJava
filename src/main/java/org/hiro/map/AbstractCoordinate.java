@@ -10,4 +10,7 @@ public interface AbstractCoordinate {
     public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size);
     public AbstractCoordinate add(AbstractCoordinate co0rdinate);
     public List<AbstractCoordinate> near();
+    int getX();
+    int getY();
+    int getZ();
 }
