@@ -4,7 +4,6 @@ import org.hiro.Global;
 import org.hiro.Misc;
 import org.hiro.Pack;
 import org.hiro.StickMethod;
-import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.input.keyboard.KeyboardCommand;
 import org.hiro.things.ObjectType;
@@ -16,7 +15,7 @@ public class ZapWandCommand implements KeyboardCommand {
     public void execute(Player player) {
         if (Misc.get_dir()) {
             Thing obj = Pack.get_item("zap with", ObjectType.STICK);
-            StickMethod.do_zap(Human.instance, obj);
+            StickMethod.do_zap(player, obj);
         } else {
             Global.after = false;
         }
