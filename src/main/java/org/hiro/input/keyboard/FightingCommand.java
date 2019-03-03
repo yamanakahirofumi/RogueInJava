@@ -6,13 +6,14 @@ import org.hiro.IOUtil;
 import org.hiro.Misc;
 import org.hiro.Util;
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.things.OriginalMonster;
 
 public class FightingCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         int ch;
         if (!Misc.get_dir()) {
             Global.after = false;

@@ -13,7 +13,7 @@ import org.hiro.things.ObjectType;
 public class DownFloorCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         Player player = Human.instance;
         Global.after = false;
         if (Command.levit_check(player)) {

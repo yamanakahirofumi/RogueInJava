@@ -245,7 +245,7 @@ public class Command {
 
                 // overで繰り返したい
                 if (commander.containsKey(ch)) {
-                    commander.get(ch).execute();
+                    commander.get(ch).execute(Human.instance);
                 } else {
                     // デフォルト処理
                     DefaultCommand defaultCommand = new DefaultCommand();

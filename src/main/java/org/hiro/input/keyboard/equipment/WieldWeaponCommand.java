@@ -2,12 +2,13 @@ package org.hiro.input.keyboard.equipment;
 
 import org.hiro.WeaponMethod;
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.input.keyboard.KeyboardCommand;
 
 public class WieldWeaponCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         WeaponMethod.wield(Human.instance);
     }
 }

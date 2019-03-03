@@ -3,14 +3,14 @@ package org.hiro.input.keyboard;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.ThingMethod;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 
 public class DropCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         if(ThingMethod.dropCheck()){
-            ThingMethod.drop(Human.instance);
+            ThingMethod.drop(player);
         }else {
             Global.after = false;
             IOUtil.msg("there is something there already");

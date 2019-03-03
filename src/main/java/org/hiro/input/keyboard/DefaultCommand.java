@@ -21,7 +21,7 @@ import org.hiro.things.WeaponEnum;
 public class DefaultCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
     }
 
     public void execute(Player player, int ch) {

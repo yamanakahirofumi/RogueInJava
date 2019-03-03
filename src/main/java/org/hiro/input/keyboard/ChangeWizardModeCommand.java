@@ -3,11 +3,12 @@ package org.hiro.input.keyboard;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Potions;
+import org.hiro.character.Player;
 
 public class ChangeWizardModeCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         Global.after = false;
         if (Global.wizard) {
             Global.wizard = false;
