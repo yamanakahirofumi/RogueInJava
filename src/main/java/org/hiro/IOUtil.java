@@ -258,7 +258,6 @@ public class IOUtil {
         Display.clrtoeol();
         Global.mpos = 0;
         Display.refresh();
-        return;
     }
 
 //    int wreadchar(WINDOW *win) {
