@@ -13,7 +13,7 @@ public class ElectricBolt extends Stick {
 
     @Override
     public void shake(Player player){
-        StickMethod.fire_bolt(Global.player._t_pos, Global.delta, "bolt");
+        StickMethod.fire_bolt(player.getPosition(), Global.delta, "bolt");
         Global.ws_info[StickEnum.ElectricBolt.getValue()].know();
         this.use();
     }

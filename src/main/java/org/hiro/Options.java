@@ -246,12 +246,12 @@ public class Options {
         was_sf = Global.see_floor;
         retval = get_bool(bp);
         if (retval == Const.QUIT || retval == Const.MINUS) {
-            return (retval);
+            return retval;
         }
         if (was_sf != Global.see_floor) {
             if (!Global.see_floor) {
                 Global.see_floor = true;
-                Misc.erase_lamp(Global.player._t_pos, Human.instance.getRoom());
+                Misc.erase_lamp(Human.instance.getPosition(), Human.instance.getRoom());
                 Global.see_floor = false;
             } else
                 Misc.look(false);

@@ -5,15 +5,15 @@ import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Pack;
 import org.hiro.character.Player;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 
 public class PickUpCommand implements KeyboardCommand {
 
     @Override
     public void execute(Player player) {
         int found = 0;
-        for (ThingImp obj : Global.lvl_obj) {
-            if (Global.player._t_pos.equals(obj._o_pos)) {
+        for (Thing obj : Global.lvl_obj) {
+            if (player.getPosition().equals(obj.getOPos())) {
                 found = 1;
                 break;
             }

@@ -18,7 +18,7 @@ public class FightingCommand implements KeyboardCommand {
             Global.after = false;
             return;
         }
-        Global.delta = Global.player._t_pos.add(Global.delta);
+        Global.delta = player.getPosition().add(Global.delta);
         OriginalMonster mp = Util.getPlace(Global.delta).p_monst;
         if (mp == null || (!Chase.see_monst(mp) && !player.containsState(StateEnum.SEEMONST))) {
             if (!Global.terse) {
@@ -26,7 +26,7 @@ public class FightingCommand implements KeyboardCommand {
             }
             IOUtil.msg("no monster there");
             Global.after = false;
-        } else if (Chase.diag_ok(Global.player._t_pos, Global.delta)) {
+        } else if (Chase.diag_ok(player.getPosition(), Global.delta)) {
             Global.to_death = true;
             Global.max_hit = 0;
             mp.addState(StateEnum.ISTARGET);

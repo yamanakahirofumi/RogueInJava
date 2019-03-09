@@ -7,12 +7,13 @@ import org.hiro.Monst;
 import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
 import org.hiro.things.StickEnum;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ChangeMonster extends Stick {
 
     @Override
     public void shake(Player player) {
-        Coordinate tmp = new Coordinate(Global.player._t_pos);
+        AbstractCoordinate tmp = player.getPosition();
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = tmp.add(Global.delta);
         }
@@ -33,7 +34,7 @@ public class ChangeMonster extends Stick {
             if (monster == 'F') {
                 player.removeState(StateEnum.ISHELD);
             }
-            List<ThingImp> pp = tp.getBaggage();
+            List<Thing> pp = tp.getBaggage();
             Global.mlist.remove(tp);
             if (Chase.see_monst(tp)) {
                 Display.mvaddch(tmp, Util.getPlace(tmp).p_ch.getValue());

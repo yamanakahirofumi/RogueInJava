@@ -2,12 +2,13 @@ package org.hiro;
 
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 import org.hiro.things.OriginalMonster;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 import org.hiro.things.ringtype.SustainStrengthRing;
@@ -26,8 +27,8 @@ public class Move {
 
     static void door_open(Room rp) {
         if (!rp.containInfo(RoomInfoEnum.ISGONE)) {
-            for (int y = rp.r_pos.y; y < rp.r_pos.y + rp.r_max.y; y++) {
-                for (int x = rp.r_pos.x; x < rp.r_pos.x + rp.r_max.x; x++) {
+            for (int y = rp.r_pos.getY(); y < rp.r_pos.getY() + rp.r_max.getY(); y++) {
+                for (int x = rp.r_pos.getX(); x < rp.r_pos.getX() + rp.r_max.getX(); x++) {
                     if (Character.isUpperCase(Util.winat(new Coordinate(x, y)).getValue())) {
                         Monst.wake_monster(y, x);
                     }
@@ -49,13 +50,13 @@ public class Move {
             IOUtil.msg("you are still stuck in the bear trap");
             return;
         }
-        Coordinate nh = new Coordinate();
+        AbstractCoordinate nh = new Coordinate();
         /*
          * Do a confused move (maybe)
          */
         if (player.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
             nh = rndmove(Global.player);
-            if (nh.equals(Global.player._t_pos)) {
+            if (nh.equals(player.getPosition())) {
                 Global.after = false;
                 Global.running = false;
                 Global.to_death = false;
@@ -63,22 +64,22 @@ public class Move {
             }
         } else {
             over:
-            nh = Global.player._t_pos.add(new Coordinate(dx, dy));
+            nh = player.getPosition().add(new Coordinate(dx, dy));
         }
 
         /*
          * Check if he tried to move off the screen or make an illegal
          * diagonal move, and stop him if he did.
          */
-        if (nh.x < 0 || nh.x >= Const.NUMCOLS || nh.y <= 0 || nh.y >= Const.NUMLINES - 1) {
+        if (nh.getX() < 0 || nh.getX() >= Const.NUMCOLS || nh.getY() <= 0 || nh.getY() >= Const.NUMLINES - 1) {
             // goto hit_bound;
         }
-        if (!Chase.diag_ok(Global.player._t_pos, nh)) {
+        if (!Chase.diag_ok(player.getPosition(), nh)) {
             Global.after = false;
             Global.running = false;
             return;
         }
-        if (Global.running && Global.player._t_pos.equals(nh)) {
+        if (Global.running && player.getPosition().equals(nh)) {
             Global.after = Global.running = false;
         }
         ObjectType ch;
@@ -143,7 +144,7 @@ public class Move {
                 break;
             case DOOR:
                 Global.running = false;
-                if ((Util.flat(Global.player._t_pos) & Const.F_PASS) != 0) {
+                if ((Util.flat(player.getPosition()) & Const.F_PASS) != 0) {
                     Rooms.enter_room(nh);
                 }
                 move_stuff(fl, nh);
@@ -160,11 +161,11 @@ public class Move {
                  * if you're leaving a maze room, so it is necessary to
                  * always recalculate proom.
                  */
-                player.setRoom(Chase.roomin(Global.player._t_pos));
+                player.setRoom(Chase.roomin(player.getPosition()));
                 move_stuff(fl, nh);
             case FLOOR:
                 if ((fl & Const.F_REAL) == 0) {
-                    be_trapped(player, Global.player._t_pos);
+                    be_trapped(player, player.getPosition());
                 }
                 move_stuff(fl, nh);
             case STAIRS:
@@ -183,7 +184,7 @@ public class Move {
         }
     }
 
-    static private void move_stuff(char fl, Coordinate nh) {
+    static private void move_stuff(char fl, AbstractCoordinate nh) {
         Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         if ((fl & Const.F_PASS) != 0 && Util.getPlace(Global.oldpos).p_ch == ObjectType.DOOR) {
             Rooms.leave_room(nh);
@@ -195,8 +196,8 @@ public class Move {
      * rndmove:
      *	Move in a random direction if the monster/person is confused
      */
-    static Coordinate rndmove(OriginalMonster who) {
-        Coordinate ret = who.getPosition().add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
+    static AbstractCoordinate rndmove(OriginalMonster who) {
+        AbstractCoordinate ret = who.getPosition().add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
 
         /*
          * Now check to see if that's a legal move.  If not, don't move.
@@ -215,10 +216,10 @@ public class Move {
                     break bad;
                 }
                 if (ch.getValue() == ObjectType.SCROLL.getValue()) {
-                    ThingImp obj2 = null;
-                    for (ThingImp obj : Global.lvl_obj) {
+                    Thing obj2 = null;
+                    for (Thing obj : Global.lvl_obj) {
                         obj2 = obj;
-                        if (obj._o_pos.equals(ret)) {
+                        if (obj.getOPos().equals(ret)) {
                             break;
                         }
                     }
@@ -264,9 +265,9 @@ public class Move {
      * be_trapped:
      *	The guy stepped on a trap.... Make him pay.
      */
-    static int be_trapped(Player player, Coordinate tc) {
+    static int be_trapped(Player player, AbstractCoordinate tc) {
         Place pp;
-        ThingImp arrow;
+        Thing arrow;
         ObjectType tr;
 
         if (player.containsState(StateEnum.ISLEVIT)) {
@@ -342,7 +343,7 @@ public class Move {
                 } else {
                     arrow = new Weapon(WeaponEnum.ARROW, 0);
                     arrow.addCount(1);
-                    arrow._o_pos = Global.player._t_pos;
+                    arrow.setOPos(player.getPosition());
                     WeaponMethod.fall(arrow, false);
                     IOUtil.msg("an arrow shoots past you");
                 }

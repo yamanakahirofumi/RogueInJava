@@ -48,9 +48,6 @@ public class Armor extends ThingImp {
         return worth;
     }
 
-    /**
-     * @return
-     */
     public List<Obj_info> getTypes() {
         String filename = "armors.csv";
         return this.getTypes(filename);

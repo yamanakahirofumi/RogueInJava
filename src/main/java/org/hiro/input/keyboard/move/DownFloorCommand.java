@@ -17,7 +17,7 @@ public class DownFloorCommand implements KeyboardCommand {
         if (Command.levit_check(player)) {
             return;
         }
-        if (Util.getPlace(Global.player._t_pos).p_ch != ObjectType.STAIRS) {
+        if (Util.getPlace(player.getPosition()).p_ch != ObjectType.STAIRS) {
             IOUtil.msg("I see no way down");
         } else {
             player.upstairs();

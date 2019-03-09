@@ -42,7 +42,7 @@ public class DefaultCommand implements KeyboardCommand {
                     Pack.inventory(Global.lvl_obj, ObjectType.Initial);
                     break;
                 case ('W' & 037):
-                    Wizard.whatis(false, 0);
+                    Wizard.whatIs(player, false, 0);
                     break;
                 case ('D' & 037):
                     player.upstairs();

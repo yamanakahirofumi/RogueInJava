@@ -2,7 +2,6 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.map.AbstractCoordinate;
-import org.hiro.map.Coordinate;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Potion;
@@ -23,18 +22,15 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
-    public static Place getPlace(AbstractCoordinate c){
-        if(c instanceof Coordinate) {
-            return Global.places.get((((Coordinate) c).getX() << 5) + ((Coordinate) c).getY());
-        }
-        return new Place();
+    public static Place getPlace(AbstractCoordinate c) {
+        return Global.places.get((c.getX() << 5) + c.getY());
     }
 
     public static Place INDEX(int y, int x) {
         return Global.places.get((x << 5) + y);
     }
 
-    public static int flat(Coordinate c) {
+    public static int flat(AbstractCoordinate c) {
         return getPlace(c).p_flags;
     }
 
@@ -68,7 +64,7 @@ public class Util {
      * Coordinateのequals()に変更
      */
     @Deprecated
-    static boolean ce(Coordinate a, Coordinate b) {
+    static boolean ce(AbstractCoordinate a, AbstractCoordinate b) {
         return false;
     }
 

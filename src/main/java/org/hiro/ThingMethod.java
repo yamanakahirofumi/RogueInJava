@@ -313,7 +313,7 @@ public class ThingMethod {
      * nameit:
      *	Give the proper name to a potion, stick, or ring
      */
-    static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
+    static void nameit(Thing obj, String type, char which, Obj_info op, Method prfunc) {
         if (op.isKnown() || op.isTemporaryNamed()) {
             if (obj.getCount() == 1) {
                 Global.prbuf = "A " + type + " ";
@@ -349,7 +349,7 @@ public class ThingMethod {
      * isDrop:
      *	Do special checks for dropping or unweilding|unwearing|unringing
      */
-    static boolean isDrop(ThingImp obj) {
+    static boolean isDrop(Thing obj) {
         if (obj == null) {
             return true;
         }
@@ -387,7 +387,7 @@ public class ThingMethod {
      * Is this floor clear?
      */
     public static boolean dropCheck() {
-        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
+        ObjectType ch = Util.getPlace(Human.instance.getPosition()).p_ch;
         if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
             return false;
         }
@@ -399,7 +399,7 @@ public class ThingMethod {
      *	Put something down
      */
     public static void drop(Player player) {
-        ThingImp obj = Pack.get_item("drop", ObjectType.Initial);
+        Thing obj = Pack.get_item("drop", ObjectType.Initial);
         if (obj == null || !isDrop(obj)) {
             return;
         }
@@ -408,9 +408,9 @@ public class ThingMethod {
          * Link it into the level object list
          */
         Global.lvl_obj.add(obj);
-        Util.getPlace(Global.player._t_pos).p_ch = obj.getDisplay();
-        Util.getPlace(Global.player._t_pos).p_flags |= Const.F_DROPPED;
-        obj._o_pos = Global.player._t_pos;
+        Util.getPlace(player.getPosition()).p_ch = obj.getDisplay();
+        Util.getPlace(player.getPosition()).p_flags |= Const.F_DROPPED;
+        obj.setOPos(player.getPosition());
         if (obj instanceof Amulet) {
             Game.getInstance().setGoal(false);
         }

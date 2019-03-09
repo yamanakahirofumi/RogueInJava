@@ -2,7 +2,7 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -13,15 +13,15 @@ public class Rooms {
      * enter_room:
      *	Code that is executed whenver you appear in a room
      */
-    public static void enter_room(Coordinate cp) {
+    public static void enter_room(AbstractCoordinate cp) {
 
         Room rp = Chase.roomin(cp);
         Human.instance.setRoom(rp);
         Move.door_open(rp);
         if (!rp.containInfo(RoomInfoEnum.ISDARK) && !Human.instance.containsState(StateEnum.ISBLIND))
-            for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++) {
-                Display.move(y, rp.r_pos.x);
-                for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
+            for (int y = rp.r_pos.getY(); y < rp.r_max.getY() + rp.r_pos.getY(); y++) {
+                Display.move(y, rp.r_pos.getX());
+                for (int x = rp.r_pos.getX(); x < rp.r_max.getX() + rp.r_pos.getX(); x++) {
                     OriginalMonster tp = Util.INDEX(y, x).p_monst;
                     // chtype ch;
                     ObjectType ch = Util.INDEX(y, x).p_ch;
@@ -54,7 +54,7 @@ public class Rooms {
      * leave_room:
      *	Code for when we exit a room
      */
-    static void leave_room(Coordinate cp) {
+    static void leave_room(AbstractCoordinate cp) {
         Room rp = Human.instance.getRoom();
 
         if (rp.containInfo(RoomInfoEnum.ISMAZE)) {
@@ -71,8 +71,8 @@ public class Rooms {
         }
 
         Human.instance.setRoom(Global.passages[Util.flat(cp) & Const.F_PNUM]);
-        for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++)
-            for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
+        for (int y = rp.r_pos.getY(); y < rp.r_max.getY() + rp.r_pos.getY(); y++)
+            for (int x = rp.r_pos.getX(); x < rp.r_max.getX() + rp.r_pos.getX(); x++) {
                 Display.move(y, x);
                 int ch = Util.CCHAR(Display.inch());
                 if (ch == ObjectType.FLOOR.getValue()) {

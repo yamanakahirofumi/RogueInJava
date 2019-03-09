@@ -44,8 +44,8 @@ public class Drain extends Stick {
          * First cnt how many things we need to spread the hit points among
          */
         Room corp;
-        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.DOOR) {
-            corp = Global.passages[Util.flat(Global.player._t_pos) & Const.F_PNUM];
+        if (Util.getPlace(player.getPosition()).p_ch == ObjectType.DOOR) {
+            corp = Global.passages[Util.flat(player.getPosition()) & Const.F_PNUM];
         } else {
             corp = null;
         }

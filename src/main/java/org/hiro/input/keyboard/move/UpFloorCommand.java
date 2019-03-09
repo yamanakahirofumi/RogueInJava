@@ -19,7 +19,7 @@ public class UpFloorCommand implements KeyboardCommand {
         if (Command.levit_check(player)) {
             return;
         }
-        if (Util.getPlace(Global.player._t_pos).p_ch == ObjectType.STAIRS) {
+        if (Util.getPlace(player.getPosition()).p_ch == ObjectType.STAIRS) {
             if (Game.getInstance().isGoal()) {
                 player.downstairs();
                 if (player.getLevel() == 0) {

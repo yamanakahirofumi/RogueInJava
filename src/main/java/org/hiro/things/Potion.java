@@ -30,9 +30,6 @@ public class Potion extends ThingImp {
         return worth;
     }
 
-    /**
-     * @return
-     */
     public List<Obj_info> getTypes() {
         String filename = "potions.csv";
         return this.getTypes(filename);

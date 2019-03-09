@@ -3,12 +3,11 @@ package org.hiro;
 import org.hiro.character.Human;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Gold;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 import org.hiro.things.ringtype.AddDamageRing;
 import org.hiro.things.ringtype.DexterityRing;
@@ -61,7 +60,7 @@ public class Fight {
      * fight:
      *	The player attacks the monster.
      */
-    static boolean fight(Coordinate mp, Weapon weap, boolean thrown) {
+    static boolean fight(AbstractCoordinate mp, Weapon weap, boolean thrown) {
         OriginalMonster tp = Util.getPlace(mp).p_monst;
 
         /*
@@ -99,7 +98,7 @@ public class Fight {
         String mname = set_mname(tp);
         boolean did_hit = false;
         Global.has_hit = (Global.terse && !Global.to_death);
-        if (roll_em(Global.player, (ThingImp) tp, weap, thrown)) {
+        if (roll_em(Global.player, tp, weap, thrown)) {
             did_hit = false;
             if (thrown) {
                 thunk(weap, mname, Global.terse);
@@ -240,10 +239,10 @@ public class Fight {
      * remove_mon:
      *	Remove a monster from the screen
      */
-    static void remove_mon(Coordinate mp, OriginalMonster tp, boolean waskill) {
+    static void remove_mon(AbstractCoordinate mp, OriginalMonster tp, boolean waskill) {
 
-        for (ThingImp obj : tp.getBaggage()) {
-            obj._o_pos = tp.getPosition();
+        for (Thing obj : tp.getBaggage()) {
+            obj.setOPos(tp.getPosition());
             tp.removeItem(obj);
             if (waskill) {
                 WeaponMethod.fall(obj, false);
@@ -265,12 +264,12 @@ public class Fight {
      * bounce:
      *	A missile misses a monster
      */
-    static void bounce(ThingImp weap, String mname, boolean noend) {
+    static void bounce(Thing weap, String mname, boolean noend) {
         if (Global.to_death) {
             return;
         }
         if (weap instanceof Weapon) {
-            IOUtil.addmsg("the %s misses ", Global.weap_info[weap._o_which].getName());
+            IOUtil.addmsg("the %s misses ", Global.weap_info[((Weapon)weap)._o_which].getName());
         } else {
             IOUtil.addmsg("you missed ");
         }
@@ -285,12 +284,12 @@ public class Fight {
      * thunk:
      *	A missile hits a monster
      */
-    static void thunk(ThingImp weap, String mname, boolean noend) {
+    static void thunk(Thing weap, String mname, boolean noend) {
         if (Global.to_death) {
             return;
         }
         if (weap instanceof Weapon) {
-            IOUtil.addmsg("the %s hits ", Global.weap_info[weap._o_which].getName());
+            IOUtil.addmsg("the %s hits ", Global.weap_info[((Weapon)weap)._o_which].getName());
         } else {
             IOUtil.addmsg("you hit ");
         }
@@ -483,7 +482,7 @@ public class Fight {
         }
         mname = set_mname(mp);
         oldhp = player.getHp();
-        if (roll_em((ThingImp) mp, Global.player, null, false)) {
+        if (roll_em(mp, Global.player, null, false)) {
             if (mp.getType() != 'I') {
                 if (Global.has_hit) {
                     IOUtil.addmsg(".  ");
@@ -620,7 +619,7 @@ public class Fight {
                          * and pick out one we like.
                          */
                         steal = null;
-                        for (Thing obj : Global.player.getBaggage()) {
+                        for (Thing obj : player.getBaggage()) {
                             if (!player.isEquipped(obj)
                                     && obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
@@ -629,7 +628,7 @@ public class Fight {
                         if (steal != null) {
                             remove_mon(mp.getPosition(), Util.getPlace(mp.getPosition()).p_monst, false);
                             mp = null;
-                            steal = Pack.leave_pack((ThingImp) steal, true, false);
+                            steal = Pack.leave_pack(steal, true, false);
                             IOUtil.msg("she stole %s!", ThingMethod.inventoryName(steal, true));
                         }
                     }

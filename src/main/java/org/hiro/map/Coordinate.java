@@ -21,9 +21,9 @@ public class Coordinate implements AbstractCoordinate {
         this.y = y;
     }
 
-    public Coordinate(Coordinate c) {
-        this.x = c.x;
-        this.y = c.y;
+    public Coordinate(AbstractCoordinate c) {
+        this.x = c.getX();
+        this.y = c.getY();
     }
 
     @Override
@@ -42,16 +42,31 @@ public class Coordinate implements AbstractCoordinate {
     }
 
     @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public void setZ(int z) {
+
+    }
+
+    @Override
     public AbstractCoordinate random(AbstractCoordinate position, AbstractCoordinate size) {
         return null;
     }
 
     @Override
-    public Coordinate add(AbstractCoordinate coordinate) {
+    public AbstractCoordinate add(AbstractCoordinate coordinate) {
         if (coordinate instanceof Coordinate) {
             throw new RuntimeException("型制限");
         }
-        Coordinate c = (Coordinate) coordinate;
+        AbstractCoordinate c = coordinate;
         return new Coordinate(this.x + c.getX(), this.y + c.getY());
     }
 

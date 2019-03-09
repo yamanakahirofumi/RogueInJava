@@ -29,7 +29,7 @@ public class LightUp extends Stick {
             /*
              * Light the room and put the player back up
              */
-            Rooms.enter_room(Global.player._t_pos);
+            Rooms.enter_room(player.getPosition());
             IOUtil.addmsg("the room is lit");
             if (!Global.terse) {
                 IOUtil.addmsg(" by a shimmering %s light", Init.pick_color("blue"));

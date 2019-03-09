@@ -7,7 +7,6 @@ import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.AbstractCoordinate;
-import org.hiro.map.Coordinate;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
 
@@ -18,7 +17,7 @@ public class TeleportMe extends Stick {
 
     @Override
     public void shake(Player player) {
-        AbstractCoordinate tmp = new Coordinate(Global.player._t_pos);
+        AbstractCoordinate tmp = player.getPosition();
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = tmp.add(Global.delta);
         }
@@ -28,8 +27,8 @@ public class TeleportMe extends Stick {
             if (monster == 'F') {
                 player.removeState(StateEnum.ISHELD);
             }
-            Coordinate new_pos = Global.player._t_pos.add(Global.delta);
-            tp.setRunPosition(Global.player._t_pos);
+            AbstractCoordinate new_pos = player.getPosition().add(Global.delta);
+            tp.setRunPosition(player.getPosition());
             tp.addState(StateEnum.ISRUN);
             Chase.relocate(tp, new_pos);
         }

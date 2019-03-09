@@ -2,6 +2,7 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -53,7 +54,7 @@ public class Monst {
      * new_monster:
      *	Pick a new monster and add it to the list
      */
-    public static void new_monster(OriginalMonster tp, int type, Coordinate cp) {
+    public static void new_monster(OriginalMonster tp, int type, AbstractCoordinate cp) {
         Monster mp;
         int lev_add;
 
@@ -116,7 +117,7 @@ public class Monst {
      *
      */
 
-    static void give_pack(ThingImp tp) {
+    static void give_pack(OriginalMonster tp) {
         if (Human.instance.getLevel() >= Global.max_level
                 && Util.rnd(100) < Global.monsters[tp.getType() - 'A'].m_carry) {
             tp.addItem(new ThingImp());

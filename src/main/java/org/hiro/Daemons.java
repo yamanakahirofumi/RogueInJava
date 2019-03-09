@@ -6,7 +6,7 @@ import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.OriginalMonster;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 import org.hiro.things.ringtype.RegenerationRing;
 
 import java.lang.reflect.Method;
@@ -26,9 +26,9 @@ public class Daemons {
         /*
          * change the things
          */
-        for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.isSee(Human.instance, tp._o_pos)) {
-                Display.mvaddch(tp._o_pos, Misc.rnd_thing().getValue());
+        for (Thing tp : Global.lvl_obj) {
+            if (Chase.isSee(Human.instance, tp.getOPos())) {
+                Display.mvaddch(tp.getOPos(), Misc.rnd_thing().getValue());
             }
         }
 
@@ -77,16 +77,17 @@ public class Daemons {
      *	He gets his sight back
      */
     static void sight() {
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+        Player player = Human.instance;
+        if (player.containsState(StateEnum.ISBLIND)) {
             try {
                 Method m = Daemons.class.getMethod("sight");
                 Daemon.extinguish(m);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            Human.instance.removeState(StateEnum.ISBLIND);
-            if (!Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
-                Rooms.enter_room(Global.player._t_pos);
+            player.removeState(StateEnum.ISBLIND);
+            if (!player.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
+                Rooms.enter_room(player.getPosition());
             }
             IOUtil.msg(Misc.choose_str("far out!  Everything is all cosmic again",
                     "the veil of darkness lifts"));
@@ -128,9 +129,9 @@ public class Daemons {
         /*
          * undo the things
          */
-        for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.isSee(player, tp._o_pos)) {
-                Display.mvaddch(tp._o_pos, tp.getDisplay().getValue());
+        for (Thing tp : Global.lvl_obj) {
+            if (Chase.isSee(player, tp.getOPos())) {
+                Display.mvaddch(tp.getOPos(), tp.getDisplay().getValue());
             }
         }
 

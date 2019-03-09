@@ -3,7 +3,7 @@ package org.hiro.things;
 import org.hiro.Room;
 import org.hiro.Stats;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 
 import java.util.List;
 
@@ -34,13 +34,13 @@ public interface OriginalMonster {
 
     void setRoom(Room room);
 
-    Coordinate getPosition();
+    AbstractCoordinate getPosition();
 
-    void setPosition(Coordinate coordinate);
+    void setPosition(AbstractCoordinate coordinate);
 
-    Coordinate getRunPosition();
+    AbstractCoordinate getRunPosition();
 
-    void setRunPosition(Coordinate coordinate);
+    void setRunPosition(AbstractCoordinate coordinate);
 
     int getFloorTile();
 
@@ -50,13 +50,13 @@ public interface OriginalMonster {
 
     void setDisplayTile(int tile);
 
-    void addItem(ThingImp th);
+    void addItem(Thing th);
 
-    void removeItem(ThingImp th);
+    void removeItem(Thing th);
 
-    List<ThingImp> getBaggage();
+    List<Thing> getBaggage();
 
     int getBaggageSize();
 
-    void setBaggage(List<ThingImp> list);
+    void setBaggage(List<Thing> list);
 }

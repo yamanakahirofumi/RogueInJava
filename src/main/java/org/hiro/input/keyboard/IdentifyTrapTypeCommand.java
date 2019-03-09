@@ -15,7 +15,7 @@ public class IdentifyTrapTypeCommand implements KeyboardCommand {
     public void execute(Player player) {
         Global.after = false;
         if (Misc.get_dir()) {
-            Global.delta = Global.player._t_pos.add(Global.delta);
+            Global.delta = player.getPosition().add(Global.delta);
             int fp = Util.flat(Global.delta);
             if (!Global.terse) {
                 IOUtil.addmsg("You have found ");

@@ -2,6 +2,7 @@ package org.hiro;
 
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
@@ -12,7 +13,6 @@ import org.hiro.things.Ring;
 import org.hiro.things.Scroll;
 import org.hiro.things.Stick;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.Weapon;
 
 import java.util.ArrayList;
@@ -25,19 +25,19 @@ public class Wizard {
      *	Bamf the hero someplace else
      */
     public static void teleport(Player player) {
-        Coordinate c = new Coordinate();
+        AbstractCoordinate c = new Coordinate();
 
-        Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
+        Display.mvaddch(player.getPosition(), Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
         if (!Chase.roomin(c).equals(player.getRoom())) {
-            Rooms.leave_room(Global.player._t_pos);
-            Global.player._t_pos = c;
-            Rooms.enter_room(Global.player._t_pos);
+            Rooms.leave_room(player.getPosition());
+            player.setPosition(c);
+            Rooms.enter_room(player.getPosition());
         } else {
-            Global.player._t_pos = c;
+            player.setPosition(c);
             Misc.look(true);
         }
-        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
+        Display.mvaddch(player.getPosition(), ObjectType.PLAYER.getValue());
         /*
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap
@@ -58,12 +58,12 @@ public class Wizard {
     }
 
     /*
-     * whatis:
+     * whatIs:
      *	What a certin object is
      */
-    public static void whatis(boolean insist, int type) {
+    public static void whatIs(Player player, boolean insist, int type) {
 
-        if (Global.player.getBaggageSize() == 0) {
+        if (player.getBaggageSize() == 0) {
             IOUtil.msg("you don't have anything in your pack to identify");
             return;
         }
@@ -109,8 +109,8 @@ public class Wizard {
      * set_know:
      *	Set things up when we really know what a thing is
      */
-    static void set_know(Thing obj, Obj_info[] info) {
-        info[((ThingImp)obj)._o_which].know();
+    private static void set_know(Thing obj, Obj_info[] info) {
+        info[obj.getNumber()].know();
         obj.add_o_flags(Const.ISKNOW);
     }
 

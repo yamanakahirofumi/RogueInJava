@@ -2,6 +2,7 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.Player;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
@@ -29,7 +30,7 @@ public class StickMethod {
 
         if (obj.contains_o_flags(Const.ISKNOW) && Global.terse) {
             buf = " [" + obj.getTimes() + "]";
-        } else if(obj.contains_o_flags(Const.ISKNOW)) {
+        } else if (obj.contains_o_flags(Const.ISKNOW)) {
             buf = " [" + obj.getTimes() + " charges]";
         }
         return buf;
@@ -62,31 +63,31 @@ public class StickMethod {
      * fire_bolt:
      *	Fire a bolt in a given direction from a specific starting place
      */
-    public static void fire_bolt(Coordinate start, Coordinate dir, String name) {
-        List<Coordinate> spotPosition = new ArrayList<>();
+    public static void fire_bolt(AbstractCoordinate start, AbstractCoordinate dir, String name) {
+        List<AbstractCoordinate> spotPosition = new ArrayList<>();
         Weapon bolt = new Weapon(WeaponEnum.FLAME, 100);
         bolt._o_hurldmg = "6x6";
         Global.weap_info[WeaponEnum.FLAME.getValue()].setName(name);
         int dirch = 0;
-        switch (dir.y + dir.x) {
+        switch (dir.getY() + dir.getX()) {
             case 0:
                 dirch = '/';
                 break;
             case 1:
             case -1:
-                dirch = (dir.y == 0 ? '-' : '|');
+                dirch = (dir.getY() == 0 ? '-' : '|');
                 break;
             case 2:
             case -2:
                 dirch = '\\';
         }
-        Coordinate pos = start;
+        AbstractCoordinate pos = start;
         boolean hit_hero = (start != Global.player._t_pos);
         boolean used = false;
         boolean changed = false;
         int i;
         for (i = 0; i < Const.BOLT_LENGTH && !used; i++) {
-            Coordinate c1;
+            AbstractCoordinate c1;
             if (spotPosition.size() <= i) {
                 c1 = new Coordinate();
                 spotPosition.add(c1);
@@ -164,8 +165,8 @@ public class StickMethod {
                         hit_hero = !hit_hero;
                     }
                     changed = false;
-                    dir.y = -dir.y;
-                    dir.x = -dir.x;
+                    dir.setY(-dir.getY());
+                    dir.setX(-dir.getX());
                     i--;
                     IOUtil.msg("the %s bounces", name);
                     break;
@@ -221,7 +222,7 @@ public class StickMethod {
             }
         }
         for (int j = 0; j < i; j++) {
-            Coordinate c2 = spotPosition.get(j);
+            AbstractCoordinate c2 = spotPosition.get(j);
             Display.mvaddch(c2, Util.getPlace(c2).p_ch.getValue());
         }
     }

@@ -13,7 +13,7 @@ public class IceBolt extends Stick {
 
     @Override
     public void shake(Player player) {
-        StickMethod.fire_bolt(Global.player._t_pos, Global.delta, "ice");
+        StickMethod.fire_bolt(player.getPosition(), Global.delta, "ice");
         Global.ws_info[StickEnum.IceBolt.getValue()].know();
         this.use();
     }

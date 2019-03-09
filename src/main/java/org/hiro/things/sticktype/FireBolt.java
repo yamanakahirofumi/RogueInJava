@@ -13,7 +13,7 @@ public class FireBolt extends Stick {
 
     @Override
     public void shake(Player player){
-        StickMethod.fire_bolt(Global.player._t_pos, Global.delta, "flame");
+        StickMethod.fire_bolt(player.getPosition(), Global.delta, "flame");
         Global.ws_info[StickEnum.FireBolt.getValue()].know();
         this.use();
     }

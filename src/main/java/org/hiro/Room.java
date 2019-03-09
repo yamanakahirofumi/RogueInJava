@@ -13,16 +13,16 @@ import java.util.HashSet;
  */
 public class Room {
 
-	Coordinate r_pos;            /* Upper left corner */ // 左上
-	Coordinate r_max;            /* Size of room */      // サイズ
-	public Coordinate r_gold;            /* Where the gold is */ // goldの位置
+	AbstractCoordinate r_pos;            /* Upper left corner */ // 左上
+	AbstractCoordinate r_max;            /* Size of room */      // サイズ
+	public AbstractCoordinate r_gold;            /* Where the gold is */ // goldの位置
 	int r_goldval;            /* How much the gold is worth */
 	@Deprecated
 	private int r_flags;            /* info about the room */  // infoに変わったよ
 	private HashSet<RoomInfoEnum> info;
 	private AbstractCoordinateFactory factory;
 	int r_nexits;            /* Number of exits */
-	Coordinate[] r_exit = new Coordinate[12];            /* Where the exits are */
+	AbstractCoordinate[] r_exit = new Coordinate[12];            /* Where the exits are */
 
 	public Room(AbstractCoordinateFactory factory){
 		this.factory = factory;
@@ -44,7 +44,7 @@ public class Room {
 //		this.r_nexits;
 	}
 
-	public Room(Coordinate position, Coordinate maxSize, Coordinate goldPosition, int goldWorth, RoomInfoEnum flag, int exitsNumber){
+	public Room(AbstractCoordinate position, AbstractCoordinate maxSize, AbstractCoordinate goldPosition, int goldWorth, RoomInfoEnum flag, int exitsNumber){
 		this.r_pos = position;
 		this.r_max = maxSize;
 		this.r_gold = goldPosition;
@@ -87,8 +87,9 @@ public class Room {
 		this.info.clear();
 	}
 
-	public boolean isInMyRoom(Coordinate c){
-		return c.x <= r_pos.x + r_max.x && r_pos.x <= c.x && c.y <= r_pos.y + r_max.y && r_pos.y <= c.y;
+	public boolean isInMyRoom(AbstractCoordinate c){
+		return c.getX() <= r_pos.getX() + r_max.getX() && r_pos.getX() <= c.getX()
+				&& c.getY() <= r_pos.getY() + r_max.getY() && r_pos.getY() <= c.getY();
 	}
 
 	@Override

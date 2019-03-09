@@ -5,7 +5,7 @@ import org.hiro.Room;
 import org.hiro.Stats;
 import org.hiro.baggage.Bag;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
-    public Coordinate _t_pos;            /* Position */
+    public AbstractCoordinate _t_pos;            /* Position */
     /*
      * If slowed, is it a turn to move
      * 旧_t_turn
@@ -33,7 +33,7 @@ public class ThingImp implements OriginalMonster, Thing {
     private int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
 
     private int _t_oldch; //ObjectType??            /* Character that was where it was */
-    private Coordinate _t_dest;        /* Where it is running to */
+    private AbstractCoordinate _t_dest;        /* Where it is running to */
     // private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
     private Stats _t_stats;        /* Physical description */  //
@@ -44,12 +44,12 @@ public class ThingImp implements OriginalMonster, Thing {
      */
     private Room room;
     @Deprecated
-    private ThingImp _t_pack;        /* What the thing is carrying */  // 配列
-    private List<ThingImp> baggage = new ArrayList<>();
+    private Thing _t_pack;        /* What the thing is carrying */  // 配列
+    private List<Thing> baggage = new ArrayList<>();
     private Bag bag;
 
     // これでアクセスされるパターン２
-    public Coordinate _o_pos;            /* Where it lives on the screen */
+    public AbstractCoordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
     public int _o_count;            /* count for plural objects */
@@ -125,22 +125,22 @@ public class ThingImp implements OriginalMonster, Thing {
     }
 
     @Override
-    public Coordinate getPosition(){
+    public AbstractCoordinate getPosition(){
         return this._t_pos;
     }
 
     @Override
-    public void setPosition(Coordinate coordinate){
+    public void setPosition(AbstractCoordinate coordinate){
         this._t_pos = coordinate;
     }
 
     @Override
-    public Coordinate getRunPosition(){
+    public AbstractCoordinate getRunPosition(){
         return  this._t_dest;
     }
 
     @Override
-    public void setRunPosition(Coordinate coordinate){
+    public void setRunPosition(AbstractCoordinate coordinate){
         this._t_dest = coordinate;
     }
 
@@ -166,16 +166,16 @@ public class ThingImp implements OriginalMonster, Thing {
 
 
     @Override
-    public void addItem(ThingImp th) {
+    public void addItem(Thing th) {
         this.baggage.add(th);
     }
     @Override
-    public void removeItem(ThingImp th) {
+    public void removeItem(Thing th) {
         this.baggage.remove(th);
     }
 
     @Override
-    public List<ThingImp> getBaggage() {
+    public List<Thing> getBaggage() {
         return this.baggage;
     }
     @Override
@@ -183,7 +183,7 @@ public class ThingImp implements OriginalMonster, Thing {
         return this.baggage.size();
     }
     @Override
-    public void setBaggage(List<ThingImp> list) {
+    public void setBaggage(List<Thing> list) {
         this.baggage = list;
     }
 
@@ -206,6 +206,16 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public boolean contains_o_flags(int flag) {
         return this._o_flags.contains(flag);
+    }
+
+    @Override
+    public AbstractCoordinate getOPos() {
+        return this._o_pos;
+    }
+
+    @Override
+    public void setOPos(AbstractCoordinate pos) {
+        this._o_pos = pos;
     }
 
     /**
@@ -276,5 +286,15 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public int getCount() {
         return this._o_count;
+    }
+
+    @Override
+    public void reduceCount(){
+        this._o_count--;
+    }
+
+    @Override
+    public int getNumber(){
+        return this._o_which;
     }
 }

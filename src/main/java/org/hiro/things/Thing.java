@@ -1,5 +1,7 @@
 package org.hiro.things;
 
+import org.hiro.map.AbstractCoordinate;
+
 import java.util.Optional;
 
 public interface Thing {
@@ -10,6 +12,10 @@ public interface Thing {
     void set_o_flags(int flag);
 
     boolean contains_o_flags(int flag);
+
+    AbstractCoordinate getOPos();
+
+    void setOPos(AbstractCoordinate pos);
 
     int foodValue();
 
@@ -34,4 +40,7 @@ public interface Thing {
     int getGroup();
     void addCount(int c);
     int getCount();
+    void reduceCount();
+
+    int getNumber();
 }

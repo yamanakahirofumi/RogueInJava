@@ -6,7 +6,7 @@ import org.hiro.IOUtil;
 import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.output.Display;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
@@ -17,7 +17,7 @@ public class InvisibleSeeing extends Stick {
 
     @Override
     public void shake(Player player) {
-        Coordinate tmp = new Coordinate(Global.player._t_pos);
+        AbstractCoordinate tmp = player.getPosition();
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
         }

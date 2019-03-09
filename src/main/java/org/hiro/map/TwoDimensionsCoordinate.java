@@ -95,4 +95,19 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
     public int getZ() {
         return 0;
     }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public void setZ(int z) {
+
+    }
 }

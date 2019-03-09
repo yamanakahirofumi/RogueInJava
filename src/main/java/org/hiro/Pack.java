@@ -20,7 +20,7 @@ public class Pack {
      * get_item:
      *	Pick something out of a pack for a purpose
      */
-    public static ThingImp get_item(String purpose, ObjectType type) {
+    public static Thing get_item(String purpose, ObjectType type) {
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");
@@ -54,7 +54,7 @@ public class Pack {
                 Global.n_objs = 1;        /* normal case: person types one char */
                 if (ch == '*') {
                     Global.mpos = 0;
-                    if (!inventory(Global.player.getBaggage(), type)) {
+                    if (!inventory(Human.instance.getBaggage(), type)) {
                         Global.after = false;
                         return null;
                     }
@@ -71,7 +71,7 @@ public class Pack {
                     IOUtil.msg("'%s' is not a valid item", String.valueOf(Display.unctrl(ch)));
                 } else {
                     IOUtil.msg("");
-                    return (ThingImp) obj;
+                    return obj;
                 }
             }
         }
@@ -93,7 +93,7 @@ public class Pack {
      *	List what is in the pack.  Return true if there is something of
      *	the given type.
      */
-    public static boolean inventory(List<ThingImp> list, ObjectType type) {
+    public static boolean inventory(List<Thing> list, ObjectType type) {
         boolean MASTER = false;
         String inv_temp;
 
@@ -133,13 +133,13 @@ public class Pack {
      * leave_pack:
      *	take an item out of the pack
      */
-    static ThingImp leave_pack(ThingImp obj, boolean newobj, boolean all) {
+    static Thing leave_pack(Thing obj, boolean newobj, boolean all) {
 
         Global.inpack--;
-        ThingImp nobj = obj;
+        Thing nobj = obj;
         if (obj.getCount() > 1 && !all) {
             Global.last_pick = obj;
-            obj._o_count--;
+            obj.reduceCount();
             if (obj.isGroup()) {
                 Global.inpack++;
             }
@@ -187,7 +187,7 @@ public class Pack {
      *	non-null use it as the linked_list pointer instead of gettting
      *	it off the ground.
      */
-    public static void add_pack(ThingImp obj, boolean silent) {
+    public static void add_pack(Thing obj, boolean silent) {
 
         boolean from_floor = false;
         if (obj == null) {
@@ -210,8 +210,8 @@ public class Pack {
             return;
         }
 
-        if(!pack_room(from_floor ,obj)){
-          return;
+        if (!pack_room(from_floor, obj)) {
+            return;
         }
 
         obj.add_o_flags(StateEnum.ISFOUND.getValue()); // TODO:o_flagとt_flag共有を考えないと
@@ -243,9 +243,9 @@ public class Pack {
      *	If this was the object of something's desire, that monster will
      *	get mad and run at the hero
      */
-    static void update_mdest(ThingImp obj) {
+    static void update_mdest(Thing obj) {
         for (OriginalMonster mp : Global.mlist) {
-            if (mp.getRunPosition().equals(obj._o_pos)) {
+            if (mp.getRunPosition().equals(obj.getOPos())) {
                 mp.setRunPosition(Global.player._t_pos);
             }
         }

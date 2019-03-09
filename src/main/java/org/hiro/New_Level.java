@@ -2,11 +2,13 @@ package org.hiro;
 
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
 import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
 
@@ -88,9 +90,9 @@ public class New_Level {
             tp.setRoom(Chase.roomin(tp.getPosition()));
         }
 
-        DrawRoom.find_floor(null, Global.player._t_pos, false, true);
-        Rooms.enter_room(Global.player._t_pos);
-        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
+        DrawRoom.find_floor(null, player.getPosition(), false, true);
+        Rooms.enter_room(player.getPosition());
+        Display.mvaddch(player.getPosition(), ObjectType.PLAYER.getValue());
         if (player.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }
@@ -123,19 +125,19 @@ public class New_Level {
         /*
          * Do MAXOBJ attempts to put things on a level
          */
-        ThingImp obj;
+        Thing obj;
         for (int i = 0; i < Const.MAXOBJ; i++) {
             if (Util.rnd(100) < 36) {
                 /*
                  * Pick a new object and link it in the list
                  */
-                obj = (ThingImp) ThingFactory.create();
+                obj = ThingFactory.create();
                 Global.lvl_obj.add(obj);
                 /*
                  * Put it somewhere
                  */
-                DrawRoom.find_floor(null, obj._o_pos, false, false);
-                Util.getPlace(obj._o_pos).p_ch = obj.getDisplay();
+                DrawRoom.find_floor(null, obj.getOPos(), false, false);
+                Util.getPlace(obj.getOPos()).p_ch = obj.getDisplay();
             }
         }
         /*
@@ -148,8 +150,8 @@ public class New_Level {
             /*
              * Put it somewhere
              */
-            DrawRoom.find_floor(null, obj._o_pos, false, false);
-            Util.getPlace(obj._o_pos).p_ch = ObjectType.AMULET;
+            DrawRoom.find_floor(null, obj.getOPos(), false, false);
+            Util.getPlace(obj.getOPos()).p_ch = ObjectType.AMULET;
         }
     }
 
@@ -166,18 +168,18 @@ public class New_Level {
     static void treas_room(Player player) {
 
         Room rp = Global.rooms.get(DrawRoom.rnd_room());
-        int spots = (rp.r_max.y - 2) * (rp.r_max.x - 2) - MINTREAS;
+        int spots = (rp.r_max.getY() - 2) * (rp.r_max.getX() - 2) - MINTREAS;
         if (spots > (MAXTREAS - MINTREAS)) {
             spots = (MAXTREAS - MINTREAS);
         }
         int nm;
         int num_monst = nm = Util.rnd(spots) + MINTREAS;
-        ThingImp tp;
-        Coordinate mp = new Coordinate();
+        Thing tp;
+        AbstractCoordinate mp = new Coordinate();
         while (nm-- != 0) {
             DrawRoom.find_floor(rp, mp, 2 * MAXTRIES != 0, false);
             tp = new ThingImp();
-            tp._o_pos = mp;
+            tp.setOPos(mp);
             Global.lvl_obj.add(tp);
             Util.getPlace(mp).p_ch = tp.getDisplay();
         }
@@ -189,18 +191,19 @@ public class New_Level {
         if ((nm = Util.rnd(spots) + MINTREAS) < num_monst + 2) {
             nm = num_monst + 2;
         }
-        spots = (rp.r_max.y - 2) * (rp.r_max.x - 2);
+        spots = (rp.r_max.getY() - 2) * (rp.r_max.getX() - 2);
         if (nm > spots) {
             nm = spots;
         }
         player.upstairs();
+        OriginalMonster m;
         while (nm-- != 0) {
             spots = 0;
             if (DrawRoom.find_floor(rp, mp, MAXTRIES != 0, true)) {
-                tp = new ThingImp();
-                Monst.new_monster(tp, Monst.randmonster(false), mp);
-                tp.addState(StateEnum.ISMEAN);    /* no sloughers in THIS room */
-                Monst.give_pack(tp);
+                m = new ThingImp();
+                Monst.new_monster(m, Monst.randmonster(false), mp);
+                m.addState(StateEnum.ISMEAN);    /* no sloughers in THIS room */
+                Monst.give_pack(m);
             }
         }
         player.downstairs();

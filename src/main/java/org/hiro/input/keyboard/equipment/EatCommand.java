@@ -5,13 +5,13 @@ import org.hiro.Pack;
 import org.hiro.character.Player;
 import org.hiro.input.keyboard.KeyboardCommand;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 
 public class EatCommand implements KeyboardCommand {
 
     @Override
     public void execute(Player player) {
-        ThingImp food = Pack.get_item("eat", ObjectType.FOOD);
+        Thing food = Pack.get_item("eat", ObjectType.FOOD);
         Misc.eat(player, food);
     }
 }

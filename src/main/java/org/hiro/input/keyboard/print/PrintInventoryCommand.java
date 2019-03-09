@@ -11,5 +11,5 @@ public class PrintInventoryCommand implements KeyboardCommand {
     @Override
     public void execute(Player player) {
         Global.after = false;
-        Pack.inventory(Global.player.getBaggage(), ObjectType.Initial);    }
+        Pack.inventory(player.getBaggage(), ObjectType.Initial);    }
 }

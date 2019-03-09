@@ -9,7 +9,7 @@ import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
 
 public class IdentifyRingOrStick extends Scroll {
-    public IdentifyRingOrStick(){
+    public IdentifyRingOrStick() {
         super();
     }
 
@@ -17,7 +17,7 @@ public class IdentifyRingOrStick extends Scroll {
     public void read(Player player) {
         Global.scr_info[ScrollEnum.IdentifyRingOrStick.getValue()].know();
         IOUtil.msg("this scroll is an %s scroll", Global.scr_info[ScrollEnum.IdentifyRingOrStick.getValue()].getName());
-        Wizard.whatis(true, Const.R_OR_S);
+        Wizard.whatIs(player, true, Const.R_OR_S);
 
     }
 }

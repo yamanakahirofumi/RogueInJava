@@ -64,10 +64,9 @@ import org.hiro.input.keyboard.print.PrintVersionCommand;
 import org.hiro.input.keyboard.print.RedrawScreenCommand;
 import org.hiro.input.keyboard.print.RepeatLastMessageCommand;
 import org.hiro.map.AbstractCoordinate;
-import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 import org.hiro.things.ringtype.SearchingRing;
 import org.hiro.things.ringtype.TeleportationRing;
 
@@ -123,7 +122,7 @@ public class Command {
             }
             IOUtil.status(Human.instance);
             Global.lastscore = Global.purse;
-            Display.move(Global.player._t_pos);
+            Display.move(Human.instance.getPosition());
             if (!((Global.running || Global.count != 0) && Global.jump)) {
                 Display.refresh();            /* Draw screen */
             }
@@ -364,8 +363,8 @@ public class Command {
         int probinc = (player.containsState(StateEnum.ISHALU) ? 3 : 0);
         probinc += (player.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
-        for (AbstractCoordinate c : Global.player._t_pos.near()) {
-            Coordinate target = (Coordinate) c;
+        for (AbstractCoordinate c : player.getPosition().near()) {
+            AbstractCoordinate target = c;
             int fp = Util.flat(target);
             if ((fp & Const.F_REAL) == 0) {
                 switch (Util.getPlace(target).p_ch) {
@@ -408,7 +407,7 @@ public class Command {
         }
     }
 
-    static private boolean foundone(Coordinate coordinate) {
+    static private boolean foundone(AbstractCoordinate coordinate) {
         Util.getPlace(coordinate).p_flags |= Const.F_REAL;
         Global.count = 0;
         Global.running = false;
@@ -427,7 +426,7 @@ public class Command {
      * current:
      *	Print the current weapon/armor
      */
-    public static void current(ThingImp cur, String how, String where) {
+    public static void current(Thing cur, String how, String where) {
         Global.after = false;
         if (cur != null) {
             if (!Global.terse) {
