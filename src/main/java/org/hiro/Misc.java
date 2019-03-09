@@ -314,7 +314,7 @@ public class Misc {
      *	used to modify the playes strength.  It keeps track of the
      *	highest it has been, just in case
      */
-    static void chg_str(int amt) {
+    public static void chg_str(int amt) {
 
         if (amt == 0) {
             return;
@@ -336,7 +336,7 @@ public class Misc {
      * add_str:
      *	Perform the actual add, checking upper and lower bound limits
      */
-    static int add_str(int sp, int amt) {
+    public static int add_str(int sp, int amt) {
         if ((sp += amt) < 3) {
             sp = 3;
         } else if (sp > 31) {
@@ -381,7 +381,7 @@ public class Misc {
      * add_haste:
      *	Add a haste to the player
      */
-    static boolean add_haste(boolean potion) {
+    public static boolean add_haste(boolean potion) {
         try {
             Method m = Daemons.class.getMethod("nohaste");
 

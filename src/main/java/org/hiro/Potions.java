@@ -9,8 +9,6 @@ import org.hiro.things.OriginalMonster;
 import org.hiro.things.Potion;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Thing;
-import org.hiro.things.ringtype.AddStrengthRing;
-import org.hiro.things.ringtype.SustainStrengthRing;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -89,158 +87,7 @@ public class Potions {
         Pack.leave_pack(potion, false, false);
         PotionEnum p = PotionEnum.get(potion._o_which);
         boolean show;
-        switch (p) {
-            case P_CONFUSE:
-                do_pot(p, !trip);
-                break;
-            case P_POISON:
-                Global.pot_info[p.getValue()].know();
-                if (SustainStrengthRing.isInclude(player.getRings())) {
-                    IOUtil.msg("you feel momentarily sick");
-                } else {
-                    Misc.chg_str(-(Util.rnd(3) + 1));
-                    IOUtil.msg("you feel very sick now");
-                    Daemons.come_down(player);
-                }
-                break;
-            case P_HEALING:
-                Global.pot_info[p.getValue()].know();
-                player.addHp(Dice.roll(Global.player.getStatus().s_lvl, 4));
-                if (player.getHp() > player.getMaxHp()) {
-                    Global.player.getStatus().s_hpt = ++Global.player.getStatus().s_maxhp;
-                }
-                Daemons.sight();
-                IOUtil.msg("you begin to feel better");
-                break;
-            case P_STRENGTH:
-                Global.pot_info[p.getValue()].know();
-                Misc.chg_str(1);
-                IOUtil.msg("you feel stronger, now.  What bulging muscles!");
-                break;
-            case P_MFIND:
-                player.addState(StateEnum.SEEMONST);
-                try {
-                    Method m = Potions.class.getMethod("turn_see_off");
-                    Daemon.fuse(m, 1, Const.HUHDURATION, Const.AFTER);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                if (turn_see(false) == 0) {
-                    IOUtil.msg("you have a %s feeling for a moment, then it passes",
-                            Misc.choose_str("normal", "strange"));
-                }
-                break;
-            case P_TFIND:
-                /*
-                 * Potion of magic detection.  Show the potions and scrolls
-                 */
-                show = false;
-                if (Global.lvl_obj.size() != 0) {
-                    // wclear(hw);
-                    for (Thing tp : Global.lvl_obj) {
-                        if (tp.isMagic()) {
-                            show = true;
-                            // wmove(hw, tp._o_pos.y, tp._o_pos.x);
-                            // waddch(hw, ObjectType.MAGIC);
-                            Global.pot_info[p.getValue()].know();
-                        }
-                    }
-                    for (OriginalMonster mp : Global.mlist) {
-                        for (Thing tp : mp.getBaggage()) {
-                            if (tp.isMagic()) {
-                                show = true;
-                                // wmove(hw, mp._t_pos.y, mp._t_pos.x);
-                                // waddch(hw, ObjectType.MAGIC);
-                            }
-                        }
-                    }
-                }
-                if (show) {
-                    Global.pot_info[p.getValue()].know();
-                    IOUtil.show_win("You sense the presence of magic on this level.--More--");
-                } else {
-                    IOUtil.msg("you have a %s feeling for a moment, then it passes",
-                            Misc.choose_str("normal", "strange"));
-                }
-                break;
-            case P_LSD:
-                if (!trip) {
-                    if (player.containsState(StateEnum.SEEMONST)) {
-                        turn_see(false);
-                    }
-                    try {
-                        Method m = Daemons.class.getMethod("visuals", Player.class);
-                        Daemon.start_daemon(m, 0, Const.BEFORE);
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                    Global.seenstairs = seen_stairs();
-                }
-                do_pot(p, true);
-                break;
-            case P_SEEINVIS:
-                Global.prbuf = "this potion tastes like " + Global.fruit + " juice";
-                show = player.containsState(StateEnum.CANSEE);
-                do_pot(p, false);
-                if (!show) {
-                    invis_on();
-                }
-                Daemons.sight();
-                break;
-            case P_RAISE:
-                Global.pot_info[p.getValue()].know();
-                IOUtil.msg("you suddenly feel much more skillful");
-                raise_level();
-                break;
-            case P_XHEAL:
-                Global.pot_info[p.getValue()].know();
-                player.addHp(Dice.roll(Global.player.getStatus().s_lvl, 8));
-                if (player.getHp() > player.getMaxHp()) {
-                    if (player.getHp() > player.getMaxHp() + Global.player.getStatus().s_lvl + 1) {
-                        ++Global.player.getStatus().s_maxhp;
-                    }
-                    Global.player.getStatus().s_hpt = ++Global.player.getStatus().s_maxhp;
-                }
-                Daemons.sight();
-                Daemons.come_down(player);
-                IOUtil.msg("you begin to feel much better");
-                break;
-            case P_HASTE:
-                Global.pot_info[p.getValue()].know();
-                Global.after = false;
-                if (Misc.add_haste(true))
-                    IOUtil.msg("you feel yourself moving much faster");
-                break;
-            case P_RESTORE:
-                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
-                }
-                if (Global.cur_ring[Const.RIGHT] instanceof  AddStrengthRing) {
-                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), -((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
-                }
-                if (player.getCurrentStrength() < player.getMaxStrength()) {
-                    Global.player.getStatus().s_str = player.getMaxStrength();
-                }
-                if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.LEFT]).getStrength());
-                }
-                if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
-                    Global.player.getStatus().s_str = Misc.add_str(player.getCurrentStrength(), ((AddStrengthRing)Global.cur_ring[Const.RIGHT]).getStrength());
-                }
-                IOUtil.msg("hey, this tastes great.  It make you feel warm all over");
-                break;
-            case P_BLIND:
-                do_pot(p, true);
-                break;
-            case P_LEVIT:
-                do_pot(p, true);
-                break;
-            default:
-                if (MASTER) {
-                    IOUtil.msg("what an odd tasting potion!");
-                    return;
-                }
-        }
+        potion.quaff(player);
         IOUtil.status(player);
         /*
          * Throw the item away
@@ -254,50 +101,50 @@ public class Potions {
      *	Do a potion with standard setup.  This means it uses a fuse and
      *	turns on a flag
      */
-    static void do_pot(PotionEnum type, boolean knowit) {
+    public static void do_pot(PotionEnum type, boolean knowit) {
 
         List<Pact> p_actions = new ArrayList<>();
         try {
             {
-                /* P_CONFUSE */
+                /* Confuse */
                 Method m = Daemon.class.getMethod("unconfuse");
                 Pact p = new Pact(StateEnum.ISHUH, m, Const.HUHDURATION, "what a tripy feeling!", "wait, what's going on here. Huh? What? Who?");
                 p_actions.add(p);
             }
             {
-                /* P_LSD */
+                /* LSD */
                 Method m = Daemon.class.getMethod("come_down");
                 Pact p = new Pact(StateEnum.ISHALU, m, Const.SEEDURATION, "Oh, wow!  Everything seems so cosmic!", "Oh, wow!  Everything seems so cosmic!");
                 p_actions.add(p);
             }
             {
-                /* P_POISON */
+                /* Poison */
                 Pact p = new Pact(StateEnum.NoChange, null, 0, "", "");
                 p_actions.add(p);
             }
             {
-                /* P_STRENGTH */
+                /* Strength */
                 Pact p = new Pact(StateEnum.NoChange, null, 0, "", "");
                 p_actions.add(p);
             }
             {
-                /* P_SEEINVIS */
+                /* SeeInvisible */
                 Method m = Daemons.class.getMethod("unsee");
                 Pact p = new Pact(StateEnum.CANSEE, m, Const.SEEDURATION, Global.prbuf, Global.prbuf);
                 p_actions.add(p);
             }
             {
-                /* P_HEALING */
+                /* Healing */
                 Pact p = new Pact(StateEnum.NoChange, null, 0, "", "");
                 p_actions.add(p);
             }
             {
-                /* P_MFIND */
+                /* MonsterFind */
                 Pact p = new Pact(StateEnum.NoChange, null, 0, "", "");
                 p_actions.add(p);
             }
             {
-                /* P_TFIND  */
+                /* TrapFind  */
                 Pact p = new Pact(StateEnum.NoChange, null, 0, "", "");
                 p_actions.add(p);
             }
@@ -322,7 +169,7 @@ public class Potions {
                 p_actions.add(p);
             }
             {
-                /* P_BLIND */
+                /* Blind */
                 Method m = Daemons.class.getMethod("sight");
                 Pact p = new Pact(StateEnum.ISBLIND, m, Const.SEEDURATION, "oh, bummer!  Everything is dark!  Help!", "a cloak of darkness falls around you");
                 p_actions.add(p);
@@ -372,7 +219,7 @@ public class Potions {
      * invis_on:
      *	Turn on the ability to see invisible
      */
-    static void invis_on() {
+    public static void invis_on() {
         Human.instance.addState(StateEnum.CANSEE);
         for (OriginalMonster mp : Global.mlist) {
             if (mp.containsState(StateEnum.ISINVIS) && Chase.see_monst(mp)
@@ -386,7 +233,7 @@ public class Potions {
      * seen_stairs:
      *	Return TRUE if the player has seen the stairs
      */
-    static boolean seen_stairs() {
+    public static boolean seen_stairs() {
 
         Display.move(Global.stairs);
         if (Util.CCHAR(Display.inch()) == ObjectType.STAIRS.getValue()) {            /* it's on the map */

@@ -89,7 +89,7 @@ public class Global {
     static Room oldrp;
 
     static String whoami;
-    static String prbuf;
+    public static String prbuf;
 
     static final String encstr = "\300k||`\251Y.'\305\321\201+\277~r\"]\240_\223=1\341)\222\212\241t;\t$\270\314/<#\201\254";
     static final String statlist = "\355kl{+\204\255\313idJ\361\214=4:\311\271\341wK<\312\321\213,,7\271/Rk%\b\312\f\246";
@@ -119,7 +119,7 @@ public class Global {
     public static String[] tr_name;
     static String[] rainbow;
 
-    static String fruit = "slime-mold";  /* Favorite fruit */
+    public static String fruit = "slime-mold";  /* Favorite fruit */
 
     public static List<Thing> lvl_obj = new ArrayList<>();  /* List of objects on this level */
     public static List<OriginalMonster> mlist = new ArrayList<>();  /* List of monsters on the level */

@@ -4,19 +4,19 @@ import java.util.Arrays;
 
 public enum PotionEnum {
 
-	P_CONFUSE(0),
-	P_LSD(1),
-	P_POISON(2),
-	P_STRENGTH(3),
-	P_SEEINVIS(4),
-	P_HEALING(5),
-	P_MFIND(6),
-	P_TFIND(7),
+	Confuse(0),
+	LSD(1),
+	Poison(2),
+	Strength(3),
+	SeeInvisible(4),
+	Healing(5),
+	MonsterFind(6),
+	TrapFind(7),
 	P_RAISE(8),
 	P_XHEAL(9),
 	P_HASTE(10),
 	P_RESTORE(11),
-	P_BLIND(12),
+	Blind(12),
 	P_LEVIT(13);
 	// public MAXPOTIONS(14);
 

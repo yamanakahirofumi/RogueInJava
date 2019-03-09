@@ -3,12 +3,13 @@ package org.hiro.things;
 import org.hiro.Global;
 import org.hiro.Obj_info;
 import org.hiro.ThingMethod;
+import org.hiro.character.Player;
 
 import java.util.List;
 
 public class Potion extends ThingImp {
 
-    Potion() {
+    public Potion() {
         super();
         this._o_which = ThingMethod.pick_one(getTypes());
     }
@@ -39,4 +40,6 @@ public class Potion extends ThingImp {
     public ObjectType getDisplay() {
         return ObjectType.POTION;
     }
+
+    public void quaff(Player player){};
 }

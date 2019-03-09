@@ -76,7 +76,7 @@ public class Daemons {
      * sight:
      *	He gets his sight back
      */
-    static void sight() {
+    public static void sight() {
         Player player = Human.instance;
         if (player.containsState(StateEnum.ISBLIND)) {
             try {
@@ -108,7 +108,7 @@ public class Daemons {
      * come_down:
      *	Take the hero down off her acid trip.
      */
-    static void come_down(Player player) {
+    public static void come_down(Player player) {
         boolean seemonst;
 
         if (!player.containsState(StateEnum.ISHALU)) {
