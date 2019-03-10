@@ -7,7 +7,6 @@ import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
 import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
@@ -122,7 +121,7 @@ public class Misc {
                     }
                     AbstractCoordinate target = new Coordinate(x, y);
                     if (!player.containsState(StateEnum.ISBLIND)) {
-                        if (Global.player._t_pos.equals(target)) {
+                        if (player.getPosition().equals(target)) {
                             continue;
                         }
                     }
@@ -478,43 +477,6 @@ public class Misc {
         } else {
             return (nm > 0 ? 1 : 0);
         }
-    }
-
-    /*
-     * eat:
-     *	She wants to eat something, so let her try
-     */
-    public static void eat(Player player, Thing obj) {
-        if (obj == null) {
-            return;
-        }
-        if (!(obj instanceof Food)) {
-            if (!Global.terse) {
-                IOUtil.msg("ugh, you would get ill if you ate that");
-            } else {
-                IOUtil.msg("that's Inedible!");
-            }
-            return;
-        }
-        if (Global.food_left < 0) {
-            Global.food_left = 0;
-        }
-        if ((Global.food_left += Const.HUNGERTIME - 200 + Util.rnd(400)) > player.getStomachSize()) {
-            Global.food_left = player.getStomachSize();
-        }
-        Global.hungry_state = 0;
-        // 装備している武器を食べる場合
-        player.removeWeapon(obj);
-        if (obj.getNumber() == 1)
-            IOUtil.msg("my, that was a yummy %s", Global.fruit);
-        else if (Util.rnd(100) > 70) {
-            player.addExperience(1);
-            IOUtil.msg("%s, this food tastes awful", choose_str("bummer", "yuk"));
-            check_level();
-        } else {
-            IOUtil.msg("%s, that tasted good", choose_str("oh, wow", "yum"));
-        }
-        Pack.leave_pack(obj, false, false);
     }
 
     /*
