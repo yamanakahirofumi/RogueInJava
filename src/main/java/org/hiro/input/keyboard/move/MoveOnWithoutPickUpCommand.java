@@ -2,12 +2,13 @@ package org.hiro.input.keyboard.move;
 
 import org.hiro.Global;
 import org.hiro.Misc;
+import org.hiro.character.Player;
 import org.hiro.input.keyboard.KeyboardCommand;
 
 public class MoveOnWithoutPickUpCommand implements KeyboardCommand {
 
     @Override
-    public void execute() {
+    public void execute(Player player) {
         int ch;
         int countch;
         Global.move_on = true;

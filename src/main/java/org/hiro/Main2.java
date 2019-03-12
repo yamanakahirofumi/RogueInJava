@@ -1,5 +1,6 @@
 package org.hiro;
 
+import org.hiro.character.Player;
 import org.hiro.output.Display;
 
 public class Main2 {
@@ -37,7 +38,7 @@ public class Main2 {
      * quit:
      *	Have player make certain, then exit.
      */
-    public static void quit(int sig) {
+    public static void quit(Player player, int sig) {
 
         // NOOP(sig);
 
@@ -67,7 +68,7 @@ public class Main2 {
         } else {
             Display.move(0, 0);
             Display.clrtoeol();
-            IOUtil.status();
+            IOUtil.status(player);
             // Display.move(oy, ox);
             Display.refresh();
             Global.mpos = 0;

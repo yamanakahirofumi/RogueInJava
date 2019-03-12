@@ -1,11 +1,14 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
 
@@ -19,11 +22,11 @@ public class New_Level {
     static final int TREAS_ROOM = 20; /* one chance in TREAS_ROOM for a treasure room */
 
 
-    public static void new_level() {
+    public static void new_level(Player player) {
 
-        Human.instance.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
-        if (Human.instance.getLevel() > Global.max_level) {
-            Global.max_level = Human.instance.getLevel();
+        player.removeState(StateEnum.ISHELD);    /* unhold when you go down just in case */
+        if (player.getLevel() > Global.max_level) {
+            Global.max_level = player.getLevel();
         }
         /*
          * Clean things off from last level
@@ -49,12 +52,12 @@ public class New_Level {
         DrawRoom.do_rooms();                /* Draw rooms */
         Passage.do_passages();            /* Draw passages */
         Global.no_food++;
-        put_things();            /* Place objects (if any) */
+        put_things(player);            /* Place objects (if any) */
         /*
          * Place the traps
          */
-        if (Util.rnd(10) < Human.instance.getLevel()) {
-            Global.ntraps = Util.rnd(Human.instance.getLevel() / 4) + 1;
+        if (Util.rnd(10) < player.getLevel()) {
+            Global.ntraps = Util.rnd(player.getLevel() / 4) + 1;
             if (Global.ntraps > Const.MAXTRAPS) {
                 Global.ntraps = Const.MAXTRAPS;
             }
@@ -73,7 +76,7 @@ public class New_Level {
 
                 int sp = Util.flat(Global.stairs);
                 sp &= ~(Const.F_REAL | Const.F_TMASK);
-                sp |= Util.rnd(Const.NTRAPS);
+                sp |= Util.rnd(TrapEnum.count());
             }
         }
         /*
@@ -83,17 +86,17 @@ public class New_Level {
         Util.getPlace(Global.stairs).p_ch = ObjectType.STAIRS;
         Global.seenstairs = false;
 
-        for (ThingImp tp : Global.mlist) {
-            tp.t_room = Chase.roomin(tp._t_pos);
+        for (OriginalMonster tp : Global.mlist) {
+            tp.setRoom(Chase.roomin(tp.getPosition()));
         }
 
-        DrawRoom.find_floor(null, Global.player._t_pos, false, true);
-        Rooms.enter_room(Global.player._t_pos);
-        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
-        if (Human.instance.containsState(StateEnum.SEEMONST)) {
+        DrawRoom.find_floor(null, player.getPosition(), false, true);
+        Rooms.enter_room(player.getPosition());
+        Display.mvaddch(player.getPosition(), ObjectType.PLAYER.getValue());
+        if (player.containsState(StateEnum.SEEMONST)) {
             Potions.turn_see(false);
         }
-        if (Human.instance.containsState(StateEnum.ISHALU)) {
+        if (player.containsState(StateEnum.ISHALU)) {
             Daemons.visuals();
         }
     }
@@ -103,52 +106,52 @@ public class New_Level {
      * put_things:
      *	Put potions and scrolls on this level
      */
-    static void put_things() {
+    static void put_things(Player player) {
 
         /*
          * Once you have found the amulet, the only way to get new stuff is
          * go down into the dungeon.
          */
         Game game = Game.getInstance();
-        if (game.isGoal() && Human.instance.getLevel() < Global.max_level) {
+        if (game.isGoal() && player.getLevel() < Global.max_level) {
             return;
         }
         /*
          * check for treasure rooms, and if so, put it in.
          */
         if (Util.rnd(TREAS_ROOM) == 0) {
-            treas_room();
+            treas_room(player);
         }
         /*
          * Do MAXOBJ attempts to put things on a level
          */
-        ThingImp obj;
+        Thing obj;
         for (int i = 0; i < Const.MAXOBJ; i++) {
             if (Util.rnd(100) < 36) {
                 /*
                  * Pick a new object and link it in the list
                  */
-                obj = (ThingImp) ThingFactory.create();
+                obj = ThingFactory.create();
                 Global.lvl_obj.add(obj);
                 /*
                  * Put it somewhere
                  */
-                DrawRoom.find_floor(null, obj._o_pos, false, false);
-                Util.getPlace(obj._o_pos).p_ch = obj.getDisplay();
+                DrawRoom.find_floor(null, obj.getOPos(), false, false);
+                Util.getPlace(obj.getOPos()).p_ch = obj.getDisplay();
             }
         }
         /*
          * If he is really deep in the dungeon and he hasn't found the
          * amulet yet, put it somewhere on the ground
          */
-        if (Human.instance.getLevel() >= Const.AMULETLEVEL && !game.isGoal()) {
+        if (player.getLevel() >= Const.AMULETLEVEL && !game.isGoal()) {
             obj = new Amulet();
             Global.lvl_obj.add(obj);
             /*
              * Put it somewhere
              */
-            DrawRoom.find_floor(null, obj._o_pos, false, false);
-            Util.getPlace(obj._o_pos).p_ch = ObjectType.AMULET;
+            DrawRoom.find_floor(null, obj.getOPos(), false, false);
+            Util.getPlace(obj.getOPos()).p_ch = ObjectType.AMULET;
         }
     }
 
@@ -162,21 +165,21 @@ public class New_Level {
      * treas_room:
      *	Add a treasure room
      */
-    static void treas_room() {
+    static void treas_room(Player player) {
 
         Room rp = Global.rooms.get(DrawRoom.rnd_room());
-        int spots = (rp.r_max.y - 2) * (rp.r_max.x - 2) - MINTREAS;
+        int spots = (rp.r_max.getY() - 2) * (rp.r_max.getX() - 2) - MINTREAS;
         if (spots > (MAXTREAS - MINTREAS)) {
             spots = (MAXTREAS - MINTREAS);
         }
         int nm;
         int num_monst = nm = Util.rnd(spots) + MINTREAS;
-        ThingImp tp;
-        Coordinate mp = new Coordinate();
+        Thing tp;
+        AbstractCoordinate mp = new Coordinate();
         while (nm-- != 0) {
             DrawRoom.find_floor(rp, mp, 2 * MAXTRIES != 0, false);
             tp = new ThingImp();
-            tp._o_pos = mp;
+            tp.setOPos(mp);
             Global.lvl_obj.add(tp);
             Util.getPlace(mp).p_ch = tp.getDisplay();
         }
@@ -188,21 +191,22 @@ public class New_Level {
         if ((nm = Util.rnd(spots) + MINTREAS) < num_monst + 2) {
             nm = num_monst + 2;
         }
-        spots = (rp.r_max.y - 2) * (rp.r_max.x - 2);
+        spots = (rp.r_max.getY() - 2) * (rp.r_max.getX() - 2);
         if (nm > spots) {
             nm = spots;
         }
-        Human.instance.upstairs();
+        player.upstairs();
+        OriginalMonster m;
         while (nm-- != 0) {
             spots = 0;
             if (DrawRoom.find_floor(rp, mp, MAXTRIES != 0, true)) {
-                tp = new ThingImp();
-                Monst.new_monster(tp, Monst.randmonster(false), mp);
-                tp.addState(StateEnum.ISMEAN);    /* no sloughers in THIS room */
-                Monst.give_pack(tp);
+                m = new ThingImp();
+                Monst.new_monster(m, Monst.randmonster(false), mp);
+                m.addState(StateEnum.ISMEAN);    /* no sloughers in THIS room */
+                Monst.give_pack(m);
             }
         }
-        Human.instance.downstairs();
+        player.downstairs();
     }
 
 }

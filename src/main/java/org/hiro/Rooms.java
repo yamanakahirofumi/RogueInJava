@@ -2,26 +2,27 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
 
 public class Rooms {
     /*
      * enter_room:
      *	Code that is executed whenver you appear in a room
      */
-    public static void enter_room(Coordinate cp) {
+    public static void enter_room(AbstractCoordinate cp) {
 
-        Room rp = Global.player.t_room = Chase.roomin(cp);
+        Room rp = Chase.roomin(cp);
+        Human.instance.setRoom(rp);
         Move.door_open(rp);
         if (!rp.containInfo(RoomInfoEnum.ISDARK) && !Human.instance.containsState(StateEnum.ISBLIND))
-            for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++) {
-                Display.move(y, rp.r_pos.x);
-                for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
-                    ThingImp tp = Util.INDEX(y, x).p_monst;
+            for (int y = rp.r_pos.getY(); y < rp.r_max.getY() + rp.r_pos.getY(); y++) {
+                Display.move(y, rp.r_pos.getX());
+                for (int x = rp.r_pos.getX(); x < rp.r_max.getX() + rp.r_pos.getX(); x++) {
+                    OriginalMonster tp = Util.INDEX(y, x).p_monst;
                     // chtype ch;
                     ObjectType ch = Util.INDEX(y, x).p_ch;
                     if (tp == null) {
@@ -31,17 +32,17 @@ public class Rooms {
                             Display.move(y, x + 1);
                         }
                     } else {
-                        tp._t_oldch = ch.getValue();
+                        tp.setFloorTile(ch.getValue());
                         if (!Chase.see_monst(tp)) {
                             if (Human.instance.containsState(StateEnum.SEEMONST)) {
                                 Display.standout();
-                                Display.addch((char) tp._t_disguise);
+                                Display.addch((char) tp.getDisplayTile());
                                 Display.standend();
                             } else {
                                 Display.addch(ch.getValue());
                             }
                         } else {
-                            Display.addch((char) tp._t_disguise);
+                            Display.addch((char) tp.getDisplayTile());
                         }
                     }
                 }
@@ -53,8 +54,8 @@ public class Rooms {
      * leave_room:
      *	Code for when we exit a room
      */
-    static void leave_room(Coordinate cp) {
-        Room rp = Global.player.t_room;
+    static void leave_room(AbstractCoordinate cp) {
+        Room rp = Human.instance.getRoom();
 
         if (rp.containInfo(RoomInfoEnum.ISMAZE)) {
             return;
@@ -69,9 +70,9 @@ public class Rooms {
             floor = ObjectType.Blank;
         }
 
-        Global.player.t_room = Global.passages[Util.flat(cp) & Const.F_PNUM];
-        for (int y = rp.r_pos.y; y < rp.r_max.y + rp.r_pos.y; y++)
-            for (int x = rp.r_pos.x; x < rp.r_max.x + rp.r_pos.x; x++) {
+        Human.instance.setRoom(Global.passages[Util.flat(cp) & Const.F_PNUM]);
+        for (int y = rp.r_pos.getY(); y < rp.r_max.getY() + rp.r_pos.getY(); y++)
+            for (int x = rp.r_pos.getX(); x < rp.r_max.getX() + rp.r_pos.getX(); x++) {
                 Display.move(y, x);
                 int ch = Util.CCHAR(Display.inch());
                 if (ch == ObjectType.FLOOR.getValue()) {

@@ -152,7 +152,7 @@ public class Rip {
                     return;
                 }
             }
-            logmessage = OffsetDateTime.now() + " " + amount + " " + Global.whoami + " " + Global.player._t_stats.s_lvl + " ";
+            logmessage = OffsetDateTime.now() + " " + amount + " " + Global.whoami + " " + Global.player.getStatus().s_lvl + " ";
             if (flags == 0) /* dead */ {
                 ltemp = "killed by " + killname(monst, true) + " on level " + Human.instance.getLevel() + "¥n";
                 logmessage = logmessage + ltemp;
@@ -394,7 +394,7 @@ public class Rip {
             if (worth < 0) {
                 worth = 0;
             }
-            // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inv_name(obj, false));
+            // printw("%c) %5d  %s\n", obj._o_packch, worth, ThingMethod.inventoryName(obj, false));
             Global.purse += worth;
         }
         Display.printw("   %5d  Gold Pieces          ", oldpurse);

@@ -1,7 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
 import org.hiro.things.Potion;
@@ -22,7 +22,7 @@ public class Util {
     }
 
     // 左に5つシフトは、*32と同じMAXLINES * MAXCOLSで32*80
-    public static Place getPlace(Coordinate c){
+    public static Place getPlace(AbstractCoordinate c) {
         return Global.places.get((c.getX() << 5) + c.getY());
     }
 
@@ -30,7 +30,7 @@ public class Util {
         return Global.places.get((x << 5) + y);
     }
 
-    public static int flat(Coordinate c) {
+    public static int flat(AbstractCoordinate c) {
         return getPlace(c).p_flags;
     }
 
@@ -42,7 +42,7 @@ public class Util {
         return x; // A_CHARTEXTは、文字を取り出すためのビットマスク
     }
 
-    static boolean ISRING(int h, RingEnum r) {
+    private static boolean ISRING(int h, RingEnum r) {
         return Global.cur_ring[h] != null && Global.cur_ring[h]._o_which == r.getValue();
     }
 
@@ -64,7 +64,7 @@ public class Util {
      * Coordinateのequals()に変更
      */
     @Deprecated
-    static boolean ce(Coordinate a, Coordinate b) {
+    static boolean ce(AbstractCoordinate a, AbstractCoordinate b) {
         return false;
     }
 
@@ -75,12 +75,13 @@ public class Util {
 //		return Global.places.get((x << 5) + y).p_ch
 //	}
 
-    public static ObjectType winat(Coordinate coordinate) {
-        if (getPlace(coordinate).p_monst != null) {
-            return ObjectType.get((char) getPlace(coordinate).p_monst._t_disguise);
+    public static ObjectType winat(AbstractCoordinate coordinate) {
+        Place place = getPlace(coordinate);
+        if (place.p_monst != null) {
+            return ObjectType.get((char) place.p_monst.getDisplayTile());
 
         } else {
-            return getPlace(coordinate).p_ch;
+            return place.p_ch;
         }
     }
 

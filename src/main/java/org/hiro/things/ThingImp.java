@@ -5,7 +5,7 @@ import org.hiro.Room;
 import org.hiro.Stats;
 import org.hiro.baggage.Bag;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,35 +23,39 @@ import java.util.Optional;
 public class ThingImp implements OriginalMonster, Thing {
 
     // これでアクセスされるパターン こっちはプレイヤやモンスタっぽい。
-    public ThingImp _l_next, _l_prev; /* Next pointer in link */
-    public Coordinate _t_pos;            /* Position */
-    public boolean _t_turn;            /* If slowed, is it a turn to move */
-    public int _t_type;            /* What it is */
-    public int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
-    public int _t_oldch; //ObjectType??            /* Character that was where it was */
-    public Coordinate _t_dest;        /* Where it is running to */
+    public AbstractCoordinate _t_pos;            /* Position */
+    /*
+     * If slowed, is it a turn to move
+     * 旧_t_turn
+     */
+    private boolean slow;
+    private int _t_type;            /* What it is */
+    private int _t_disguise; //ObjectType 変装用        /* What mimic looks like */
+
+    private int _t_oldch; //ObjectType??            /* Character that was where it was */
+    private AbstractCoordinate _t_dest;        /* Where it is running to */
     // private int _t_flags;            /* State word */ // Enumの配列が良さそう
     private HashSet<StateEnum> flags = new HashSet<>();
-    public Stats _t_stats;        /* Physical description */  //
-    public Room t_room;        /* Current room for thing */
+    private Stats _t_stats;        /* Physical description */  //
+    /**
+     * Current room for Monster
+     *
+     * 旧t_room
+     */
+    private Room room;
     @Deprecated
-    public ThingImp _t_pack;        /* What the thing is carrying */  // 配列
-    private List<ThingImp> baggage = new ArrayList<>();
+    private Thing _t_pack;        /* What the thing is carrying */  // 配列
+    private List<Thing> baggage = new ArrayList<>();
     private Bag bag;
-    public int _t_reserved;
 
     // これでアクセスされるパターン２
-    public Coordinate _o_pos;            /* Where it lives on the screen */
+    public AbstractCoordinate _o_pos;            /* Where it lives on the screen */
     public char _o_text;            /* What it says if you read it */
     public int _o_launch;            /* What you need to launch it */
-    // public int _o_packch;            /* What character it is in the pack */
     public int _o_count;            /* count for plural objects */
     public int _o_which;            /* Which object of a type it is */ // Thingクラスにできないか？
-    public int _o_hplus;            /* Plusses to hit */
-    public int _o_dplus;            /* Plusses to damage */
-    public int _o_arm;            /* ArmorEnum protection */
     private HashSet<Integer> _o_flags;            /* information about objects */
-    public int _o_group;            /* group number for this object */  // もしかして要らない
+    int _o_group;            /* group number for this object */  // もしかして要らない
     public char _o_label;            /* Label for object */
 
     @Override
@@ -76,16 +80,102 @@ public class ThingImp implements OriginalMonster, Thing {
     }
 
     @Override
-    public void addItem(ThingImp th) {
+    public int getType() {
+        return this._t_type;
+    }
+
+    @Override
+    public void setType(int type){
+        this._t_type = type;
+    }
+
+    @Override
+    public boolean isSlow() {
+        return this.slow;
+    }
+
+    @Override
+    public void slow() {
+        this.slow = true;
+    }
+
+    @Override
+    public void changeSlow(){
+        this.slow = !this.slow;
+    }
+
+    @Override
+    public Stats getStatus(){
+        return  this._t_stats;
+    }
+
+    @Override
+    public void setStatus(Stats status){
+        this._t_stats = status;
+    }
+
+    @Override
+    public Room getRoom(){
+        return this.room;
+    }
+
+    @Override
+    public void setRoom(Room room){
+        this.room = room;
+    }
+
+    @Override
+    public AbstractCoordinate getPosition(){
+        return this._t_pos;
+    }
+
+    @Override
+    public void setPosition(AbstractCoordinate coordinate){
+        this._t_pos = coordinate;
+    }
+
+    @Override
+    public AbstractCoordinate getRunPosition(){
+        return  this._t_dest;
+    }
+
+    @Override
+    public void setRunPosition(AbstractCoordinate coordinate){
+        this._t_dest = coordinate;
+    }
+
+    @Override
+    public int getFloorTile(){
+        return this._t_oldch;
+    }
+
+    @Override
+    public void setFloorTile(int tile){
+        this._t_oldch = tile;
+    }
+
+    @Override
+    public int getDisplayTile(){
+        return this._t_disguise;
+    }
+
+    @Override
+    public void setDisplayTile(int tile){
+        this._t_disguise = tile;
+    }
+
+
+    @Override
+    public void addItem(Thing th) {
         this.baggage.add(th);
     }
     @Override
-    public void removeItem(ThingImp th) {
+    public void removeItem(Thing th) {
         this.baggage.remove(th);
     }
 
     @Override
-    public List<ThingImp> getBaggage() {
+    public List<Thing> getBaggage() {
         return this.baggage;
     }
     @Override
@@ -93,7 +183,7 @@ public class ThingImp implements OriginalMonster, Thing {
         return this.baggage.size();
     }
     @Override
-    public void setBaggage(List<ThingImp> list) {
+    public void setBaggage(List<Thing> list) {
         this.baggage = list;
     }
 
@@ -118,14 +208,21 @@ public class ThingImp implements OriginalMonster, Thing {
         return this._o_flags.contains(flag);
     }
 
+    @Override
+    public AbstractCoordinate getOPos() {
+        return this._o_pos;
+    }
+
+    @Override
+    public void setOPos(AbstractCoordinate pos) {
+        this._o_pos = pos;
+    }
+
     /**
      * new_Thing()の代わり
      */
     public ThingImp() {
         this.bag = new Bag();
-        this._o_hplus = 0;
-        this._o_dplus = 0;
-        this._o_arm = 11;
         this._o_count = 1;
         this._o_group = 0;
         this._o_flags = new HashSet<>();
@@ -189,5 +286,15 @@ public class ThingImp implements OriginalMonster, Thing {
     @Override
     public int getCount() {
         return this._o_count;
+    }
+
+    @Override
+    public void reduceCount(){
+        this._o_count--;
+    }
+
+    @Override
+    public int getNumber(){
+        return this._o_which;
     }
 }

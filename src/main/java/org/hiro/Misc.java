@@ -1,15 +1,15 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Food;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
-import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AddStrengthRing;
 
 import java.lang.reflect.Method;
@@ -82,8 +82,8 @@ public class Misc {
      *	A quick glance all around the player
      */
     static void look(boolean wakeup) {
+        Player player = Human.instance;
         boolean DEBUG = false;
-        int passcount;
         if (DEBUG) {
             boolean done = false;
 
@@ -92,150 +92,160 @@ public class Misc {
             }
             done = true;
         } /* DEBUG */
-        passcount = 0;
-        Room rp = Global.player.t_room;
-        if (!Global.oldpos.equals(Global.player._t_pos)) {
+        int passcount = 0;
+        Room rp = player.getRoom();
+        if (!Global.oldpos.equals(player.getPosition())) {
             erase_lamp(Global.oldpos, Global.oldrp);
-            Global.oldpos = Global.player._t_pos;
+            Global.oldpos = player.getPosition();
             Global.oldrp = rp;
         }
-        int ey = Global.player._t_pos.y + 1;
-        int ex = Global.player._t_pos.x + 1;
-        int sx = Global.player._t_pos.x - 1;
-        int sy = Global.player._t_pos.y - 1;
+        int ey = player.getPositionY() + 1;
+        int ex = player.getPositionX() + 1;
+        int sx = player.getPositionX() - 1;
+        int sy = player.getPositionY() - 1;
         int sumhero = 0;
         int diffhero = 0;
         if (Global.door_stop && !Global.firstmove && Global.running) {
-            sumhero = Global.player._t_pos.y + Global.player._t_pos.x;
-            diffhero = Global.player._t_pos.y - Global.player._t_pos.x;
+            sumhero = player.getPositionY() + player.getPositionX();
+            diffhero = player.getPositionY() - player.getPositionX();
         }
-        Place pp = Util.getPlace(Global.player._t_pos);
+        Place pp = Util.getPlace(player.getPosition());
         ObjectType pch = pp.p_ch;
         int pfl = pp.p_flags;
 
-        for (int y = sy; y <= ey; y++)
-            if (y > 0 && y < Const.NUMLINES - 1) for (int x = sx; x <= ex; x++) {
-                if (x < 0 || x >= Const.NUMCOLS) {
-                    continue;
-                }
-                Coordinate target = new Coordinate(x, y);
-                if (!Human.instance.containsState(StateEnum.ISBLIND)) {
-                    if (Global.player._t_pos.equals(target)) {
+        for (int y = sy; y <= ey; y++) {
+            if (y > 0 && y < Const.NUMLINES - 1) {
+                for (int x = sx; x <= ex; x++) {
+                    if (x < 0 || x >= Const.NUMCOLS) {
                         continue;
                     }
-                }
+                    AbstractCoordinate target = new Coordinate(x, y);
+                    if (!player.containsState(StateEnum.ISBLIND)) {
+                        if (player.getPosition().equals(target)) {
+                            continue;
+                        }
+                    }
 
-                pp = Util.INDEX(y, x);
-                ObjectType ch = pp.p_ch;
-                if (ch.getValue() == ObjectType.Blank.getValue()) {
-                    /* nothing need be done with a ' ' */
-                    continue;
-                }
-                int fp = pp.p_flags;
-                if (pch != ObjectType.DOOR && ch != ObjectType.DOOR) {
-                    if ((pfl & Const.F_PASS) != (fp & Const.F_PASS)) {
+                    pp = Util.INDEX(y, x);
+                    ObjectType ch = pp.p_ch;
+                    if (ch.getValue() == ObjectType.Blank.getValue()) {
+                        /* nothing need be done with a ' ' */
                         continue;
                     }
-                }
-                if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
-                        ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
-                    if (Global.player._t_pos.x != x && Global.player._t_pos.y != y &&
-                            !IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch) &&
-                            !IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch)) {
-                        continue;
+                    int fp = pp.p_flags;
+                    if (pch != ObjectType.DOOR && ch != ObjectType.DOOR) {
+                        if ((pfl & Const.F_PASS) != (fp & Const.F_PASS)) {
+                            continue;
+                        }
                     }
-                }
-
-                ThingImp tp;
-                if ((tp = pp.p_monst) == null) {
-                    ch = trip_ch(target, ch);
-                } else if (Human.instance.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
-                    if (Global.door_stop && !Global.firstmove) {
-                        Global.running = false;
+                    if (((fp & Const.F_PASS) != 0 || ch == ObjectType.DOOR) &&
+                            ((pfl & Const.F_PASS) != 0 || pch == ObjectType.DOOR)) {
+                        if (player.getPositionX() != x && player.getPositionY() != y &&
+                                !IOUtil.step_ok(Util.INDEX(y, player.getPositionX()).p_ch) &&
+                                !IOUtil.step_ok(Util.INDEX(player.getPositionY(), x).p_ch)) {
+                            continue;
+                        }
                     }
-                    continue;
-                } else {
-                    if (wakeup)
-                        Monst.wake_monster(y, x);
-                    if (Chase.see_monst(tp)) {
-                        if (Human.instance.containsState(StateEnum.ISHALU))
-                            ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
-                        else
-                            ch = ObjectType.get((char) tp._t_disguise);
-                    }
-                }
-                if (Human.instance.containsState(StateEnum.ISBLIND) && (!Global.player._t_pos.equals(target))) {
-                    continue;
-                }
 
-                Display.move(y, x);
-
-                if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK) &&
-                        !Global.see_floor && ch == ObjectType.FLOOR) {
-                    ch = ObjectType.Blank;
-                }
-
-                if (tp != null || ch.getValue() != Util.CCHAR(Display.inch())) {
-                    Display.addch(ch.getValue());
-                }
-
-                if (Global.door_stop && !Global.firstmove && Global.running) {
-                    switch ((char) Global.runch) {
-                        case 'h':
-                            if (x == ex)
-                                continue;
-                            break;
-                        case 'j':
-                            if (y == sy)
-                                continue;
-                            break;
-                        case 'k':
-                            if (y == ey) {
-                                continue;
-                            }
-                            break;
-                        case 'l':
-                            if (x == sx)
-                                continue;
-                            break;
-                        case 'y':
-                            if ((y + x) - sumhero >= 1)
-                                continue;
-                            break;
-                        case 'u':
-                            if ((y - x) - diffhero >= 1)
-                                continue;
-                            break;
-                        case 'n':
-                            if ((y + x) - sumhero <= -1)
-                                continue;
-                            break;
-                        case 'b':
-                            if ((y - x) - diffhero <= -1)
-                                continue;
-                    }
-                    switch (ch) {
-                        case DOOR:
-                            if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
-                                Global.running = false;
-                            }
-                            break;
-                        case PASSAGE:
-                            if (x == Global.player._t_pos.x || y == Global.player._t_pos.y) {
-                                passcount++;
-                            }
-                            break;
-                        case FLOOR:
-                        case Vert:
-                        case Horizon:
-                        case Blank:
-                            break;
-                        default:
+                    OriginalMonster tp;
+                    if ((tp = pp.p_monst) == null) {
+                        ch = trip_ch(target, ch);
+                    } else if (player.containsState(StateEnum.SEEMONST) && tp.containsState(StateEnum.ISINVIS)) {
+                        if (Global.door_stop && !Global.firstmove) {
                             Global.running = false;
-                            break;
+                        }
+                        continue;
+                    } else {
+                        if (wakeup)
+                            Monst.wake_monster(y, x);
+                        if (Chase.see_monst(tp)) {
+                            if (player.containsState(StateEnum.ISHALU))
+                                ch = ObjectType.get((char) (Util.rnd(26) + 'A'));
+                            else
+                                ch = ObjectType.get((char) tp.getDisplayTile());
+                        }
+                    }
+                    if (player.containsState(StateEnum.ISBLIND) && (!player.getPosition().equals(target))) {
+                        continue;
+                    }
+
+                    Display.move(y, x);
+
+                    if (player.getRoom().containInfo(RoomInfoEnum.ISDARK) &&
+                            !Global.see_floor && ch == ObjectType.FLOOR) {
+                        ch = ObjectType.Blank;
+                    }
+
+                    if (tp != null || ch.getValue() != Util.CCHAR(Display.inch())) {
+                        Display.addch(ch.getValue());
+                    }
+
+                    if (Global.door_stop && !Global.firstmove && Global.running) {
+                        switch (Global.runch) {
+                            case 'h':
+                                if (x == ex) {
+                                    continue;
+                                }
+                                break;
+                            case 'j':
+                                if (y == sy) {
+                                    continue;
+                                }
+                                break;
+                            case 'k':
+                                if (y == ey) {
+                                    continue;
+                                }
+                                break;
+                            case 'l':
+                                if (x == sx) {
+                                    continue;
+                                }
+                                break;
+                            case 'y':
+                                if ((y + x) - sumhero >= 1) {
+                                    continue;
+                                }
+                                break;
+                            case 'u':
+                                if ((y - x) - diffhero >= 1) {
+                                    continue;
+                                }
+                                break;
+                            case 'n':
+                                if ((y + x) - sumhero <= -1) {
+                                    continue;
+                                }
+                                break;
+                            case 'b':
+                                if ((y - x) - diffhero <= -1) {
+                                    continue;
+                                }
+                        }
+                        switch (ch) {
+                            case DOOR:
+                                if (x == player.getPositionX() || y == player.getPositionY()) {
+                                    Global.running = false;
+                                }
+                                break;
+                            case PASSAGE:
+                                if (x == player.getPositionX() || y == player.getPositionY()) {
+                                    passcount++;
+                                }
+                                break;
+                            case FLOOR:
+                            case Vert:
+                            case Horizon:
+                            case Blank:
+                                break;
+                            default:
+                                Global.running = false;
+                                break;
+                        }
                     }
                 }
             }
+        }
         if (Global.door_stop && !Global.firstmove && passcount > 1)
             Global.running = false;
         if (!Global.running || !Global.jump)
@@ -250,7 +260,7 @@ public class Misc {
      *	Return the character appropriate for this space, taking into
      *	account whether or not the player is tripping.
      */
-    static ObjectType trip_ch(Coordinate target, ObjectType ch) {
+    static ObjectType trip_ch(AbstractCoordinate target, ObjectType ch) {
         if (Human.instance.containsState(StateEnum.ISHALU) && Global.after)
             switch (ch) {
                 case FLOOR:
@@ -274,7 +284,7 @@ public class Misc {
      * erase_lamp:
      *	Erase the area shown by a lamp in a dark room.
      */
-    static void erase_lamp(Coordinate pos, Room rp) {
+    static void erase_lamp(AbstractCoordinate pos, Room rp) {
 
         if (!(Global.see_floor && rp.containInfo(RoomInfoEnum.ISDARK)
                 && !rp.containInfo(RoomInfoEnum.ISGONE)
@@ -282,12 +292,12 @@ public class Misc {
             return;
         }
 
-        int ey = pos.y + 1;
-        int ex = pos.x + 1;
-        int sy = pos.y - 1;
-        for (int x = pos.x - 1; x <= ex; x++) {
+        int ey = pos.getY() + 1;
+        int ex = pos.getX() + 1;
+        int sy = pos.getY() - 1;
+        for (int x = pos.getX() - 1; x <= ex; x++) {
             for (int y = sy; y <= ey; y++) {
-                Coordinate tmp = new Coordinate(x, y);
+                AbstractCoordinate tmp = new Coordinate(x, y);
                 if (Global.player._t_pos.equals(tmp)) {
                     continue;
                 }
@@ -303,18 +313,18 @@ public class Misc {
      *	used to modify the playes strength.  It keeps track of the
      *	highest it has been, just in case
      */
-    static void chg_str(int amt) {
+    public static void chg_str(int amt) {
 
         if (amt == 0) {
             return;
         }
-        Global.player._t_stats.s_str = add_str(Human.instance.getCurrentStrength(), amt);
+        Global.player.getStatus().s_str = add_str(Human.instance.getCurrentStrength(), amt);
         int comp = Human.instance.getCurrentStrength();
         if (Global.cur_ring[Const.LEFT] instanceof AddStrengthRing) {
-            comp = add_str(comp, -Global.cur_ring[Const.LEFT]._o_arm);
+            comp = add_str(comp, -((AddStrengthRing) Global.cur_ring[Const.LEFT]).getStrength());
         }
-        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing ) {
-            comp = add_str(comp, -Global.cur_ring[Const.RIGHT]._o_arm);
+        if (Global.cur_ring[Const.RIGHT] instanceof AddStrengthRing) {
+            comp = add_str(comp, -((AddStrengthRing) Global.cur_ring[Const.RIGHT]).getStrength());
         }
         if (comp > Human.instance.getMaxStrength()) {
             Global.max_stats.s_str = comp;
@@ -325,7 +335,7 @@ public class Misc {
      * add_str:
      *	Perform the actual add, checking upper and lower bound limits
      */
-    static int add_str(int sp, int amt) {
+    public static int add_str(int sp, int amt) {
         if ((sp += amt) < 3) {
             sp = 3;
         } else if (sp > 31) {
@@ -351,16 +361,16 @@ public class Misc {
         int i;
 
         for (i = 0; Global.e_levels[i] != 0; i++) {
-            if (Global.e_levels[i] > Global.player._t_stats.s_exp) {
+            if (Global.e_levels[i] > Global.player.getStatus().s_exp) {
                 break;
             }
         }
         i++;
-        int olevel = Global.player._t_stats.s_lvl;
-        Global.player._t_stats.s_lvl = i;
+        int olevel = Global.player.getStatus().s_lvl;
+        Global.player.getStatus().s_lvl = i;
         if (i > olevel) {
             int add = Dice.roll(i - olevel, 10);
-            Global.player._t_stats.s_maxhp += add;
+            Global.player.getStatus().s_maxhp += add;
             Human.instance.addHp(add);
             IOUtil.msg("welcome to level %d", String.valueOf(i));
         }
@@ -370,7 +380,7 @@ public class Misc {
      * add_haste:
      *	Add a haste to the player
      */
-    static boolean add_haste(boolean potion) {
+    public static boolean add_haste(boolean potion) {
         try {
             Method m = Daemons.class.getMethod("nohaste");
 
@@ -399,8 +409,8 @@ public class Misc {
      *	Should we show the floor in her room at this time?
      */
     static boolean show_floor() {
-        if (Global.player.t_room.containInfo(RoomInfoEnum.ISDARK)
-                && !Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
+        if (Human.instance.getRoom().containInfo(RoomInfoEnum.ISDARK)
+                && !Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)
                 && !Human.instance.containsState(StateEnum.ISBLIND)) {
             return Global.see_floor;
         } else {
@@ -431,8 +441,8 @@ public class Misc {
      *	Aggravate all the monsters on this level
      */
     public static void aggravate() {
-        for (ThingImp mp : Global.mlist) {
-            Chase.runto(mp._t_pos);
+        for (OriginalMonster mp : Global.mlist) {
+            Chase.runto(mp.getPosition());
         }
     }
 
@@ -440,9 +450,9 @@ public class Misc {
      * find_obj:
      *	Find the unclaimed object at y, x
      */
-    public static ThingImp find_obj(AbstractCoordinate coordinate) {
-        for (ThingImp obj : Global.lvl_obj) {
-            if (obj._o_pos.equals(coordinate)) {
+    public static Thing find_obj(AbstractCoordinate coordinate) {
+        for (Thing obj : Global.lvl_obj) {
+            if (obj.getOPos().equals(coordinate)) {
                 return obj;
             }
         }
@@ -470,49 +480,12 @@ public class Misc {
     }
 
     /*
-     * eat:
-     *	She wants to eat something, so let her try
-     */
-    public static void eat(ThingImp obj) {
-        if (obj == null) {
-            return;
-        }
-        if (!(obj instanceof Food)) {
-            if (!Global.terse) {
-                IOUtil.msg("ugh, you would get ill if you ate that");
-            } else {
-                IOUtil.msg("that's Inedible!");
-            }
-            return;
-        }
-        if (Global.food_left < 0) {
-            Global.food_left = 0;
-        }
-        if ((Global.food_left += Const.HUNGERTIME - 200 + Util.rnd(400)) > Human.instance.getStomachSize()) {
-            Global.food_left = Human.instance.getStomachSize();
-        }
-        Global.hungry_state = 0;
-        // 装備している武器を食べる場合
-        Human.instance.removeWeapon(obj);
-        if (obj._o_which == 1)
-            IOUtil.msg("my, that was a yummy %s", Global.fruit);
-        else if (Util.rnd(100) > 70) {
-            Human.instance.addExperience(1);
-            IOUtil.msg("%s, this food tastes awful", choose_str("bummer", "yuk"));
-            check_level();
-        } else {
-            IOUtil.msg("%s, that tasted good", choose_str("oh, wow", "yum"));
-        }
-        Pack.leave_pack(obj, false, false);
-    }
-
-    /*
      * get_dir:
      *	Set up the direction co_ordinate for use in varios "prefix"
      *	commands
      */
     public static boolean get_dir() {
-        Coordinate last_delt = new Coordinate(0, 0);
+        AbstractCoordinate last_delt = new Coordinate(0, 0);
 
         if (Global.again && Global.last_dir != '\0') {
             Global.delta = new Coordinate(last_delt);
@@ -530,15 +503,15 @@ public class Misc {
                 switch (Global.dir_ch = IOUtil.readchar()) {
                     case 'h':
                     case 'H':
-                        Global.delta = new Coordinate(-1,0);
+                        Global.delta = new Coordinate(-1, 0);
                         break;
                     case 'j':
                     case 'J':
-                        Global.delta = new Coordinate(0,1);
+                        Global.delta = new Coordinate(0, 1);
                         break;
                     case 'k':
                     case 'K':
-                        Global.delta = new Coordinate(0,-1);
+                        Global.delta = new Coordinate(0, -1);
                         break;
                     case 'l':
                     case 'L':
@@ -550,15 +523,15 @@ public class Misc {
                         break;
                     case 'u':
                     case 'U':
-                        Global.delta = new Coordinate( -1, -1);
+                        Global.delta = new Coordinate(-1, -1);
                         break;
                     case 'b':
                     case 'B':
-                        Global.delta =  new Coordinate(-1,1);
+                        Global.delta = new Coordinate(-1, 1);
                         break;
                     case 'n':
                     case 'N':
-                        Global.delta =  new Coordinate(1,1);
+                        Global.delta = new Coordinate(1, 1);
                         break;
                     case Const.ESCAPE:
                         Global.last_dir = '\0';
@@ -579,8 +552,8 @@ public class Misc {
         }
         if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) == 0) {
             do {
-                Global.delta = new Coordinate(Util.rnd(3) - 1,Util.rnd(3) - 1);
-            } while (Global.delta.equals(new Coordinate(0,0)));
+                Global.delta = new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1);
+            } while (Global.delta.equals(new Coordinate(0, 0)));
         }
         Global.mpos = 0;
         IOUtil.msg("");

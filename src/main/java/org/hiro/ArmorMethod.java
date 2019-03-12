@@ -1,8 +1,7 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.things.Armor;
-import org.hiro.things.ObjectType;
 import org.hiro.things.Thing;
 
 public class ArmorMethod {
@@ -11,12 +10,11 @@ public class ArmorMethod {
      * wear:
      *	The player wants to wear something, so let him/her put it on.
      */
-    public static void wear() {
-        Thing obj;
-        if ((obj = Pack.get_item("wear", ObjectType.ARMOR)) == null) {
+    public static void wear(Player player, Thing obj) {
+        if (obj == null) {
             return;
         }
-        if (Human.instance.isEquippedArmor()) {
+        if (player.isEquippedArmor()) {
             IOUtil.addmsg("you are already wearing some");
             if (!Global.terse) {
                 IOUtil.addmsg(".  You'll have to take it off first");
@@ -33,8 +31,8 @@ public class ArmorMethod {
         Armor armor = (Armor) obj;
         waste_time();
         obj.add_o_flags(Const.ISKNOW);
-        String sp = ThingMethod.inv_name(armor, true);
-        Human.instance.putOnArmor(armor);
+        String sp = ThingMethod.inventoryName(armor, true);
+        player.putOnArmor(armor);
         if (!Global.terse) {
             IOUtil.addmsg("you are now ");
         }
@@ -56,8 +54,8 @@ public class ArmorMethod {
      * take_off:
      *	Get the armor off of the players back
      */
-    public static void take_off() {
-        if (!Human.instance.isEquippedArmor()) {
+    public static void take_off(Player player) {
+        if (!player.isEquippedArmor()) {
             Global.after = false;
             if (Global.terse) {
                 IOUtil.msg("not wearing armor");
@@ -66,18 +64,18 @@ public class ArmorMethod {
             }
             return;
         }
-        if (!ThingMethod.isDrop(Human.instance.getArmor())) {
+        if (!ThingMethod.isDrop(player.getArmor())) {
             return;
         }
-        Armor obj = Human.instance.getArmor();
-        Human.instance.removeArmor();
+        Armor obj = player.getArmor();
+        player.removeArmor();
         if (Global.terse) {
             IOUtil.addmsg("was");
         } else {
             IOUtil.addmsg("you used to be");
         }
-        IOUtil.msg(" wearing %c) %s", String.valueOf(Human.instance.getPositionOfContent(obj)),
-                ThingMethod.inv_name(obj, true));
+        IOUtil.msg(" wearing %c) %s", String.valueOf(player.getPositionOfContent(obj)),
+                ThingMethod.inventoryName(obj, true));
     }
 
 

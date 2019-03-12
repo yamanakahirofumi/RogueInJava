@@ -1,10 +1,12 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.ringtype.RegenerationRing;
 
 import java.lang.reflect.Method;
@@ -24,16 +26,16 @@ public class Daemons {
         /*
          * change the things
          */
-        for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos, Misc.rnd_thing().getValue());
+        for (Thing tp : Global.lvl_obj) {
+            if (Chase.isSee(Human.instance, tp.getOPos())) {
+                Display.mvaddch(tp.getOPos(), Misc.rnd_thing().getValue());
             }
         }
 
         /*
          * change the stairs
          */
-        if (!Global.seenstairs && Chase.isSee(Global.stairs)) {
+        if (!Global.seenstairs && Chase.isSee(Human.instance, Global.stairs)) {
             Display.mvaddch(Global.stairs, Misc.rnd_thing().getValue());
         }
 
@@ -41,10 +43,10 @@ public class Daemons {
          * change the monsters
          */
         boolean seemonst = Human.instance.containsState(StateEnum.SEEMONST);
-        for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos);
+        for (OriginalMonster tp : Global.mlist) {
+            Display.move(tp.getPosition());
             if (Chase.see_monst(tp)) {
-                if (tp._t_type == 'X' && tp._t_disguise != 'X') {
+                if (tp.getType() == 'X' && tp.getDisplayTile() != 'X') {
                     Display.addch(Misc.rnd_thing().getValue());
                 } else {
                     Display.addch((char) (Util.rnd(26) + 'A'));
@@ -62,9 +64,9 @@ public class Daemons {
      *	Turn off the ability to see invisible
      */
     static void unsee() {
-        for (ThingImp th : Global.mlist) {
+        for (OriginalMonster th : Global.mlist) {
             if (th.containsState(StateEnum.ISINVIS) && Chase.see_monst(th)) {
-                Display.mvaddch(th._t_pos, (char) th._t_oldch);
+                Display.mvaddch(th.getPosition(), (char) th.getFloorTile());
             }
         }
         Human.instance.removeState(StateEnum.CANSEE);
@@ -74,17 +76,18 @@ public class Daemons {
      * sight:
      *	He gets his sight back
      */
-    static void sight() {
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+    public static void sight() {
+        Player player = Human.instance;
+        if (player.containsState(StateEnum.ISBLIND)) {
             try {
                 Method m = Daemons.class.getMethod("sight");
                 Daemon.extinguish(m);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            Human.instance.removeState(StateEnum.ISBLIND);
-            if (!Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
-                Rooms.enter_room(Global.player._t_pos);
+            player.removeState(StateEnum.ISBLIND);
+            if (!player.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
+                Rooms.enter_room(player.getPosition());
             }
             IOUtil.msg(Misc.choose_str("far out!  Everything is all cosmic again",
                     "the veil of darkness lifts"));
@@ -105,10 +108,10 @@ public class Daemons {
      * come_down:
      *	Take the hero down off her acid trip.
      */
-    static void come_down() {
+    public static void come_down(Player player) {
         boolean seemonst;
 
-        if (!Human.instance.containsState(StateEnum.ISHALU)) {
+        if (!player.containsState(StateEnum.ISHALU)) {
             return;
         }
         try {
@@ -117,36 +120,36 @@ public class Daemons {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        Human.instance.removeState(StateEnum.ISHALU);
+        player.removeState(StateEnum.ISHALU);
 
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+        if (player.containsState(StateEnum.ISBLIND)) {
             return;
         }
 
         /*
          * undo the things
          */
-        for (ThingImp tp : Global.lvl_obj) {
-            if (Chase.isSee(tp._o_pos)) {
-                Display.mvaddch(tp._o_pos, tp.getDisplay().getValue());
+        for (Thing tp : Global.lvl_obj) {
+            if (Chase.isSee(player, tp.getOPos())) {
+                Display.mvaddch(tp.getOPos(), tp.getDisplay().getValue());
             }
         }
 
         /*
          * undo the monsters
          */
-        seemonst = Human.instance.containsState(StateEnum.SEEMONST);
-        for (ThingImp tp : Global.mlist) {
-            Display.move(tp._t_pos);
-            if (Chase.isSee(tp._t_pos)) {
-                if (!tp.containsState(StateEnum.ISINVIS) || Human.instance.containsState(StateEnum.CANSEE))
-                    Display.addch((char) tp._t_disguise);
+        seemonst = player.containsState(StateEnum.SEEMONST);
+        for (OriginalMonster tp : Global.mlist) {
+            Display.move(tp.getPosition());
+            if (Chase.isSee(player, tp.getPosition())) {
+                if (!tp.containsState(StateEnum.ISINVIS) || player.containsState(StateEnum.CANSEE))
+                    Display.addch((char) tp.getDisplayTile());
                 else {
-                    Display.addch(Util.getPlace(tp._t_pos).p_ch.getValue());
+                    Display.addch(Util.getPlace(tp.getPosition()).p_ch.getValue());
                 }
             } else if (seemonst) {
                 Display.standout();
-                Display.addch((char) tp._t_type);
+                Display.addch((char) tp.getType());
                 Display.standend();
             }
         }
@@ -166,28 +169,28 @@ public class Daemons {
      * doctor:
      *	A healing daemon that restors hit points after rest
      */
-    void doctor() {
+    void doctor(Player player) {
         int lv, ohp;
 
-        lv = Global.player._t_stats.s_lvl;
-        ohp = Human.instance.getHp();
+        lv = Global.player.getStatus().s_lvl;
+        ohp = player.getHp();
         Global.quiet++;
         if (lv < 8) {
             if (Global.quiet + (lv << 1) > 20) {
-                Human.instance.addHp(1);
+                player.addHp(1);
             }
         } else if (Global.quiet >= 3) {
-            Human.instance.addHp(Util.rnd(lv - 7) + 1);
+            player.addHp(Util.rnd(lv - 7) + 1);
         }
         if (Global.cur_ring[Const.LEFT] instanceof RegenerationRing) {
-            Human.instance.addHp(1);
+            player.addHp(1);
         }
         if (Global.cur_ring[Const.RIGHT] instanceof RegenerationRing) {
-            Human.instance.addHp(1);
+            player.addHp(1);
         }
-        if (ohp != Human.instance.getHp()) {
-            if (Human.instance.getHp() > Human.instance.getMaxHp()) {
-                Global.player._t_stats.s_hpt = Human.instance.getMaxHp();
+        if (ohp != player.getHp()) {
+            if (player.getHp() > player.getMaxHp()) {
+                Global.player.getStatus().s_hpt = player.getMaxHp();
             }
             Global.quiet = 0;
         }

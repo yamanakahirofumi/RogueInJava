@@ -2,6 +2,9 @@ package org.hiro.map;
 
 import org.hiro.Util;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /*
  * Coordinate data type
  * 座標
@@ -54,8 +57,57 @@ public class TwoDimensionsCoordinate implements AbstractCoordinate {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return this.y * 31 + this.x;
+    }
+
     public void setDimensions(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public List<AbstractCoordinate> near() {
+        List<AbstractCoordinate> result = new LinkedList<>();
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y));
+        result.add(new TwoDimensionsCoordinate(this.x - 1, this.y + 1));
+        result.add(new TwoDimensionsCoordinate(this.x, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x, this.y + 1));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y - 1));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y));
+        result.add(new TwoDimensionsCoordinate(this.x + 1, this.y + 1));
+        return result;
+    }
+
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public int getZ() {
+        return 0;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public void setZ(int z) {
+
     }
 }

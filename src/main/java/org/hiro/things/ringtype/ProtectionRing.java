@@ -38,5 +38,7 @@ public class ProtectionRing extends Ring {
         return worth;
     }
 
-
+    public int getDefence() {
+        return defence;
+    }
 }

@@ -56,7 +56,7 @@ public class Daemon {
      * fuse:
      *	Start a fuse to go off in a certain number of turns
      */
-    static void fuse(Method func, int arg, int time, int type) {
+    public static void fuse(Method func, int arg, int time, int type) {
         Delayed_action wire;
 
         wire = d_slot();
@@ -171,7 +171,7 @@ public class Daemon {
      * start_daemon:
      *	Start a daemon, takes a function.
      */
-    static void start_daemon(Method func, int arg, int type)
+    public static void start_daemon(Method func, int arg, int type)
     {
         Delayed_action dev;
 

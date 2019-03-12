@@ -4,12 +4,12 @@ import org.hiro.Chase;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Util;
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.output.Display;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
 
 public class InvalidateEffect extends Stick {
     public InvalidateEffect() {
@@ -17,23 +17,23 @@ public class InvalidateEffect extends Stick {
     }
 
     @Override
-    public void shake() {
-        Coordinate tmp = new Coordinate(Global.player._t_pos);
+    public void shake(Player player) {
+        AbstractCoordinate tmp = player.getPosition();
         while (IOUtil.step_ok(Util.winat(tmp))) {
             tmp = Global.delta.add(tmp);
         }
-        ThingImp tp = Util.getPlace(tmp).p_monst;
+        OriginalMonster tp = Util.getPlace(tmp).p_monst;
         if (tp != null) {
-            int monster = tp._t_type;
+            int monster = tp.getType();
             if (monster == 'F') {
-                Human.instance.removeState(StateEnum.ISHELD);
+                player.removeState(StateEnum.ISHELD);
             }
             tp.addState(StateEnum.ISCANC);
             tp.removeState(StateEnum.ISINVIS);
             tp.removeState(StateEnum.CANHUH);
-            tp._t_disguise = tp._t_type;
+            tp.setDisplayTile(tp.getType());
             if (Chase.see_monst(tp)) {
-                Display.mvaddch(tmp, (char) tp._t_disguise);
+                Display.mvaddch(tmp, (char) tp.getDisplayTile());
             }
         }
         this.use();

@@ -1,10 +1,12 @@
 package org.hiro;
 
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.PotionEnum;
 import org.hiro.things.Ring;
 import org.hiro.things.ScrollEnum;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 
 import java.io.File;
@@ -80,14 +82,14 @@ public class Global {
     static File logfi;
     static File scoreboard;
 
-    static Coordinate stairs;  /* Location of staircase */
-    public static Coordinate delta;
-    static Coordinate oldpos;
+    static AbstractCoordinate stairs;  /* Location of staircase */
+    public static AbstractCoordinate delta;
+    static AbstractCoordinate oldpos;
 
     static Room oldrp;
 
     static String whoami;
-    static String prbuf;
+    public static String prbuf;
 
     static final String encstr = "\300k||`\251Y.'\305\321\201+\277~r\"]\240_\223=1\341)\222\212\241t;\t$\270\314/<#\201\254";
     static final String statlist = "\355kl{+\204\255\313idJ\361\214=4:\311\271\341wK<\312\321\213,,7\271/Rk%\b\312\f\246";
@@ -117,15 +119,15 @@ public class Global {
     public static String[] tr_name;
     static String[] rainbow;
 
-    static String fruit = "slime-mold";  /* Favorite fruit */
+    public static String fruit = "slime-mold";  /* Favorite fruit */
 
-    public static List<ThingImp> lvl_obj = new ArrayList<>();  /* List of objects on this level */
-    public static List<ThingImp> mlist = new ArrayList<>();  /* List of monsters on the level */
+    public static List<Thing> lvl_obj = new ArrayList<>();  /* List of objects on this level */
+    public static List<OriginalMonster> mlist = new ArrayList<>();  /* List of monsters on the level */
     public static Ring cur_ring[];
     @Deprecated
     public static ThingImp player;
-    static ThingImp last_pick;   /* Last object picked in get_item() */   // なくす方向で
-    static ThingImp l_last_pick;   // なくす方向で
+    static Thing last_pick;   /* Last object picked in get_item() */   // なくす方向で
+    static Thing l_last_pick;   // なくす方向で
 
     public static Obj_info[] things;
     public static Obj_info[] pot_info; //oi_knowをなんとかしないと

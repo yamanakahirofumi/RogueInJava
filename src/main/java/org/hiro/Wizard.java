@@ -1,16 +1,18 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Armor;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.Potion;
 import org.hiro.things.Ring;
 import org.hiro.things.Scroll;
 import org.hiro.things.Stick;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 
 import java.util.ArrayList;
@@ -22,31 +24,31 @@ public class Wizard {
      * telport:
      *	Bamf the hero someplace else
      */
-    public static void teleport() {
-        Coordinate c = new Coordinate();
+    public static void teleport(Player player) {
+        AbstractCoordinate c = new Coordinate();
 
-        Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
+        Display.mvaddch(player.getPosition(), Pack.floor_at().getValue());
         DrawRoom.find_floor(null, c, false, true);
-        if (Chase.roomin(c) != Global.player.t_room) {
-            Rooms.leave_room(Global.player._t_pos);
-            Global.player._t_pos = c;
-            Rooms.enter_room(Global.player._t_pos);
+        if (!Chase.roomin(c).equals(player.getRoom())) {
+            Rooms.leave_room(player.getPosition());
+            player.setPosition(c);
+            Rooms.enter_room(player.getPosition());
         } else {
-            Global.player._t_pos = c;
+            player.setPosition(c);
             Misc.look(true);
         }
-        Display.mvaddch(Global.player._t_pos, ObjectType.PLAYER.getValue());
+        Display.mvaddch(player.getPosition(), ObjectType.PLAYER.getValue());
         /*
          * turn off ISHELD in case teleportation was done while fighting
          * a Flytrap
          */
-        if (Human.instance.containsState(StateEnum.ISHELD)) {
+        if (player.containsState(StateEnum.ISHELD)) {
 
-            Human.instance.removeState(StateEnum.ISHELD);
+            player.removeState(StateEnum.ISHELD);
             Global.vf_hit = 0;
-            for (ThingImp mp : Global.mlist) {
-                if (mp._t_type == 'F')
-                    mp._t_stats.s_dmg = "0x0";
+            for (OriginalMonster mp : Global.mlist) {
+                if (mp.getType() == 'F')
+                    mp.getStatus().s_dmg = "0x0";
             }
         }
         Global.no_move = 0;
@@ -56,17 +58,17 @@ public class Wizard {
     }
 
     /*
-     * whatis:
+     * whatIs:
      *	What a certin object is
      */
-    public static void whatis(boolean insist, int type) {
+    public static void whatIs(Player player, boolean insist, int type) {
 
-        if (Global.player.getBaggageSize() == 0) {
+        if (player.getBaggageSize() == 0) {
             IOUtil.msg("you don't have anything in your pack to identify");
             return;
         }
 
-        ThingImp obj;
+        Thing obj;
         for (; ; ) {
             obj = Pack.get_item("identify", ObjectType.get((char) type));
             if (insist) {
@@ -100,15 +102,15 @@ public class Wizard {
         } else if (obj instanceof Ring) {
             set_know(obj, Global.ring_info);
         }
-        IOUtil.msg(ThingMethod.inv_name(obj, false));
+        IOUtil.msg(ThingMethod.inventoryName(obj, false));
     }
 
     /*
      * set_know:
      *	Set things up when we really know what a thing is
      */
-    static void set_know(ThingImp obj, Obj_info[] info) {
-        info[obj._o_which].know();
+    private static void set_know(Thing obj, Obj_info[] info) {
+        info[obj.getNumber()].know();
         obj.add_o_flags(Const.ISKNOW);
     }
 

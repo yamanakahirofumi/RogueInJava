@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
 
@@ -159,7 +160,7 @@ public class IOUtil {
         // ch = Mdport.md_readchar(stdscr);
 
         if (ch == 3) {
-            Main2.quit(0);
+            Main2.quit(Human.instance, 0);
             return (27);
         }
 
@@ -170,7 +171,7 @@ public class IOUtil {
      * status:
      *	Display the important stats line.  Keep the cursor where it was.
      */
-    public static void status() {
+    public static void status(Player player) {
         int oy;
         int ox;
         int s_hungry = 0;
@@ -186,9 +187,9 @@ public class IOUtil {
          * If nothing has changed since the last status, don't
          * bother.
          */
-        int temp = (Human.instance.isEquippedArmor() ? Human.instance.getArmor()._o_arm : Global.player._t_stats.s_arm);
-        if (s_hp == Human.instance.getHp() && s_exp == Global.player._t_stats.s_exp && s_pur == Global.purse
-                && s_arm == temp && s_str == Human.instance.getCurrentStrength() && s_lvl == Human.instance.getLevel()
+        int temp = (player.isEquippedArmor() ? player.getArmor().getDefence() : Global.player.getStatus().s_arm);
+        if (s_hp == player.getHp() && s_exp == Global.player.getStatus().s_exp && s_pur == Global.purse
+                && s_arm == temp && s_str == player.getCurrentStrength() && s_lvl == player.getLevel()
                 && s_hungry == Global.hungry_state && !Global.stat_msg) {
             return;
         }
@@ -197,9 +198,9 @@ public class IOUtil {
 
         // getyx(stdscr, oy, ox);
         int hpwidth = 0;
-        if (s_hp != Human.instance.getMaxHp()) {
-            temp = Human.instance.getMaxHp();
-            s_hp = Human.instance.getMaxHp();
+        if (s_hp != player.getMaxHp()) {
+            temp = player.getMaxHp();
+            s_hp = player.getMaxHp();
             for (hpwidth = 0; temp != 0; hpwidth++) {
                 temp /= 10;
             }
@@ -208,27 +209,26 @@ public class IOUtil {
         /*
          * Save current status
          */
-        s_lvl = Human.instance.getLevel();
+        s_lvl = player.getLevel();
         s_pur = Global.purse;
-        s_hp = Human.instance.getHp();
-        s_str = Human.instance.getCurrentStrength();
-        s_exp = Global.player._t_stats.s_exp;
+        s_hp = player.getHp();
+        s_str = player.getCurrentStrength();
+        s_exp = Global.player.getStatus().s_exp;
         s_hungry = Global.hungry_state;
 
         if (Global.stat_msg) {
             Display.move(0, 0);
             msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
-                    s_lvl, s_pur, hpwidth, s_hp, hpwidth,
-                    Human.instance.getMaxHp(), s_str, Human.instance.getMaxStrength(),
-                    10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
+                    s_lvl, s_pur, hpwidth, s_hp, hpwidth, player.getMaxHp(), s_str,
+                    player.getMaxStrength(), 10 - s_arm, Global.player.getStatus().s_lvl, s_exp,
                     state_name[s_hungry]);
         } else {
             Display.move(Const.STATLINE, 0);
 
             Display.printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
                     s_lvl, s_pur, hpwidth, s_hp, hpwidth,
-                    Human.instance.getMaxHp(), s_str, Human.instance.getMaxStrength(),
-                    10 - s_arm, Global.player._t_stats.s_lvl, s_exp,
+                    player.getMaxHp(), s_str, player.getMaxStrength(),
+                    10 - s_arm, Global.player.getStatus().s_lvl, s_exp,
                     state_name[s_hungry]);
         }
 
@@ -258,7 +258,6 @@ public class IOUtil {
         Display.clrtoeol();
         Global.mpos = 0;
         Display.refresh();
-        return;
     }
 
 //    int wreadchar(WINDOW *win) {

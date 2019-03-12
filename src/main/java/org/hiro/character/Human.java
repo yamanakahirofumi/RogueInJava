@@ -1,6 +1,7 @@
 package org.hiro.character;
 
 import org.hiro.Misc;
+import org.hiro.Room;
 import org.hiro.Util;
 import org.hiro.baggage.Bag;
 import org.hiro.map.AbstractCoordinate;
@@ -42,6 +43,7 @@ public class Human implements Player {
     private AbstractCoordinate position;
     private int level;
     private String dungeon;
+    private Room room;
     /**
      * 装備周り
      */
@@ -76,8 +78,28 @@ public class Human implements Player {
     }
 
     @Override
+    public int getPositionX() {
+        return this.position.getX();
+    }
+
+    @Override
+    public int getPositionY() {
+        return this.position.getY();
+    }
+
+    @Override
     public void setPosition(AbstractCoordinate position) {
         this.position = position;
+    }
+
+    @Override
+    public Room getRoom(){
+        return this.room;
+    }
+
+    @Override
+    public void setRoom(Room room){
+        this.room = room;
     }
 
     @Override

@@ -1,17 +1,16 @@
 package org.hiro;
 
-import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Armor;
-import org.hiro.things.ArmorEnum;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
-import org.hiro.things.ringtype.MaintainArmorRing;
 import org.hiro.things.ringtype.SustainStrengthRing;
 import org.hiro.things.scrolltype.Scare;
 
@@ -28,8 +27,8 @@ public class Move {
 
     static void door_open(Room rp) {
         if (!rp.containInfo(RoomInfoEnum.ISGONE)) {
-            for (int y = rp.r_pos.y; y < rp.r_pos.y + rp.r_max.y; y++) {
-                for (int x = rp.r_pos.x; x < rp.r_pos.x + rp.r_max.x; x++) {
+            for (int y = rp.r_pos.getY(); y < rp.r_pos.getY() + rp.r_max.getY(); y++) {
+                for (int x = rp.r_pos.getX(); x < rp.r_pos.getX() + rp.r_max.getX(); x++) {
                     if (Character.isUpperCase(Util.winat(new Coordinate(x, y)).getValue())) {
                         Monst.wake_monster(y, x);
                     }
@@ -43,10 +42,7 @@ public class Move {
      *	Check to see that a move is legal.  If it is handle the
      * consequences (fighting, picking up, etc.)
      */
-    public static void do_move(int dy, int dx) {
-        ObjectType ch;
-        char fl;
-        Coordinate nh = new Coordinate();
+    public static void do_move(Player player, int dy, int dx) {
 
         Global.firstmove = false;
         if (Global.no_move != 0) {
@@ -54,12 +50,13 @@ public class Move {
             IOUtil.msg("you are still stuck in the bear trap");
             return;
         }
+        AbstractCoordinate nh = new Coordinate();
         /*
          * Do a confused move (maybe)
          */
-        if (Human.instance.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
+        if (player.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) {
             nh = rndmove(Global.player);
-            if (nh.equals(Global.player._t_pos)) {
+            if (nh.equals(player.getPosition())) {
                 Global.after = false;
                 Global.running = false;
                 Global.to_death = false;
@@ -67,32 +64,34 @@ public class Move {
             }
         } else {
             over:
-            nh = Global.player._t_pos.add(new Coordinate(dx,dy));
+            nh = player.getPosition().add(new Coordinate(dx, dy));
         }
 
         /*
          * Check if he tried to move off the screen or make an illegal
          * diagonal move, and stop him if he did.
          */
-        if (nh.x < 0 || nh.x >= Const.NUMCOLS || nh.y <= 0 || nh.y >= Const.NUMLINES - 1) {
+        if (nh.getX() < 0 || nh.getX() >= Const.NUMCOLS || nh.getY() <= 0 || nh.getY() >= Const.NUMLINES - 1) {
             // goto hit_bound;
         }
-        if (!Chase.diag_ok(Global.player._t_pos, nh)) {
+        if (!Chase.diag_ok(player.getPosition(), nh)) {
             Global.after = false;
             Global.running = false;
             return;
         }
-        if (Global.running && Global.player._t_pos.equals(nh)) {
+        if (Global.running && player.getPosition().equals(nh)) {
             Global.after = Global.running = false;
         }
+        ObjectType ch;
+        char fl;
         fl = (char) Util.flat(nh);
         ch = Util.winat(nh);
         if ((fl & Const.F_REAL) == 0 && ch == ObjectType.FLOOR) {
-            if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
+            if (!player.containsState(StateEnum.ISLEVIT)) {
                 Util.getPlace(nh).p_ch = ch = ObjectType.TRAP;
                 Util.getPlace(nh).p_flags |= Const.F_REAL;
             }
-        } else if (Human.instance.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
+        } else if (player.containsState(StateEnum.ISHELD) && ch.getValue() != 'F') {
             IOUtil.msg("you are being held");
             return;
         }
@@ -101,14 +100,14 @@ public class Move {
             case Vert:
             case Horizon:
                 hit_bound:
-                if (Global.passgo && Global.running && Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)
-                        && !Human.instance.containsState(StateEnum.ISBLIND)) {
+                if (Global.passgo && Global.running && player.getRoom().containInfo(RoomInfoEnum.ISGONE)
+                        && !player.containsState(StateEnum.ISBLIND)) {
                     boolean b1, b2;
                     switch (Global.runch) {
                         case 'h':
                         case 'l':
-                            b1 = (Global.player._t_pos.y != 1 && turn_ok(Global.player._t_pos.y - 1, Global.player._t_pos.x));
-                            b2 = (Global.player._t_pos.y != Const.NUMLINES - 2 && turn_ok(Global.player._t_pos.y + 1, Global.player._t_pos.x));
+                            b1 = (player.getPositionY() != 1 && turn_ok(player.getPositionY() - 1, player.getPositionX()));
+                            b2 = (player.getPositionY() != Const.NUMLINES - 2 && turn_ok(player.getPositionY() + 1, player.getPositionX()));
                             if (b1 == b2) {
                                 break;
                             }
@@ -123,8 +122,8 @@ public class Move {
                             turnref();
                         case 'j':
                         case 'k':
-                            b1 = (Global.player._t_pos.x != 0 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x - 1));
-                            b2 = (Global.player._t_pos.x != Const.NUMCOLS - 1 && turn_ok(Global.player._t_pos.y, Global.player._t_pos.x + 1));
+                            b1 = (player.getPositionX() != 0 && turn_ok(player.getPositionY(), player.getPositionX() - 1));
+                            b2 = (player.getPositionX() != Const.NUMCOLS - 1 && turn_ok(player.getPositionY(), player.getPositionX() + 1));
                             if (b1 == b2) {
                                 break;
                             }
@@ -145,13 +144,13 @@ public class Move {
                 break;
             case DOOR:
                 Global.running = false;
-                if ((Util.flat(Global.player._t_pos) & Const.F_PASS) != 0) {
+                if ((Util.flat(player.getPosition()) & Const.F_PASS) != 0) {
                     Rooms.enter_room(nh);
                 }
                 move_stuff(fl, nh);
             case TRAP:
-                ch = ObjectType.get((char) be_trapped(nh));
-                if (ch.getValue() == Const.T_DOOR || ch.getValue() == Const.T_TELEP) {
+                ch = ObjectType.get((char) be_trapped(player, nh));
+                if (ch.getValue() == TrapEnum.T_DOOR.getValue() || ch.getValue() == TrapEnum.T_TELEP.getValue()) {
                     return;
                 }
                 move_stuff(fl, nh);
@@ -162,11 +161,11 @@ public class Move {
                  * if you're leaving a maze room, so it is necessary to
                  * always recalculate proom.
                  */
-                Global.player.t_room = Chase.roomin(Global.player._t_pos);
+                player.setRoom(Chase.roomin(player.getPosition()));
                 move_stuff(fl, nh);
             case FLOOR:
                 if ((fl & Const.F_REAL) == 0) {
-                    be_trapped(Global.player._t_pos);
+                    be_trapped(player, player.getPosition());
                 }
                 move_stuff(fl, nh);
             case STAIRS:
@@ -175,7 +174,7 @@ public class Move {
             default:
                 Global.running = false;
                 if (Character.isUpperCase(ch.getValue()) || Util.getPlace(nh).p_monst != null) {
-                    Fight.fight(nh, Human.instance.getWeapons().size() > 0 ? Human.instance.getWeapons().get(0) : null, false);
+                    Fight.fight(nh, player.getWeapons().size() > 0 ? player.getWeapons().get(0) : null, false);
                 } else {
                     if (ch != ObjectType.STAIRS) {
                         Global.take = ch;
@@ -185,7 +184,7 @@ public class Move {
         }
     }
 
-    static private void move_stuff(char fl, Coordinate nh) {
+    static private void move_stuff(char fl, AbstractCoordinate nh) {
         Display.mvaddch(Global.player._t_pos, Pack.floor_at().getValue());
         if ((fl & Const.F_PASS) != 0 && Util.getPlace(Global.oldpos).p_ch == ObjectType.DOOR) {
             Rooms.leave_room(nh);
@@ -197,19 +196,19 @@ public class Move {
      * rndmove:
      *	Move in a random direction if the monster/person is confused
      */
-    static Coordinate rndmove(ThingImp who) {
-        Coordinate ret = who._t_pos.add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
+    static AbstractCoordinate rndmove(OriginalMonster who) {
+        AbstractCoordinate ret = who.getPosition().add(new Coordinate(Util.rnd(3) - 1, Util.rnd(3) - 1));  /* what we will be returning */
 
         /*
          * Now check to see if that's a legal move.  If not, don't move.
          * (I.e., bump into the wall or whatever)
          */
-        if (who._t_pos.equals(ret)) {
+        if (who.getPosition().equals(ret)) {
             return ret;
         }
         bad:
         {
-            if (!Chase.diag_ok(who._t_pos, ret)) {
+            if (!Chase.diag_ok(who.getPosition(), ret)) {
                 break bad;
             } else {
                 ObjectType ch = Util.winat(ret);
@@ -217,10 +216,10 @@ public class Move {
                     break bad;
                 }
                 if (ch.getValue() == ObjectType.SCROLL.getValue()) {
-                    ThingImp obj2 = null;
-                    for (ThingImp obj : Global.lvl_obj) {
+                    Thing obj2 = null;
+                    for (Thing obj : Global.lvl_obj) {
                         obj2 = obj;
-                        if (obj._o_pos.equals(ret)) {
+                        if (obj.getOPos().equals(ret)) {
                             break;
                         }
                     }
@@ -232,7 +231,7 @@ public class Move {
             return ret;
 
         }
-        ret = who._t_pos;
+        ret = who.getPosition();
         return ret;
     }
 
@@ -266,13 +265,13 @@ public class Move {
      * be_trapped:
      *	The guy stepped on a trap.... Make him pay.
      */
-    static int be_trapped(Coordinate tc) {
+    static int be_trapped(Player player, AbstractCoordinate tc) {
         Place pp;
-        ThingImp arrow;
+        Thing arrow;
         ObjectType tr;
 
-        if (Human.instance.containsState(StateEnum.ISLEVIT)) {
-            return Const.T_RUST;    /* anything that's not a door or teleport */
+        if (player.containsState(StateEnum.ISLEVIT)) {
+            return TrapEnum.T_RUST.getValue();    /* anything that's not a door or teleport */
         }
         Global.running = false;
         Global.count = 0;
@@ -280,98 +279,105 @@ public class Move {
         pp.p_ch = ObjectType.TRAP;
         tr = ObjectType.get((char) (pp.p_flags & Const.F_TMASK));
         pp.p_flags |= Const.F_SEEN;
-        switch ((int) tr.getValue()) {
-            case Const.T_DOOR:
-                Human.instance.upstairs();
-                New_Level.new_level();
-                IOUtil.msg("you fell into a trap!");
-                break;
-            case Const.T_BEAR:
-                Global.no_move += Const.BEARTIME;
-                IOUtil.msg("you are caught in a bear trap");
-                break;
-            case Const.T_MYST:
-                switch (Util.rnd(11)) {
-                    case 0:
-                        IOUtil.msg("you are suddenly in a parallel dimension");
-                        break;
-                    case 1:
-                        // IOUtil.msg("the light in here suddenly seems %s", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 2:
-                        IOUtil.msg("you feel a sting in the side of your neck");
-                        break;
-                    case 3:
-                        IOUtil.msg("multi-colored lines swirl around you, then fade");
-                        break;
-                    case 4:
-                        // IOUtil.msg("a %s light flashes in your eyes", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 5:
-                        IOUtil.msg("a spike shoots past your ear!");
-                        break;
-                    case 6:
-                        // IOUtil.msg("%s sparks dance across your armor", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 7:
-                        IOUtil.msg("you suddenly feel very thirsty");
-                        break;
-                    case 8:
-                        IOUtil.msg("you feel time speed up suddenly");
-                        break;
-                    case 9:
-                        IOUtil.msg("time now seems to be going slower");
-                        break;
-                    case 10:
-                        // IOUtil.msg("you pack turns %s!", rainbow[rnd(cNCOLORS)]);
-                }
-                break;
-            case Const.T_SLEEP:
-                Global.no_command += Const.SLEEPTIME;
-                Human.instance.removeState(StateEnum.ISRUN);
-                IOUtil.msg("a strange white mist envelops you and you fall asleep");
-                break;
-            case Const.T_ARROW:
-                if (Fight.swing(Global.player._t_stats.s_lvl - 1, Global.player._t_stats.s_arm, 1)) {
-                    Human.instance.deleteHp(Dice.roll(1, 6));
-                    if (Human.instance.getHp() <= 0) {
-                        IOUtil.msg("an arrow killed you");
-                        Rip.death('a');
-                    } else
-                        IOUtil.msg("oh no! An arrow shot you");
-                } else {
-                    arrow = new Weapon(WeaponEnum.ARROW, 0);
-                    arrow.addCount(1);
-                    arrow._o_pos = Global.player._t_pos;
-                    WeaponMethod.fall(arrow, false);
-                    IOUtil.msg("an arrow shoots past you");
-                }
-                break;
-            case Const.T_TELEP:
-                /*
-                 * since the hero's leaving, look() won't put a TRAP
-                 * down for us, so we have to do it ourself
-                 */
-                Wizard.teleport();
-                Display.mvaddch(tc, ObjectType.TRAP.getValue());
-                break;
-            case Const.T_DART:
-                if (!Fight.swing(Global.player._t_stats.s_lvl + 1, Global.player._t_stats.s_arm, 1)) {
-                    IOUtil.msg("a small dart whizzes by your ear and vanishes");
-                } else {
-                    Human.instance.deleteHp(Dice.roll(1, 4));
-                    if (Human.instance.getHp() <= 0) {
-                        IOUtil.msg("a poisoned dart killed you");
-                        Rip.death('d');
+        TrapEnum e = TrapEnum.get(tr.getValue());
+        if(e != null) {
+            switch (e) {
+                case T_DOOR:
+                    player.upstairs();
+                    New_Level.new_level(player);
+                    IOUtil.msg("you fell into a trap!");
+                    break;
+                case T_BEAR:
+                    Global.no_move += Const.BEARTIME;
+                    IOUtil.msg("you are caught in a bear trap");
+                    break;
+                case T_MYST:
+                    switch (Util.rnd(11)) {
+                        case 0:
+                            IOUtil.msg("you are suddenly in a parallel dimension");
+                            break;
+                        case 1:
+                            // IOUtil.msg("the light in here suddenly seems %s", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 2:
+                            IOUtil.msg("you feel a sting in the side of your neck");
+                            break;
+                        case 3:
+                            IOUtil.msg("multi-colored lines swirl around you, then fade");
+                            break;
+                        case 4:
+                            // IOUtil.msg("a %s light flashes in your eyes", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 5:
+                            IOUtil.msg("a spike shoots past your ear!");
+                            break;
+                        case 6:
+                            // IOUtil.msg("%s sparks dance across your armor", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 7:
+                            IOUtil.msg("you suddenly feel very thirsty");
+                            break;
+                        case 8:
+                            IOUtil.msg("you feel time speed up suddenly");
+                            break;
+                        case 9:
+                            IOUtil.msg("time now seems to be going slower");
+                            break;
+                        case 10:
+                            // IOUtil.msg("you pack turns %s!", rainbow[rnd(cNCOLORS)]);
+                        default:
+                            break;
                     }
-                    if (!SustainStrengthRing.isInclude(Human.instance.getRings()) && !Monst.save(Const.VS_POISON))
-                        Misc.chg_str(-1);
-                    IOUtil.msg("a small dart just hit you in the shoulder");
-                }
-                break;
-            case Const.T_RUST:
-                IOUtil.msg("a gush of water hits you on the head");
-                rust_armor(Human.instance.getArmor());
+                    break;
+                case T_SLEEP:
+                    Global.no_command += Const.SLEEPTIME;
+                    player.removeState(StateEnum.ISRUN);
+                    IOUtil.msg("a strange white mist envelops you and you fall asleep");
+                    break;
+                case T_ARROW:
+                    if (Fight.swing(Global.player.getStatus().s_lvl - 1, Global.player.getStatus().s_arm, 1)) {
+                        player.deleteHp(Dice.roll(1, 6));
+                        if (player.getHp() <= 0) {
+                            IOUtil.msg("an arrow killed you");
+                            Rip.death('a');
+                        } else {
+                            IOUtil.msg("oh no! An arrow shot you");
+                        }
+                    } else {
+                        arrow = new Weapon(WeaponEnum.ARROW, 0);
+                        arrow.addCount(1);
+                        arrow.setOPos(player.getPosition());
+                        WeaponMethod.fall(arrow, false);
+                        IOUtil.msg("an arrow shoots past you");
+                    }
+                    break;
+                case T_TELEP:
+                    /*
+                     * since the hero's leaving, look() won't put a TRAP
+                     * down for us, so we have to do it ourself
+                     */
+                    Wizard.teleport(player);
+                    Display.mvaddch(tc, ObjectType.TRAP.getValue());
+                    break;
+                case T_DART:
+                    if (!Fight.swing(Global.player.getStatus().s_lvl + 1, Global.player.getStatus().s_arm, 1)) {
+                        IOUtil.msg("a small dart whizzes by your ear and vanishes");
+                    } else {
+                        player.deleteHp(Dice.roll(1, 4));
+                        if (player.getHp() <= 0) {
+                            IOUtil.msg("a poisoned dart killed you");
+                            Rip.death('d');
+                        }
+                        if (!SustainStrengthRing.isInclude(player.getRings()) && !Monst.save(Const.VS_POISON)) {
+                            Misc.chg_str(-1);
+                        }
+                        IOUtil.msg("a small dart just hit you in the shoulder");
+                    }
+                    break;
+                case T_RUST:
+                    IOUtil.msg("a gush of water hits you on the head");
+                    rust_armor(player);
+            }
         }
         Mach_dep.flush_type();
         return tr.getValue();
@@ -384,17 +390,11 @@ public class Move {
      *	aren't wearing a magic ring.
      *  錆びた鎧
      */
-    static void rust_armor(ThingImp arm) {
-        if (!(arm instanceof Armor) ||
-                arm._o_which == ArmorEnum.LEATHER.getValue() || arm._o_arm >= 9) {
-            return;
-        }
-        if (arm.contains_o_flags(Const.ISPROT) || MaintainArmorRing.isInclude(Human.instance.getRings())) {
-            if (!Global.to_death) {
-                IOUtil.msg("the rust vanishes instantly");
-            }
+    static void rust_armor(Player player) {
+        boolean result = player.getArmor().rust(player);
+        if (result && !Global.to_death) {
+            IOUtil.msg("the rust vanishes instantly");
         } else {
-            arm._o_arm++;
             if (!Global.terse) {
                 IOUtil.msg("your armor appears to be weaker now. Oh my!");
             } else {

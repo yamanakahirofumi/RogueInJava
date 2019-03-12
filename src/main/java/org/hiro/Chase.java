@@ -1,26 +1,29 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.scrolltype.Scare;
 
 /**
  * Code for one creature to chase another
  */
 public class Chase {
-    private static Coordinate ch_ret;
+    private static AbstractCoordinate ch_ret;
 
     /*
      * roomin:
      *	Find what room some coordinates are in. null means they aren't
      *	in any room.
      */
-    static Room roomin(Coordinate cp) {
+    static Room roomin(AbstractCoordinate cp) {
 
         int fp = Util.flat(cp);
         if ((fp & Const.F_PASS) != 0) {
@@ -47,13 +50,13 @@ public class Chase {
      * runto:
      *	Set a monster running after the hero.
      */
-    public static void runto(Coordinate runner) {
-        ThingImp tp;
+    public static void runto(AbstractCoordinate runner) {
+        OriginalMonster tp = Util.getPlace(runner).p_monst;
 
         /*
          * If we couldn't find him, something is funny
          */
-        if ((tp = Util.getPlace(runner).p_monst) == null) {
+        if (tp == null) {
             boolean MASTER = true;
             if (MASTER) {
                 //	msg("couldn't find monster in runto at (%d,%d)", runner. y, runner.x);
@@ -66,38 +69,38 @@ public class Chase {
          */
         tp.addState(StateEnum.ISRUN);
         tp.removeState(StateEnum.ISHELD);
-        tp._t_dest = find_dest(tp);
+        tp.setRunPosition(find_dest(tp));
     }
 
     /*
      * find_dest:
      *	find the proper destination for the monster
      */
-    static Coordinate find_dest(ThingImp tp) {
+    static AbstractCoordinate find_dest(OriginalMonster tp) {
         int prob;
 
-        if ((prob = Global.monsters[tp._t_type - 'A'].m_carry) <= 0
-                || tp.t_room == Global.player.t_room
+        if ((prob = Global.monsters[tp.getType() - 'A'].m_carry) <= 0
+                || tp.getRoom().equals(Human.instance.getRoom())
                 || see_monst(tp)) {
-            return Global.player._t_pos;
+            return Human.instance.getPosition();
         }
-        for (ThingImp obj : Global.lvl_obj) {
+        for (Thing obj : Global.lvl_obj) {
             if (obj instanceof Scare) {
                 continue;
             }
-            if (roomin(obj._o_pos) == tp.t_room && Util.rnd(100) < prob) {
-                for (ThingImp tp2 : Global.mlist) {
+            if (tp.getRoom().equals(roomin(obj.getOPos())) && Util.rnd(100) < prob) {
+                for (OriginalMonster tp2 : Global.mlist) {
                     tp = tp2;
-                    if (tp._t_dest.equals(obj._o_pos)) {
+                    if (tp.getRunPosition().equals(obj.getOPos())) {
                         break;
                     }
                 }
                 if (tp == null) {
-                    return obj._o_pos;
+                    return obj.getOPos();
                 }
             }
         }
-        return Global.player._t_pos;
+        return Human.instance.getPosition();
     }
 
     /*
@@ -105,24 +108,24 @@ public class Chase {
      *	Return true if the hero can see the monster
      *  true: 主人公がモンスターを見える場合
      */
-    public static boolean see_monst(ThingImp mp) {
+    public static boolean see_monst(OriginalMonster mp) {
         if (Human.instance.containsState(StateEnum.ISBLIND)) {
             return false;
         }
         if (mp.containsState(StateEnum.ISINVIS) && !Human.instance.containsState(StateEnum.CANSEE)) {
             return false;
         }
-        int y = mp._t_pos.y;
-        int x = mp._t_pos.x;
-        if (dist_cp(mp._t_pos, Global.player._t_pos) < Const.LAMPDIST) {
-            return y == Global.player._t_pos.y || x == Global.player._t_pos.x
-                    || IOUtil.step_ok(Util.INDEX(y, Global.player._t_pos.x).p_ch)
-                    || IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, x).p_ch);
+        int y = mp.getPosition().getY();
+        int x = mp.getPosition().getX();
+        if (dist_cp(mp.getPosition(), Human.instance.getPosition()) < Const.LAMPDIST) {
+            return y == Human.instance.getPositionY() || x == Human.instance.getPositionX()
+                    || IOUtil.step_ok(Util.INDEX(y, Human.instance.getPositionX()).p_ch)
+                    || IOUtil.step_ok(Util.INDEX(Human.instance.getPositionY(), x).p_ch);
         }
-        if (mp.t_room != Global.player.t_room) {
+        if (!mp.getRoom().equals(Human.instance.getRoom())) {
             return false;
         }
-        return !mp.t_room.containInfo(RoomInfoEnum.ISDARK);
+        return !mp.getRoom().containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
@@ -141,15 +144,15 @@ public class Chase {
      * 昔はcan_see()
      *	Returns true if the hero can see a certain coordinate.
      */
-    public static boolean isSee(Coordinate c) {
-        if (Human.instance.containsState(StateEnum.ISBLIND)) {
+    public static boolean isSee(Player player, AbstractCoordinate c) {
+        if (player.containsState(StateEnum.ISBLIND)) {
             return false;
         }
-        if (dist_cp(c, Global.player._t_pos) < Const.LAMPDIST) {
+        if (dist_cp(c, player.getPosition()) < Const.LAMPDIST) {
             if ((Util.flat(c) & Const.F_PASS) != 0) {
-                return c.y == Global.player._t_pos.y || c.x == Global.player._t_pos.x ||
-                        IOUtil.step_ok(Util.INDEX(c.y, Global.player._t_pos.x).p_ch) ||
-                        IOUtil.step_ok(Util.INDEX(Global.player._t_pos.y, c.x).p_ch);
+                return c.getY() == player.getPositionY() || c.getX() == player.getPositionX() ||
+                        IOUtil.step_ok(Util.INDEX(c.getY(), player.getPositionX()).p_ch) ||
+                        IOUtil.step_ok(Util.INDEX(player.getPositionY(), c.getX()).p_ch);
             }
         }
         /*
@@ -157,22 +160,22 @@ public class Chase {
          * the coordinate and the room is lit or if it is close.
          */
         Room rer = roomin(c);
-        return rer == Global.player.t_room && !rer.containInfo(RoomInfoEnum.ISDARK);
+        return rer.equals(player.getRoom()) && !rer.containInfo(RoomInfoEnum.ISDARK);
     }
 
     /*
      * diag_ok:
      *	Check to see if the move is legal if it is diagonal
      */
-    public static boolean diag_ok(Coordinate sp, Coordinate ep) {
-        if (ep.x < 0 || ep.x >= Const.NUMCOLS || ep.y <= 0 || ep.y >= Const.NUMLINES - 1) {
+    public static boolean diag_ok(AbstractCoordinate sp, AbstractCoordinate ep) {
+        if (ep.getX() < 0 || ep.getX() >= Const.NUMCOLS || ep.getY() <= 0 || ep.getY() >= Const.NUMLINES - 1) {
             return false;
         }
-        if (ep.x == sp.x || ep.y == sp.y) {
+        if (ep.getX() == sp.getX() || ep.getY() == sp.getY()) {
             return true;
         }
-        return (IOUtil.step_ok(Util.INDEX(ep.y, sp.x).p_ch) &&
-                IOUtil.step_ok(Util.INDEX(sp.y, ep.x).p_ch));
+        return (IOUtil.step_ok(Util.INDEX(ep.getY(), sp.getX()).p_ch) &&
+                IOUtil.step_ok(Util.INDEX(sp.getY(), ep.getX()).p_ch));
     }
 
     /*
@@ -180,27 +183,27 @@ public class Chase {
      *	Make the monster's new location be the specified one, updating
      *	all the relevant state.
      */
-    public static void relocate(ThingImp th, Coordinate new_loc) {
+    public static void relocate(OriginalMonster th, AbstractCoordinate new_loc) {
 
-        if (!new_loc.equals(th._t_pos)) {
-            Display.mvaddch(th._t_pos, (char) th._t_oldch);
-            th.t_room = roomin(new_loc);
+        if (!new_loc.equals(th.getPosition())) {
+            Display.mvaddch(th.getPosition(), (char) th.getFloorTile());
+            th.setRoom(roomin(new_loc));
             set_oldch(th, new_loc);
-            Room oroom = th.t_room;
-            Util.getPlace(th._t_pos).p_monst = null;
+            Room oroom = th.getRoom();
+            Util.getPlace(th.getPosition()).p_monst = null;
 
-            if (oroom != th.t_room) {
-                th._t_dest = find_dest(th);
+            if (!oroom.equals(th.getRoom())) {
+                th.setRunPosition(find_dest(th));
             }
-            th._t_pos = new_loc;
+            th.setPosition(new_loc);
             Util.getPlace(new_loc).p_monst = th;
         }
         Display.move(new_loc);
         if (see_monst(th)) {
-            Display.addch((char) th._t_disguise);
+            Display.addch((char) th.getDisplayTile());
         } else if (Human.instance.containsState(StateEnum.SEEMONST)) {
             Display.standout();
-            Display.addch((char) th._t_type);
+            Display.addch((char) th.getType());
             Display.standend();
         }
     }
@@ -209,20 +212,20 @@ public class Chase {
      * set_oldch:
      *	Set the oldch character for the monster
      */
-    static void set_oldch(ThingImp tp, Coordinate cp) {
+    static void set_oldch(OriginalMonster tp, AbstractCoordinate cp) {
 
-        if (tp._t_pos.equals(cp)) {
+        if (tp.getPosition().equals(cp)) {
             return;
         }
 
-        int sch = tp._t_oldch;
-        tp._t_oldch = Util.CCHAR(Display.mvinch(cp));
+        int sch = tp.getFloorTile();
+        tp.setFloorTile(Util.CCHAR(Display.mvinch(cp)));
         if (!Human.instance.containsState(StateEnum.ISBLIND)) {
-            if ((sch == ObjectType.FLOOR.getValue() || tp._t_oldch == ObjectType.FLOOR.getValue()) &&
-                    tp.t_room.containInfo(RoomInfoEnum.ISDARK)) {
-                tp._t_oldch = ' ';
-            } else if (dist_cp(cp, Global.player._t_pos) <= Const.LAMPDIST && Global.see_floor) {
-                tp._t_oldch = Util.getPlace(cp).p_ch.getValue();
+            if ((sch == ObjectType.FLOOR.getValue() || tp.getFloorTile() == ObjectType.FLOOR.getValue()) &&
+                    tp.getRoom().containInfo(RoomInfoEnum.ISDARK)) {
+                tp.setFloorTile(' ');
+            } else if (dist_cp(cp, Human.instance.getPosition()) <= Const.LAMPDIST && Global.see_floor) {
+                tp.setFloorTile(Util.getPlace(cp).p_ch.getValue());
             }
         }
     }
@@ -231,8 +234,8 @@ public class Chase {
      * dist_cp:
      *	Call dist() with appropriate arguments for coordinate pointers
      */
-    static int dist_cp(Coordinate c1, Coordinate c2) {
-        return dist(c1.y, c1.x, c2.y, c2.x);
+    static int dist_cp(AbstractCoordinate c1, AbstractCoordinate c2) {
+        return dist(c1.getY(), c1.getX(), c2.getY(), c2.getX());
     }
 
     /*
@@ -240,19 +243,17 @@ public class Chase {
      *	Make all the running monsters move.
      */
     static void runners() {
-        ThingImp next;
 
-        for (ThingImp tp = Global.mlist.get(0); tp != null; tp = next) {
+        for (OriginalMonster tp : Global.mlist) {
             /* remember this in case the monster's "next" is changed */
-            next = tp._l_next;
             if (!tp.containsState(StateEnum.ISHELD) && tp.containsState(StateEnum.ISRUN)) {
-                Coordinate orig_pos = tp._t_pos;
-                boolean wastarget = tp.containsState(StateEnum.ISTARGET);
+                AbstractCoordinate orig_pos = tp.getPosition();
+                boolean wasTarget = tp.containsState(StateEnum.ISTARGET);
                 if (move_monst(tp) == -1)
                     continue;
-                if (tp.containsState(StateEnum.ISFLY) && dist_cp(Global.player._t_pos, tp._t_pos) >= 3)
+                if (tp.containsState(StateEnum.ISFLY) && dist_cp(Human.instance.getPosition(), tp.getPosition()) >= 3)
                     move_monst(tp);
-                if (wastarget && !orig_pos.equals(tp._t_pos)) {
+                if (wasTarget && !orig_pos.equals(tp.getPosition())) {
                     tp.removeState(StateEnum.ISTARGET);
                     Global.to_death = false;
                 }
@@ -268,8 +269,8 @@ public class Chase {
      * move_monst:
      *	Execute a single turn of running for a monster
      */
-    static int move_monst(ThingImp tp) {
-        if (!tp.containsState(StateEnum.ISSLOW) || tp._t_turn) {
+    static int move_monst(OriginalMonster tp) {
+        if (!tp.containsState(StateEnum.ISSLOW) || tp.isSlow()) {
             if (do_chase(tp) == -1) {
                 return -1;
             }
@@ -279,7 +280,7 @@ public class Chase {
                 return -1;
             }
         }
-        tp._t_turn ^= true;
+        tp.changeSlow();
         return 0;
     }
 
@@ -287,27 +288,27 @@ public class Chase {
      * do_chase:
      *	Make one thing chase another.
      */
-    static int do_chase(ThingImp th) {
+    static int do_chase(OriginalMonster th) {
         int DRAGONSHOT = 5;   /* one chance in DRAGONSHOT that a dragon will flame */
         int mindist = 32767;
-        Coordinate thisTmp = new Coordinate();            /* Temporary destination for chaser */
+        AbstractCoordinate thisTmp = new Coordinate();            /* Temporary destination for chaser */
 
         /* Find room of chaser */
         /* room of chaser, room of chasee */
-        Room rer = th.t_room;
+        Room rer = th.getRoom();
         if (th.containsState(StateEnum.ISGREED) && rer.r_goldval == 0) {
-            th._t_dest = Global.player._t_pos;    /* If gold has been taken, run after hero */
+            th.setRunPosition(Human.instance.getPosition());    /* If gold has been taken, run after hero */
         }
         Room ree;
-        if (th._t_dest == Global.player._t_pos) {    /* Find room of chasee */
-            ree = Global.player.t_room;
+        if (th.getRunPosition().equals(Human.instance.getPosition())) {    /* Find room of chasee */
+            ree = Human.instance.getRoom();
         } else {
-            ree = roomin(th._t_dest);
+            ree = roomin(th.getRunPosition());
         }
         /*
          * We don't count doors as inside rooms for this routine
          */
-        boolean door = (Util.getPlace(th._t_pos).p_ch == ObjectType.DOOR);
+        boolean door = (Util.getPlace(th.getPosition()).p_ch == ObjectType.DOOR);
         /*
          * If the object of our desire is in a different room,
          * and we are not in a corridor, run to the door nearest to
@@ -316,35 +317,35 @@ public class Chase {
         while (true) {
             if (rer != ree) {
                 for (int i = 0; i < rer.r_nexits; i++) {
-                    Coordinate cp = rer.r_exit[i];
-                    int curdist = dist_cp(th._t_dest, cp);
+                    AbstractCoordinate cp = rer.r_exit[i];
+                    int curdist = dist_cp(th.getRunPosition(), cp);
                     if (curdist < mindist) {
                         thisTmp = cp;
                         mindist = curdist;
                     }
                 }
                 if (door) {
-                    rer = Global.passages[Util.flat(th._t_pos) & Const.F_PNUM];
+                    rer = Global.passages[Util.flat(th.getPosition()) & Const.F_PNUM];
                     door = false;
                     continue;
                 }
             } else {
-                thisTmp = th._t_dest;
+                thisTmp = th.getRunPosition();
                 /*
                  * For dragons check and see if (a) the hero is on a straight
                  * line from it, and (b) that it is within shooting distance,
                  * but outside of striking range.
                  */
-                if (th._t_type == 'D' && (th._t_pos.y == Global.player._t_pos.y || th._t_pos.x == Global.player._t_pos.x
-                        || Math.abs(th._t_pos.y - Global.player._t_pos.y) == Math.abs(th._t_pos.x - Global.player._t_pos.x))
-                        && dist_cp(th._t_pos, Global.player._t_pos) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
+                if (th.getType() == 'D' && (th.getPosition().getY() == Human.instance.getPositionY() || th.getPosition().getX() == Human.instance.getPositionX()
+                        || Math.abs(th.getPosition().getY() - Human.instance.getPositionY()) == Math.abs(th.getPosition().getX() - Human.instance.getPositionX()))
+                        && dist_cp(th.getPosition(), Human.instance.getPosition()) <= Const.BOLT_LENGTH * Const.BOLT_LENGTH
                         && !th.containsState(StateEnum.ISCANC) && Util.rnd(DRAGONSHOT) == 0) {
-                    Global.delta = new Coordinate(Misc.sign(Global.player._t_pos.x - th._t_pos.x),
-                            Misc.sign(Global.player._t_pos.y - th._t_pos.y));
+                    Global.delta = new Coordinate(Misc.sign(Human.instance.getPositionX() - th.getPosition().getX()),
+                            Misc.sign(Human.instance.getPositionY() - th.getPosition().getY()));
                     if (Global.has_hit) {
                         IOUtil.endmsg();
                     }
-                    StickMethod.fire_bolt(th._t_pos, Global.delta, "flame");
+                    StickMethod.fire_bolt(th.getPosition(), Global.delta, "flame");
                     Global.running = false;
                     Global.count = 0;
                     Global.quiet = 0;
@@ -365,25 +366,25 @@ public class Chase {
         /* true means we are there */
         boolean stoprun = false;
         if (!chase(th, thisTmp)) {
-            if (thisTmp.equals(Global.player._t_pos)) {
-                return (Fight.attack(th));
-            } else if (thisTmp.equals(th._t_dest)) {
-                for (ThingImp obj : Global.lvl_obj) {
-                    if (th._t_dest.equals(obj._o_pos)) {
+            if (thisTmp.equals(Human.instance.getPosition())) {
+                return (Fight.attack(Human.instance, th));
+            } else if (thisTmp.equals(th.getRunPosition())) {
+                for (Thing obj : Global.lvl_obj) {
+                    if (th.getRunPosition().equals(obj.getOPos())) {
                         Global.lvl_obj.remove(obj);
                         th.addItem(obj);
-                        Util.getPlace(obj._o_pos).p_ch =
-                                th.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
-                        th._t_dest = find_dest(th);
+                        Util.getPlace(obj.getOPos()).p_ch =
+                                th.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                        th.setRunPosition(find_dest(th));
                         break;
                     }
                 }
-                if (th._t_type != 'F') {
+                if (th.getType() != 'F') {
                     stoprun = true;
                 }
             }
         } else {
-            if (th._t_type == 'F') {
+            if (th.getType() == 'F') {
                 return (0);
             }
         }
@@ -391,7 +392,7 @@ public class Chase {
         /*
          * And stop running if need be
          */
-        if (stoprun && th._t_pos.equals(th._t_dest)) {
+        if (stoprun && th.getPosition().equals(th.getRunPosition())) {
             th.removeState(StateEnum.ISRUN);
         }
         return (0);
@@ -403,18 +404,18 @@ public class Chase {
      *	chasee(ee).  Returns TRUE if we want to keep on chasing later
      *	FALSE if we reach the goal.
      */
-    static boolean chase(ThingImp tp, Coordinate ee) {
+    static boolean chase(OriginalMonster tp, AbstractCoordinate ee) {
         int curdist;
-        Coordinate er = tp._t_pos;
-        Coordinate tryp = new Coordinate();
+        AbstractCoordinate er = tp.getPosition();
+        AbstractCoordinate tryp = new Coordinate();
 
         /*
          * If the thing is confused, let it move randomly. Invisible
          * Stalkers are slightly confused all of the time, and bats are
          * quite confused all the time
          */
-        if ((tp.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) || (tp._t_type == 'P' && Util.rnd(5) == 0)
-                || (tp._t_type == 'B' && Util.rnd(2) == 0)) {
+        if ((tp.containsState(StateEnum.ISHUH) && Util.rnd(5) != 0) || (tp.getType() == 'P' && Util.rnd(5) == 0)
+                || (tp.getType() == 'B' && Util.rnd(2) == 0)) {
             /*
              * get a valid random move
              */
@@ -439,22 +440,22 @@ public class Chase {
             curdist = dist_cp(er, ee);
             ch_ret = er;
 
-            int ey = er.y + 1;
+            int ey = er.getY() + 1;
             if (ey >= Const.NUMLINES - 1) {
                 ey = Const.NUMLINES - 2;
             }
-            int ex = er.x + 1;
+            int ex = er.getX() + 1;
             if (ex >= Const.NUMCOLS) {
                 ex = Const.NUMCOLS - 1;
             }
 
             int plcnt = 1;
-            for (int x = er.x - 1; x <= ex; x++) {
+            for (int x = er.getX() - 1; x <= ex; x++) {
                 if (x < 0)
                     continue;
-                tryp.x = x;
-                for (int y = er.y - 1; y <= ey; y++) {
-                    tryp.y = y;
+                tryp.setX(x);
+                for (int y = er.getY() - 1; y <= ey; y++) {
+                    tryp.setY(y);
                     if (!diag_ok(er, tryp))
                         continue;
                     ObjectType ch = Util.winat(tryp);
@@ -463,11 +464,11 @@ public class Chase {
                          * If it is a scroll, it might be a scare monster scroll
                          * so we need to look it up to see what type it is.
                          */
-                        ThingImp obj2 = null;
+                        Thing obj2 = null;
                         if (ch == ObjectType.SCROLL) {
-                            for (ThingImp obj : Global.lvl_obj) {
+                            for (Thing obj : Global.lvl_obj) {
                                 obj2 = obj;
-                                if (obj._o_pos.equals(new Coordinate(x, y))) {
+                                if (obj.getOPos().equals(new Coordinate(x, y))) {
                                     break;
                                 }
                             }
@@ -478,7 +479,8 @@ public class Chase {
                         /*
                          * It can also be a Xeroc, which we shouldn't step on
                          */
-                        if ((obj2 = Util.getPlace(tryp).p_monst) != null && obj2._t_type == 'X') {
+                        OriginalMonster obj3;
+                        if ((obj3 = Util.getPlace(tryp).p_monst) != null && obj3.getType() == 'X') {
                             continue;
                         }
                         /*
@@ -498,7 +500,7 @@ public class Chase {
                 }
             }
         }
-        return (curdist != 0 && !ch_ret.equals(Global.player._t_pos));
+        return (curdist != 0 && !ch_ret.equals(Human.instance.getPosition()));
     }
 
 }

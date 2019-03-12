@@ -50,7 +50,7 @@ public class Gold extends ThingImp {
 
     @Override
     public Optional<Thing> eat() {
-        return Optional.of(null);
+        return Optional.empty();
     }
 
     @Override

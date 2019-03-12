@@ -2,10 +2,11 @@ package org.hiro;
 
 import org.hiro.character.Human;
 import org.hiro.character.StateEnum;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
-import org.hiro.things.Thing;
+import org.hiro.things.OriginalMonster;
 import org.hiro.things.ThingImp;
 import org.hiro.things.ringtype.AggravateMonsterRing;
 import org.hiro.things.ringtype.ProtectionRing;
@@ -53,7 +54,7 @@ public class Monst {
      * new_monster:
      *	Pick a new monster and add it to the list
      */
-    public static void new_monster(ThingImp tp, int type, Coordinate cp) {
+    public static void new_monster(OriginalMonster tp, int type, AbstractCoordinate cp) {
         Monster mp;
         int lev_add;
 
@@ -61,31 +62,31 @@ public class Monst {
             lev_add = 0;
         }
         Global.mlist.add(tp);
-        tp._t_type = type;
-        tp._t_disguise = type;
-        tp._t_pos = cp;
+        tp.setType(type);
+        tp.setDisplayTile(type);
+        tp.setPosition(cp);
         Display.move(cp); //ncursesライブラリ move()
-        tp._t_oldch = Util.CCHAR(Display.inch());
-        tp.t_room = Chase.roomin(cp);
+        tp.setFloorTile(Util.CCHAR(Display.inch()));
+        tp.setRoom(Chase.roomin(cp));
         Util.getPlace(cp).p_monst = tp;
-        mp = Global.monsters[tp._t_type - 'A'];
-        tp._t_stats.s_lvl = mp.m_stats.s_lvl + lev_add;
-        tp._t_stats.s_maxhp = tp._t_stats.s_hpt = Dice.roll(tp._t_stats.s_lvl, 8);
-        tp._t_stats.s_arm = mp.m_stats.s_arm - lev_add;
-        tp._t_stats.s_dmg = mp.m_stats.s_dmg; //  strcpy(tp._t_stats.s_dmg, mp.m_stats.s_dmg);
-        tp._t_stats.s_str = mp.m_stats.s_str;
-        tp._t_stats.s_exp = mp.m_stats.s_exp + lev_add * 10 + exp_add(tp);
+        mp = Global.monsters[tp.getType() - 'A'];
+        tp.getStatus().s_lvl = mp.m_stats.s_lvl + lev_add;
+        tp.getStatus().s_maxhp = tp.getStatus().s_hpt = Dice.roll(tp.getStatus().s_lvl, 8);
+        tp.getStatus().s_arm = mp.m_stats.s_arm - lev_add;
+        tp.getStatus().s_dmg = mp.m_stats.s_dmg; //  strcpy(tp._t_stats.s_dmg, mp.m_stats.s_dmg);
+        tp.getStatus().s_str = mp.m_stats.s_str;
+        tp.getStatus().s_exp = mp.m_stats.s_exp + lev_add * 10 + exp_add(tp);
         tp.setState(mp.m_flags);  // TODO:o_flagとt_flag共有を考えないと
         if (Human.instance.getLevel() > 29) {
             tp.addState(StateEnum.ISHASTE);
         }
-        tp._t_turn = true;
+        tp.slow();
         tp.setBaggage(new ArrayList<>());
         if (AggravateMonsterRing.isInclude(Human.instance.getRings())) {
             Chase.runto(cp);
         }
         if (type == 'X') {
-            tp._t_disguise = Misc.rnd_thing().getValue();
+            tp.setDisplayTile(Misc.rnd_thing().getValue());
         }
     }
 
@@ -93,18 +94,18 @@ public class Monst {
      * expadd:
      *	Experience to add for this monster's level/hit points
      */
-    static int exp_add(ThingImp tp) {
+    static int exp_add(OriginalMonster tp) {
         int mod;
 
-        if (tp._t_stats.s_lvl == 1) {
-            mod = tp._t_stats.s_maxhp / 8;
+        if (tp.getStatus().s_lvl == 1) {
+            mod = tp.getStatus().s_maxhp / 8;
         } else {
-            mod = tp._t_stats.s_maxhp / 6;
+            mod = tp.getStatus().s_maxhp / 6;
         }
 
-        if (tp._t_stats.s_lvl > 9) {
+        if (tp.getStatus().s_lvl > 9) {
             mod *= 20;
-        } else if (tp._t_stats.s_lvl > 6) {
+        } else if (tp.getStatus().s_lvl > 6) {
             mod *= 4;
         }
         return mod;
@@ -116,9 +117,9 @@ public class Monst {
      *
      */
 
-    static void give_pack(ThingImp tp) {
+    static void give_pack(OriginalMonster tp) {
         if (Human.instance.getLevel() >= Global.max_level
-                && Util.rnd(100) < Global.monsters[tp._t_type - 'A'].m_carry) {
+                && Util.rnd(100) < Global.monsters[tp.getType() - 'A'].m_carry) {
             tp.addItem(new ThingImp());
         }
     }
@@ -127,8 +128,8 @@ public class Monst {
      * wake_monster:
      *	What to do when the hero steps next to a monster
      */
-    static Thing wake_monster(int y, int x) {
-        ThingImp tp;
+    static OriginalMonster wake_monster(int y, int x) {
+        OriginalMonster tp;
         Room rp;
         int ch;
         String mname;
@@ -141,20 +142,20 @@ public class Monst {
             return null;
         }
 
-        ch = tp._t_type;
+        ch = tp.getType();
         /*
          * Every time he sees mean monster, it might start chasing him
          */
         if (!tp.containsState(StateEnum.ISRUN) && Util.rnd(3) != 0
                 && tp.containsState(StateEnum.ISMEAN) && !tp.containsState(StateEnum.ISHELD)
                 && !StealthRing.isInclude(Human.instance.getRings()) && !Human.instance.containsState(StateEnum.ISLEVIT)) {
-            tp._t_dest = Global.player._t_pos;
+            tp.setRunPosition(Global.player._t_pos);
             tp.addState(StateEnum.ISRUN);
         }
         if (ch == 'M' && !Human.instance.containsState(StateEnum.ISBLIND) && !Human.instance.containsState(StateEnum.ISHALU)
                 && !tp.containsState(StateEnum.ISFOUND) && !tp.containsState(StateEnum.ISCANC)
                 && tp.containsState(StateEnum.ISRUN)) {
-            rp = Global.player.t_room;
+            rp = Human.instance.getRoom();
             if (rp == null || rp.containInfo(RoomInfoEnum.ISDARK)
                     || Chase.dist_cp(new Coordinate(x, y), Global.player._t_pos) < Const.LAMPDIST) {
                 tp.addState(StateEnum.ISFOUND);
@@ -184,10 +185,10 @@ public class Monst {
          */
         if (tp.containsState(StateEnum.ISGREED) && !tp.containsState(StateEnum.ISRUN)) {
             tp.addState(StateEnum.ISRUN);
-            if (Global.player.t_room.r_goldval != 0) {
-                tp._t_dest = Global.player.t_room.r_gold;
+            if (Human.instance.getRoom().r_goldval != 0) {
+                tp.setRunPosition(Human.instance.getRoom().r_gold);
             } else {
-                tp._t_dest = Global.player._t_pos;
+                tp.setRunPosition( Global.player._t_pos);
             }
         }
         return tp;
@@ -201,10 +202,10 @@ public class Monst {
     static boolean save(int which) {
         if (which == Const.VS_MAGIC) {
             if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing ) {
-                which -= Global.cur_ring[Const.LEFT]._o_arm;
+                which -= ((ProtectionRing)Global.cur_ring[Const.LEFT]).getDefence();
             }
             if (Global.cur_ring[Const.RIGHT] instanceof  ProtectionRing) {
-                which -= Global.cur_ring[Const.RIGHT]._o_arm;
+                which -= ((ProtectionRing)Global.cur_ring[Const.RIGHT]).getDefence();
             }
         }
         return save_throw(which, Global.player);
@@ -215,10 +216,10 @@ public class Monst {
      * save_throw:
      *	See if a creature save against something
      */
-    public static boolean save_throw(int which, ThingImp tp) {
+    public static boolean save_throw(int which, OriginalMonster tp) {
         int need;
 
-        need = 14 + which - tp._t_stats.s_lvl / 2;
+        need = 14 + which - tp.getStatus().s_lvl / 2;
         return (Dice.roll(1, 20) >= need);
     }
 

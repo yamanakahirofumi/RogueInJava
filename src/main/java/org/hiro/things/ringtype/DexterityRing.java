@@ -38,4 +38,7 @@ public class DexterityRing extends Ring {
         return worth;
     }
 
+    public int getDexterity() {
+        return dexterity;
+    }
 }

@@ -1,6 +1,8 @@
 package org.hiro.input.keyboard;
 
+import org.hiro.character.Player;
+
 public interface KeyboardCommand {
 
-    public void execute();
+    public void execute(Player player);
 }

@@ -1,11 +1,13 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.output.Display;
 import org.hiro.things.Gold;
-import org.hiro.things.ThingImp;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.Weapon;
 import org.hiro.things.ringtype.AddDamageRing;
 import org.hiro.things.ringtype.DexterityRing;
@@ -20,7 +22,7 @@ public class Fight {
      * set_mname:
      *	return the monster name for the given monster
      */
-    static String set_mname(ThingImp tp) {
+    static String set_mname(OriginalMonster tp) {
         char ch;
         String mname;
         String tbuf = "the ";
@@ -28,7 +30,7 @@ public class Fight {
         if (!Chase.see_monst(tp) && !Human.instance.containsState(StateEnum.SEEMONST))
             return (Global.terse ? "it" : "something");
         else if (Human.instance.containsState(StateEnum.ISHALU)) {
-            Display.move(tp._t_pos);
+            Display.move(tp.getPosition());
             ch = (char) Util.CCHAR(Display.inch());
             if (!Character.isUpperCase(ch)) {
                 ch = (char) Util.rnd(26);
@@ -37,7 +39,7 @@ public class Fight {
             }
             mname = Global.monsters[ch].m_name;
         } else {
-            mname = Global.monsters[tp._t_type - 'A'].m_name;
+            mname = Global.monsters[tp.getType() - 'A'].m_name;
         }
         return tbuf + mname;
     }
@@ -58,13 +60,13 @@ public class Fight {
      * fight:
      *	The player attacks the monster.
      */
-    static boolean fight(Coordinate mp, Weapon weap, boolean thrown) {
-        ThingImp tp;
+    static boolean fight(AbstractCoordinate mp, Weapon weap, boolean thrown) {
+        OriginalMonster tp = Util.getPlace(mp).p_monst;
 
         /*
          * Find the monster we want to fight
          */
-        if ((tp = Util.getPlace(mp).p_monst) == null) {
+        if (tp == null) {
             boolean MASTER = false;
             if (MASTER) {
                 // debug("Fight what @ %d,%d", mp . y, mp . x);
@@ -82,11 +84,11 @@ public class Fight {
          * Let him know it was really a xeroc (if it was one).
          */
         char ch = '\0';
-        if (tp._t_type == 'X' && tp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
-            tp._t_disguise = 'X';
+        if (tp.getType() == 'X' && tp.getDisplayTile() != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
+            tp.setDisplayTile('X');
             if (Human.instance.containsState(StateEnum.ISHALU)) {
                 ch = (char) (Util.rnd(26) + 'A');
-                Display.mvaddch(tp._t_pos, ch);
+                Display.mvaddch(tp.getPosition(), ch);
             }
             // msg(Misc.choose_str("heavy!  That's a nasty critter!",
             //        "wait!  That's a xeroc!"));
@@ -111,7 +113,7 @@ public class Fight {
                 Global.has_hit = false;
                 IOUtil.msg("your hands stop glowing %s", Init.pick_color("red"));
             }
-            if (tp._t_stats.s_hpt <= 0) {
+            if (tp.getStatus().s_hpt <= 0) {
                 killed(tp, true);
             } else if (did_hit && !Human.instance.containsState(StateEnum.ISBLIND)) {
                 IOUtil.msg("%s appears confused", mname);
@@ -186,33 +188,31 @@ public class Fight {
      * killed:
      *	Called to put a monster to death
      */
-    public static void killed(ThingImp tp, boolean pr) {
+    public static void killed(OriginalMonster tp, boolean pr) {
 
-        Human.instance.addExperience(tp._t_stats.s_exp);
+        Human.instance.addExperience(tp.getStatus().s_exp);
 
         /*
          * If the monster was a venus flytrap, un-hold him
          */
-        switch (tp._t_type) {
-            case 'F':
-                Human.instance.removeState(StateEnum.ISHELD);
-                Global.vf_hit = 0;
-                break;
-            case 'L': {
-                if (WeaponMethod.fallpos(tp._t_pos, tp.t_room.r_gold) && Human.instance.getLevel() >= Global.max_level) {
-                    Gold gold = new Gold(Human.instance.getLevel());
-                    if (Monst.save(Const.VS_MAGIC)) {
-                        gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
-                    }
-                    tp.addItem(gold);
+        if (tp.getType() == 'F') {
+            Human.instance.removeState(StateEnum.ISHELD);
+            Global.vf_hit = 0;
+        } else if (tp.getType() == 'L') {
+            if (WeaponMethod.fallpos(tp.getPosition(), tp.getRoom().r_gold) && Human.instance.getLevel() >= Global.max_level) {
+                Gold gold = new Gold(Human.instance.getLevel());
+                if (Monst.save(Const.VS_MAGIC)) {
+                    gold.addGold(Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC() + Util.GOLDCALC());
                 }
+                tp.addItem(gold);
             }
+
         }
         /*
          * Get rid of the monster.
          */
         String mname = set_mname(tp);
-        remove_mon(tp._t_pos, tp, true);
+        remove_mon(tp.getPosition(), tp, true);
         if (pr) {
             if (Global.has_hit) {
                 IOUtil.addmsg(".  Defeated ");
@@ -239,21 +239,17 @@ public class Fight {
      * remove_mon:
      *	Remove a monster from the screen
      */
-    static void remove_mon(Coordinate mp, ThingImp tp, boolean waskill) {
-        ThingImp nexti;
+    static void remove_mon(AbstractCoordinate mp, OriginalMonster tp, boolean waskill) {
 
-        for (ThingImp obj = tp._t_pack; obj != null; obj = nexti) {
-            nexti = obj._l_next;
-            obj._o_pos = tp._t_pos;
+        for (Thing obj : tp.getBaggage()) {
+            obj.setOPos(tp.getPosition());
             tp.removeItem(obj);
             if (waskill) {
                 WeaponMethod.fall(obj, false);
-            } else {
-                tp._t_pack.removeItem(obj); // TODO: エラー
             }
         }
         Util.getPlace(mp).p_monst = null;
-        Display.mvaddch(mp, (char) tp._t_oldch);
+        Display.mvaddch(mp, (char) tp.getFloorTile());
         Global.mlist.remove(tp);
         if (tp.containsState(StateEnum.ISTARGET)) {
             Global.kamikaze = false;
@@ -268,12 +264,12 @@ public class Fight {
      * bounce:
      *	A missile misses a monster
      */
-    static void bounce(ThingImp weap, String mname, boolean noend) {
+    static void bounce(Thing weap, String mname, boolean noend) {
         if (Global.to_death) {
             return;
         }
         if (weap instanceof Weapon) {
-            IOUtil.addmsg("the %s misses ", Global.weap_info[weap._o_which].getName());
+            IOUtil.addmsg("the %s misses ", Global.weap_info[((Weapon)weap)._o_which].getName());
         } else {
             IOUtil.addmsg("you missed ");
         }
@@ -288,12 +284,12 @@ public class Fight {
      * thunk:
      *	A missile hits a monster
      */
-    static void thunk(ThingImp weap, String mname, boolean noend) {
+    static void thunk(Thing weap, String mname, boolean noend) {
         if (Global.to_death) {
             return;
         }
         if (weap instanceof Weapon) {
-            IOUtil.addmsg("the %s hits ", Global.weap_info[weap._o_which].getName());
+            IOUtil.addmsg("the %s hits ", Global.weap_info[((Weapon)weap)._o_which].getName());
         } else {
             IOUtil.addmsg("you hit ");
         }
@@ -345,7 +341,7 @@ public class Fight {
      * roll_em:
      *	Roll several attacks
      */
-    static boolean roll_em(ThingImp thatt, ThingImp thdef, Weapon weap, boolean hurl) {
+    static boolean roll_em(OriginalMonster thatt, OriginalMonster thdef, Weapon weap, boolean hurl) {
         /*
          * adjustments to hit probabilities due to strength
          */
@@ -361,26 +357,26 @@ public class Fight {
                 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6
         };
         boolean did_hit = false;
-        int hplus= 0;
+        int hplus = 0;
         int dplus = 0;
 
-        Stats att = thatt._t_stats;
-        Stats def = thdef._t_stats;
+        Stats att = thatt.getStatus();
+        Stats def = thdef.getStatus();
         String cp = att.s_dmg;
         if (weap != null) {
-            hplus = weap._o_hplus;
-            dplus = weap._o_dplus;
+            hplus = weap.getHitPlus();
+            dplus = weap.getDamagePlus();
             List<Weapon> curWeapons = Human.instance.getWeapons();
             if (curWeapons.size() > 0 && weap == curWeapons.get(0)) {
                 if (Global.cur_ring[Const.LEFT] instanceof AddDamageRing) {
-                    dplus += Global.cur_ring[Const.LEFT]._o_arm;
+                    dplus += ((AddDamageRing) Global.cur_ring[Const.LEFT]).getDamage();
                 } else if (Global.cur_ring[Const.LEFT] instanceof DexterityRing) {
-                    hplus += Global.cur_ring[Const.LEFT]._o_arm;
+                    hplus += ((DexterityRing) Global.cur_ring[Const.LEFT]).getDexterity();
                 }
                 if (Global.cur_ring[Const.RIGHT] instanceof AddDamageRing) {
-                    dplus += Global.cur_ring[Const.RIGHT]._o_arm;
+                    dplus += ((AddDamageRing) Global.cur_ring[Const.RIGHT]).getDamage();
                 } else if (Global.cur_ring[Const.RIGHT] instanceof DexterityRing) {
-                    hplus += Global.cur_ring[Const.RIGHT]._o_arm;
+                    hplus += ((DexterityRing) Global.cur_ring[Const.RIGHT]).getDexterity();
                 }
             }
             cp = weap.getDamage();
@@ -388,8 +384,8 @@ public class Fight {
                 if (weap.contains_o_flags(Const.ISMISL) && curWeapons.size() > 0 &&
                         curWeapons.get(0)._o_which == weap._o_launch) {
                     cp = weap._o_hurldmg;
-                    hplus += curWeapons.get(0)._o_hplus;
-                    dplus += curWeapons.get(0)._o_dplus;
+                    hplus += curWeapons.get(0).getHitPlus();
+                    dplus += curWeapons.get(0).getDamagePlus();
                 } else if (weap._o_launch < 0) {
                     cp = weap._o_hurldmg;
                 }
@@ -402,15 +398,15 @@ public class Fight {
         if (!thdef.containsState(StateEnum.ISRUN))
             hplus += 4;
         int def_arm = def.s_arm;
-        if (def == Global.player._t_stats) {
+        if (def == Global.player.getStatus()) {
             if (Human.instance.isEquippedArmor()) {
-                def_arm = Human.instance.getArmor()._o_arm;
+                def_arm = Human.instance.getArmor().getDefence();
             }
             if (Global.cur_ring[Const.LEFT] instanceof ProtectionRing) {
-                def_arm -= Global.cur_ring[Const.LEFT]._o_arm;
+                def_arm -= ((ProtectionRing) Global.cur_ring[Const.LEFT]).getDefence();
             }
             if (Global.cur_ring[Const.RIGHT] instanceof ProtectionRing) {
-                def_arm -= Global.cur_ring[Const.RIGHT]._o_arm;
+                def_arm -= ((ProtectionRing) Global.cur_ring[Const.RIGHT]).getDefence();
             }
         }
         boolean MASTER = false;
@@ -460,7 +456,7 @@ public class Fight {
      * attack:
      *	The monster attacks the player
      */
-    static int attack(ThingImp mp) {
+    static int attack(Player player, OriginalMonster mp) {
         String mname;
         int oldhp;
 
@@ -475,19 +471,19 @@ public class Fight {
             Global.to_death = false;
             Global.kamikaze = false;
         }
-        if (mp._t_type == 'F') {
-            Global.vf_hit = Integer.valueOf(mp._t_stats.s_dmg);
+        if (mp.getType() == 'F') {
+            Global.vf_hit = Integer.valueOf(mp.getStatus().s_dmg);
         }
-        if (mp._t_type == 'X' && mp._t_disguise != 'X' && !Human.instance.containsState(StateEnum.ISBLIND)) {
-            mp._t_disguise = 'X';
-            if (Human.instance.containsState(StateEnum.ISHALU)) {
-                Display.mvaddch(mp._t_pos, (char) (Util.rnd(26) + 'A'));
+        if (mp.getType() == 'X' && mp.getDisplayTile() != 'X' && !player.containsState(StateEnum.ISBLIND)) {
+            mp.setDisplayTile('X');
+            if (player.containsState(StateEnum.ISHALU)) {
+                Display.mvaddch(mp.getPosition(), (char) (Util.rnd(26) + 'A'));
             }
         }
         mname = set_mname(mp);
-        oldhp = Human.instance.getHp();
+        oldhp = player.getHp();
         if (roll_em(mp, Global.player, null, false)) {
-            if (mp._t_type != 'I') {
+            if (mp.getType() != 'I') {
                 if (Global.has_hit) {
                     IOUtil.addmsg(".  ");
                 }
@@ -496,30 +492,30 @@ public class Fight {
                 IOUtil.endmsg();
             }
             Global.has_hit = false;
-            if (Human.instance.getHp() <= 0) {
-                Rip.death(mp._t_type);    /* Bye bye life ... */
+            if (player.getHp() <= 0) {
+                Rip.death(mp.getType());    /* Bye bye life ... */
             } else if (!Global.kamikaze) {
-                oldhp -= Human.instance.getHp();
+                oldhp -= player.getHp();
                 if (oldhp > Global.max_hit) {
                     Global.max_hit = oldhp;
                 }
-                if (Human.instance.getHp() <= Global.max_hit) {
+                if (player.getHp() <= Global.max_hit) {
                     Global.to_death = false;
                 }
             }
             if (!mp.containsState(StateEnum.ISCANC)) {
-                switch (mp._t_type) {
+                switch (mp.getType()) {
                     case 'A':
                         /*
                          * If an aquator hits, you can lose armor class.
                          */
-                        Move.rust_armor(Human.instance.getArmor());
+                        Move.rust_armor(player);
                         break;
                     case 'I':
                         /*
                          * The ice monster freezes you
                          */
-                        Human.instance.removeState(StateEnum.ISRUN);
+                        player.removeState(StateEnum.ISRUN);
                         if (Global.no_command == 0) {
                             IOUtil.addmsg("you are frozen");
                             if (!Global.terse) {
@@ -536,7 +532,7 @@ public class Fight {
                          * Rattlesnakes have poisonous bites
                          */
                         if (!Monst.save(Const.VS_POISON)) {
-                            if (!SustainStrengthRing.isInclude(Human.instance.getRings())) {
+                            if (!SustainStrengthRing.isInclude(player.getRings())) {
                                 Misc.chg_str(-1);
                                 if (!Global.terse) {
                                     IOUtil.msg("you feel a bite in your leg and now feel weaker");
@@ -558,28 +554,28 @@ public class Fight {
                          * Wraiths might drain energy levels, and Vampires
                          * can steal max_hp
                          */
-                        if (Util.rnd(100) < (mp._t_type == 'W' ? 15 : 30)) {
+                        if (Util.rnd(100) < (mp.getType() == 'W' ? 15 : 30)) {
                             int fewer;
 
-                            if (mp._t_type == 'W') {
-                                if (Global.player._t_stats.s_exp == 0) {
+                            if (mp.getType() == 'W') {
+                                if (Global.player.getStatus().s_exp == 0) {
                                     Rip.death('W');        /* All levels gone */
                                 }
-                                if (--Global.player._t_stats.s_lvl == 0) {
-                                    Global.player._t_stats.s_exp = 0;
-                                    Global.player._t_stats.s_lvl = 1;
+                                if (--Global.player.getStatus().s_lvl == 0) {
+                                    Global.player.getStatus().s_exp = 0;
+                                    Global.player.getStatus().s_lvl = 1;
                                 } else
-                                    Global.player._t_stats.s_exp = Global.e_levels[Global.player._t_stats.s_lvl - 1] + 1;
+                                    Global.player.getStatus().s_exp = Global.e_levels[Global.player.getStatus().s_lvl - 1] + 1;
                                 fewer = Dice.roll(1, 10);
                             } else
                                 fewer = Dice.roll(1, 3);
-                            Human.instance.deleteHp(fewer);
-                            Global.player._t_stats.s_maxhp -= fewer;
-                            if (Human.instance.getHp() <= 0) {
-                                Global.player._t_stats.s_hpt = 1;
+                            player.deleteHp(fewer);
+                            Global.player.getStatus().s_maxhp -= fewer;
+                            if (player.getHp() <= 0) {
+                                Global.player.getStatus().s_hpt = 1;
                             }
-                            if (Human.instance.getMaxHp() <= 0) {
-                                Rip.death(mp._t_type);
+                            if (player.getMaxHp() <= 0) {
+                                Rip.death(mp.getType());
                             }
                             IOUtil.msg("you suddenly feel weaker");
                         }
@@ -588,9 +584,9 @@ public class Fight {
                         /*
                          * Venus Flytrap stops the poor guy from moving
                          */
-                        Human.instance.addState(StateEnum.ISHELD);
-                        mp._t_stats.s_dmg = ++Global.vf_hit + "x1";
-                        if (--Global.player._t_stats.s_hpt <= 0) {
+                        player.addState(StateEnum.ISHELD);
+                        mp.getStatus().s_dmg = ++Global.vf_hit + "x1";
+                        if (--Global.player.getStatus().s_hpt <= 0) {
                             Rip.death('F');
                         }
                         break;
@@ -607,7 +603,7 @@ public class Fight {
                         if (Global.purse < 0) {
                             Global.purse = 0;
                         }
-                        remove_mon(mp._t_pos, mp, false);
+                        remove_mon(mp.getPosition(), mp, false);
                         mp = null;
                         if (Global.purse != lastpurse) {
                             IOUtil.msg("your purse feels lighter");
@@ -615,7 +611,7 @@ public class Fight {
                     }
                     break;
                     case 'N': {
-                        ThingImp steal;
+                        Thing steal;
                         int nobj = 0;
 
                         /*
@@ -623,17 +619,17 @@ public class Fight {
                          * and pick out one we like.
                          */
                         steal = null;
-                        for (ThingImp obj : Global.player.getBaggage()) {
-                            if (!Human.instance.isEquipped(obj)
+                        for (Thing obj : player.getBaggage()) {
+                            if (!player.isEquipped(obj)
                                     && obj.isMagic() && Util.rnd(++nobj) == 0) {
                                 steal = obj;
                             }
                         }
                         if (steal != null) {
-                            remove_mon(mp._t_pos, Util.getPlace(mp._t_pos).p_monst, false);
+                            remove_mon(mp.getPosition(), Util.getPlace(mp.getPosition()).p_monst, false);
                             mp = null;
                             steal = Pack.leave_pack(steal, true, false);
-                            IOUtil.msg("she stole %s!", ThingMethod.inv_name(steal, true));
+                            IOUtil.msg("she stole %s!", ThingMethod.inventoryName(steal, true));
                         }
                     }
                     break;
@@ -641,15 +637,15 @@ public class Fight {
                         break;
                 }
             }
-        } else if (mp._t_type != 'I') {
+        } else if (mp.getType() != 'I') {
             if (Global.has_hit) {
                 IOUtil.addmsg(".  ");
                 Global.has_hit = false;
             }
-            if (mp._t_type == 'F') {
-                Human.instance.deleteHp(Global.vf_hit);
-                if (Human.instance.getHp() <= 0) {
-                    Rip.death(mp._t_type);    /* Bye bye life ... */
+            if (mp.getType() == 'F') {
+                player.deleteHp(Global.vf_hit);
+                if (player.getHp() <= 0) {
+                    Rip.death(mp.getType());    /* Bye bye life ... */
                 }
             }
             miss(mname, null, false);
@@ -658,7 +654,7 @@ public class Fight {
             Mach_dep.flush_type();
         }
         Global.count = 0;
-        IOUtil.status();
+        IOUtil.status(player);
         if (mp == null)
             return (-1);
         else

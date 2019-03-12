@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.map.Coordinate;
 import org.hiro.map.RoomInfoEnum;
 import org.hiro.output.Display;
@@ -22,7 +23,7 @@ public class Passage {
      *	add a passage character or secret passage here
      *  通路や秘密の通路の追加
      */
-    static void putpass(Coordinate cp) {
+    static void putpass(AbstractCoordinate cp) {
         Place pp = Util.getPlace(cp);
         pp.p_flags |= Const.F_PASS;
         if (Util.rnd(10) + 1 < Human.instance.getLevel() && Util.rnd(40) == 0) {
@@ -209,52 +210,52 @@ public class Passage {
         int distance = 0;
         int turn_distance = 0;
         Room rpt = null;
-        Coordinate startPosition = new Coordinate();
-        Coordinate endPosiiton = new Coordinate();
-        Coordinate direction = new Coordinate();
-        Coordinate turn_delta = new Coordinate();
+        AbstractCoordinate startPosition = new Coordinate();
+        AbstractCoordinate endPosiiton = new Coordinate();
+        AbstractCoordinate direction = new Coordinate();
+        AbstractCoordinate turn_delta = new Coordinate();
         if (direc == 'd') {
             rmt = rm + 3;                /* room # of dest */
             rpt = Global.rooms.get(rmt);            /* room pointer of dest */
-            direction.x = 0;
-            direction.y = 1;                /* direction of move */
+            direction.setX(0);
+            direction.setY(1);                /* direction of move */
             startPosition = new Coordinate(rpf.r_pos);            /* start of move */
             endPosiiton = new Coordinate(rpt.r_pos);            /* end of move */
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {    /* if not gone pick door pos */
                 do {
-                    startPosition = rpf.r_pos.add(new Coordinate(Util.rnd(rpf.r_max.x - 2) + 1, rpf.r_max.y - 1));
+                    startPosition = rpf.r_pos.add(new Coordinate(Util.rnd(rpf.r_max.getX() - 2) + 1, rpf.r_max.getY() - 1));
                 } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
-                    endPosiiton.x = rpt.r_pos.x + Util.rnd(rpt.r_max.x - 2) + 1;
+                    endPosiiton.setX(rpt.r_pos.getX() + Util.rnd(rpt.r_max.getX() - 2) + 1);
                 } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton) & Const.F_PASS) == 0);
             }
-            distance = Math.abs(startPosition.y - endPosiiton.y) - 1;    /* distance to move */
-            turn_delta.x = (startPosition.x < endPosiiton.x ? 1 : -1);
-            turn_delta.y = 0; /* direction to turn */
-            turn_distance = Math.abs(startPosition.x - endPosiiton.x);    /* how far to turn */
+            distance = Math.abs(startPosition.getY() - endPosiiton.getY()) - 1;    /* distance to move */
+            turn_delta.setX (startPosition.getX() < endPosiiton.getX() ? 1 : -1);
+            turn_delta.setY( 0); /* direction to turn */
+            turn_distance = Math.abs(startPosition.getX() - endPosiiton.getX());    /* how far to turn */
         } else if (direc == 'r')            /* setup for moving right */ {
             rmt = rm + 1;
             rpt = Global.rooms.get(rmt);
-            direction.x = 1;
-            direction.y = 0;
+            direction.setX(1);
+            direction.setY( 0);
             startPosition = new Coordinate(rpf.r_pos);
             endPosiiton = new Coordinate(rpt.r_pos);
             if (!rpf.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
-                    startPosition = rpf.r_pos.add(new Coordinate(rpf.r_max.x - 1,Util.rnd(rpf.r_max.y - 2) + 1 ));
+                    startPosition = rpf.r_pos.add(new Coordinate(rpf.r_max.getX() - 1, Util.rnd(rpf.r_max.getY() - 2) + 1));
                 } while (rpf.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(startPosition) & Const.F_PASS) == 0);
             }
             if (!rpt.containInfo(RoomInfoEnum.ISGONE)) {
                 do {
-                    endPosiiton.y = rpt.r_pos.y + Util.rnd(rpt.r_max.y - 2) + 1;
+                    endPosiiton.setY(rpt.r_pos.getY() + Util.rnd(rpt.r_max.getY() - 2) + 1);
                 } while (rpt.containInfo(RoomInfoEnum.ISMAZE) && (Util.flat(endPosiiton) & Const.F_PASS) == 0);
             }
-            distance = Math.abs(startPosition.x - endPosiiton.x) - 1;
-            turn_delta.x = 0;
-            turn_delta.y = (startPosition.y < endPosiiton.y ? 1 : -1);
-            turn_distance = Math.abs(startPosition.y - endPosiiton.y);
+            distance = Math.abs(startPosition.getX() - endPosiiton.getX()) - 1;
+            turn_delta.setX( 0);
+            turn_delta.setY(startPosition.getY() < endPosiiton.getY() ? 1 : -1);
+            turn_distance = Math.abs(startPosition.getY() - endPosiiton.getY());
         }
         boolean MASTER = true;
         if (MASTER) {
@@ -282,7 +283,7 @@ public class Passage {
         /*
          * Get ready to move...
          */
-        Coordinate curr = new Coordinate(startPosition);
+        AbstractCoordinate curr = new Coordinate(startPosition);
         while (distance > 0) {
             /*
              * Move to new position
@@ -314,7 +315,7 @@ public class Passage {
      *	Add a door or possibly a secret door.  Also enters the door in
      *	the exits array of the room.
      */
-    static void door(Room rm, Coordinate cp) {
+    static void door(Room rm, AbstractCoordinate cp) {
         Place pp;
 
         rm.r_exit[rm.r_nexits++] = cp;
@@ -325,7 +326,7 @@ public class Passage {
 
         pp = Util.getPlace(cp);
         if (Util.rnd(10) + 1 < Human.instance.getLevel() && Util.rnd(5) == 0) {
-            if (cp.y == rm.r_pos.y || cp.y == rm.r_pos.y + rm.r_max.y - 1) {
+            if (cp.getY() == rm.r_pos.getY() || cp.getY() == rm.r_pos.getY() + rm.r_max.getY() - 1) {
                 pp.p_ch = ObjectType.Horizon;
             } else {
                 pp.p_ch = ObjectType.Vert;
@@ -353,7 +354,7 @@ public class Passage {
         for (Room rp : Global.rooms) {
             for (int i = 0; i < rp.r_nexits; i++) {
                 newpnum = true;
-                numpass(rp.r_exit[i].y, rp.r_exit[i].x);
+                numpass(rp.r_exit[i].getY(), rp.r_exit[i].getX());
             }
         }
     }
@@ -362,7 +363,6 @@ public class Passage {
      * numpass:
      *	Number a passageway square and its brethren
      */
-
     static void numpass(int y, int x) {
 
         if (x >= Const.NUMCOLS || x < 0 || y >= Const.NUMLINES || y <= 0) {
@@ -380,12 +380,12 @@ public class Passage {
          * check to see if it is a door or secret door, i.e., a new exit,
          * or a numerable type of place
          */
-        char ch = Util.INDEX(y,x).p_ch.getValue();
+        char ch = Util.INDEX(y, x).p_ch.getValue();
         if (ch == ObjectType.DOOR.getValue() ||
                 ((fp & Const.F_REAL) == 0 && (ch == ObjectType.Horizon.getValue() || ch == ObjectType.Vert.getValue()))) {
             Room rp = Global.passages[pnum];
-            rp.r_exit[rp.r_nexits].y = y;
-            rp.r_exit[rp.r_nexits++].x = x;
+            rp.r_exit[rp.r_nexits].setY(y);
+            rp.r_exit[rp.r_nexits++].setX(x);
         } else if ((fp & Const.F_PASS) == 0) {
             return;
         }
@@ -421,7 +421,7 @@ public class Passage {
                     pp.p_flags |= Const.F_SEEN;
                     Display.move(y, x);
                     if (pp.p_monst != null) {
-                        pp.p_monst._t_oldch = pp.p_ch.getValue();
+                        pp.p_monst.setFloorTile(pp.p_ch.getValue());
                     } else if ((pp.p_flags & Const.F_REAL) != 0) {
                         Display.addch(ch.getValue());
                     } else {

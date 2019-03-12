@@ -7,6 +7,8 @@ import org.hiro.output.Display;
 import org.hiro.things.Amulet;
 import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.OriginalMonster;
+import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
 import org.hiro.things.scrolltype.Scare;
 
@@ -18,7 +20,7 @@ public class Pack {
      * get_item:
      *	Pick something out of a pack for a purpose
      */
-    public static ThingImp get_item(String purpose, ObjectType type) {
+    public static Thing get_item(String purpose, ObjectType type) {
 
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");
@@ -52,14 +54,14 @@ public class Pack {
                 Global.n_objs = 1;        /* normal case: person types one char */
                 if (ch == '*') {
                     Global.mpos = 0;
-                    if (!inventory(Global.player.getBaggage(), type)) {
+                    if (!inventory(Human.instance.getBaggage(), type)) {
                         Global.after = false;
                         return null;
                     }
                     continue;
                 }
-                ThingImp obj = null;
-                for (ThingImp obj2 : Global.player.getBaggage()) {
+                Thing obj = null;
+                for (Thing obj2 : Global.player.getBaggage()) {
                     obj = obj2;
                     if (Human.instance.getPositionOfContent(obj2) == ch) {
                         break;
@@ -91,12 +93,12 @@ public class Pack {
      *	List what is in the pack.  Return true if there is something of
      *	the given type.
      */
-    public static boolean inventory(List<ThingImp> list, ObjectType type) {
+    public static boolean inventory(List<Thing> list, ObjectType type) {
         boolean MASTER = false;
         String inv_temp;
 
         Global.n_objs = 0;
-        for (ThingImp th : list) {
+        for (Thing th : list) {
             if (type != ObjectType.Initial && type != th.getDisplay()) {
                 continue;
             }
@@ -106,7 +108,7 @@ public class Pack {
                 inv_temp = "%s";
             }
             Global.msg_esc = true;
-            if (ThingMethod.add_line(inv_temp, ThingMethod.inv_name(th, false)) == Const.ESCAPE) {
+            if (ThingMethod.add_line(inv_temp, ThingMethod.inventoryName(th, false)) == Const.ESCAPE) {
                 Global.msg_esc = false;
                 IOUtil.msg("");
                 return true;
@@ -131,21 +133,19 @@ public class Pack {
      * leave_pack:
      *	take an item out of the pack
      */
-    static ThingImp leave_pack(ThingImp obj, boolean newobj, boolean all) {
+    static Thing leave_pack(Thing obj, boolean newobj, boolean all) {
 
         Global.inpack--;
-        ThingImp nobj = obj;
+        Thing nobj = obj;
         if (obj.getCount() > 1 && !all) {
             Global.last_pick = obj;
-            obj._o_count--;
+            obj.reduceCount();
             if (obj.isGroup()) {
                 Global.inpack++;
             }
             if (newobj) {
                 nobj = new ThingImp();
                 nobj = obj;
-                nobj._l_next = null;
-                nobj._l_prev = null;
                 nobj.addCount(1);
             }
         } else {
@@ -174,7 +174,7 @@ public class Pack {
      *	Return the appropriate floor character for her room
      */
     static ObjectType floor_ch() {
-        if (Global.player.t_room.containInfo(RoomInfoEnum.ISGONE)) {
+        if (Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE)) {
             return ObjectType.PASSAGE;
         }
         return (Misc.show_floor() ? ObjectType.FLOOR : ObjectType.Blank);
@@ -187,7 +187,7 @@ public class Pack {
      *	non-null use it as the linked_list pointer instead of gettting
      *	it off the ground.
      */
-    public static void add_pack(ThingImp obj, boolean silent) {
+    public static void add_pack(Thing obj, boolean silent) {
 
         boolean from_floor = false;
         if (obj == null) {
@@ -204,14 +204,14 @@ public class Pack {
             // TODO:o_flagとt_flag共有を考えないと
             Global.lvl_obj.remove(obj);
             Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
-            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
             update_mdest(obj);
             IOUtil.msg("the scroll turns to dust as you pick it up");
             return;
         }
 
-        if(!pack_room(from_floor ,obj)){
-          return;
+        if (!pack_room(from_floor, obj)) {
+            return;
         }
 
         obj.add_o_flags(StateEnum.ISFOUND.getValue()); // TODO:o_flagとt_flag共有を考えないと
@@ -232,7 +232,7 @@ public class Pack {
             if (!Global.terse) {
                 IOUtil.addmsg("you now have ");
             }
-            IOUtil.msg("%s (%c)", ThingMethod.inv_name(obj, !Global.terse),
+            IOUtil.msg("%s (%c)", ThingMethod.inventoryName(obj, !Global.terse),
                     Human.instance.getPositionOfContent(obj));
         }
     }
@@ -243,10 +243,10 @@ public class Pack {
      *	If this was the object of something's desire, that monster will
      *	get mad and run at the hero
      */
-    static void update_mdest(ThingImp obj) {
-        for (ThingImp mp : Global.mlist) {
-            if (mp._t_dest.equals(obj._o_pos)) {
-                mp._t_dest = Global.player._t_pos;
+    static void update_mdest(Thing obj) {
+        for (OriginalMonster mp : Global.mlist) {
+            if (mp.getRunPosition().equals(obj.getOPos())) {
+                mp.setRunPosition(Global.player._t_pos);
             }
         }
     }
@@ -257,7 +257,7 @@ public class Pack {
      *	See if there's room in the pack.  If not, print out an
      *	appropriate message
      */
-    static boolean pack_room(boolean from_floor, ThingImp obj) {
+    static boolean pack_room(boolean from_floor, Thing obj) {
         boolean b = Human.instance.addContent(obj);
         if (!b && from_floor) {
             move_msg(obj);
@@ -266,7 +266,7 @@ public class Pack {
         if (from_floor) {
             Global.lvl_obj.remove(obj);
             Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
-            Util.getPlace(Global.player._t_pos).p_ch = Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+            Util.getPlace(Global.player._t_pos).p_ch = Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         }
 
         return true;
@@ -276,11 +276,11 @@ public class Pack {
      * move_msg:
      *	Print out the message if you are just moving onto an object
      */
-    static void move_msg(ThingImp obj) {
+    static void move_msg(Thing obj) {
         if (!Global.terse) {
             IOUtil.addmsg("you ");
         }
-        IOUtil.msg("moved onto %s", ThingMethod.inv_name(obj, true));
+        IOUtil.msg("moved onto %s", ThingMethod.inventoryName(obj, true));
     }
 
     /*
@@ -292,16 +292,17 @@ public class Pack {
             return;
         }
 
-        ThingImp obj = Misc.find_obj(Global.player._t_pos);
+        Thing obj = Misc.find_obj(Global.player._t_pos);
         if (Global.move_on) {
             move_msg(obj);
         } else {
             if (obj instanceof Gold) {
-                money(obj._o_arm);
-                Global.lvl_obj.remove(obj);
-                update_mdest(obj);
-                Global.lvl_obj.remove(obj);
-                Global.player.t_room.r_goldval = 0;
+                Gold gold = (Gold) obj;
+                money(gold.getGold());
+                Global.lvl_obj.remove(gold);
+                update_mdest(gold);
+                Global.lvl_obj.remove(gold);
+                Human.instance.getRoom().r_goldval = 0;
             } else {
                 add_pack(null, false);
             }
@@ -316,7 +317,7 @@ public class Pack {
         Global.purse += value;
         Display.mvaddch(Global.player._t_pos, floor_ch().getValue());
         Util.getPlace(Global.player._t_pos).p_ch =
-                Global.player.t_room.containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
+                Human.instance.getRoom().containInfo(RoomInfoEnum.ISGONE) ? ObjectType.PASSAGE : ObjectType.FLOOR;
         if (value > 0) {
             if (!Global.terse) {
                 IOUtil.addmsg("you found ");
@@ -335,7 +336,7 @@ public class Pack {
         if (Global.player.getBaggageSize() == 0) {
             IOUtil.msg("you aren't carrying anything");
         } else if (Global.player.getBaggageSize() == 1) {
-            IOUtil.msg("a) %s", ThingMethod.inv_name(Global.player.getBaggage().get(0), false));
+            IOUtil.msg("a) %s", ThingMethod.inventoryName(Global.player.getBaggage().get(0), false));
         } else {
             IOUtil.msg(Global.terse ? "item: " : "which item do you wish to inventory: ");
             int mch = IOUtil.readchar();
@@ -344,9 +345,9 @@ public class Pack {
                 IOUtil.msg("");
                 return;
             }
-            for (ThingImp obj : Global.player.getBaggage()) {
+            for (Thing obj : Global.player.getBaggage()) {
                 if (mch == Human.instance.getPositionOfContent(obj)) {
-                    IOUtil.msg("%c) %s", mch, ThingMethod.inv_name(obj, false));
+                    IOUtil.msg("%c) %s", mch, ThingMethod.inventoryName(obj, false));
                     return;
                 }
             }

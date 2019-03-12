@@ -1,11 +1,20 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.output.Display;
 import org.hiro.things.Amulet;
+import org.hiro.things.Armor;
+import org.hiro.things.Food;
+import org.hiro.things.Gold;
 import org.hiro.things.ObjectType;
+import org.hiro.things.Potion;
+import org.hiro.things.Ring;
+import org.hiro.things.Scroll;
+import org.hiro.things.Stick;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingImp;
+import org.hiro.things.Weapon;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.SeeInvisibleRing;
 
@@ -88,7 +97,7 @@ public class ThingMethod {
         }
         if (Global.inv_type == Const.INV_SLOW) {
             if (fmt != null && fmt.length() != 0) {
-                if (IOUtil.msg(fmt,(Object) arg) == Const.ESCAPE) {
+                if (IOUtil.msg(fmt, (Object) arg) == Const.ESCAPE) {
                     return Const.ESCAPE;
                 }
             }
@@ -160,121 +169,124 @@ public class ThingMethod {
         return ~Const.ESCAPE;
     }
 
-    /*
-     * inv_name:
-     *	Return the name of something as it would appear in an
-     *	inventory.
+    private static void inventoryName(Potion obj) throws NoSuchMethodException {
+        int which = obj._o_which;
+        Method m = ThingMethod.class.getMethod("nullstr", ThingImp.class);
+        nameit(obj, "potion", Global.p_colors[which], Global.pot_info[which], m);
+    }
+
+    private static void inventoryName(Ring obj) throws NoSuchMethodException {
+        int which = obj._o_which;
+        Method m = RingMethod.class.getMethod("ring_num", Ring.class);
+        nameit(obj, "ring", Global.r_stones[which], Global.ring_info[which], m);
+    }
+
+    private static void inventoryName(Stick obj) throws NoSuchMethodException {
+        int which = obj._o_which;
+        Method m = StickMethod.class.getMethod("charge_str", Stick.class);
+        nameit(obj, Global.ws_type[which], Global.ws_made[which], Global.ws_info[which], m);
+    }
+
+    private static void inventoryName(Scroll obj) {
+        int which = obj._o_which;
+        if (obj.getCount() == 1) {
+            Global.prbuf = "A scroll ";
+        } else {
+            Global.prbuf = obj.getCount() + " scrolls ";
+        }
+        Obj_info op = Global.scr_info[which];
+        if (op.isKnown()) {
+            Global.prbuf = Global.prbuf + "of " + op.getName();
+        } else if (op.isTemporaryNamed()) {
+            Global.prbuf = Global.prbuf + "called " + op.getTemporaryName();
+        } else {
+            Global.prbuf = Global.prbuf + "titled '" + Global.s_names[which] + "'";
+        }
+    }
+
+    private static void inventoryName(Food obj) {
+        if (obj._o_which == 1) {
+            if (obj.getCount() == 1) {
+                Global.prbuf = "A" + Misc.vowelstr(Global.fruit) + " " + Global.fruit;
+            } else {
+                Global.prbuf = obj.getCount() + " " + Global.fruit + "s";
+            }
+        } else if (obj.getCount() == 1) {
+            Global.prbuf = "Some food";
+        } else {
+            Global.prbuf = obj.getCount() + " rations of food";
+        }
+    }
+
+    private static void inventoryName(Weapon obj) {
+        String sp = Global.weap_info[obj._o_which].getName();
+        if (obj.getCount() > 1) {
+            Global.prbuf = obj.getCount() + " ";
+        } else {
+            Global.prbuf = "A" + Misc.vowelstr(sp) + " ";
+        }
+        if (obj.contains_o_flags(Const.ISKNOW)) {
+            Global.prbuf = Global.prbuf + WeaponMethod.num(obj.getHitPlus(), obj.getDamagePlus(), ObjectType.WEAPON)
+                    + " " + sp;
+        } else {
+            Global.prbuf = Global.prbuf + sp;
+        }
+        if (obj.getCount() > 1) {
+            Global.prbuf = Global.prbuf + "s";
+        }
+        if (obj._o_label != Character.MIN_VALUE) {
+            Global.prbuf = Global.prbuf + " called " + obj._o_label;
+        }
+    }
+
+    public static void inventoryName(Armor obj) {
+        int which = obj._o_which;
+        String sp = Global.arm_info[which].getName();
+        if (obj.contains_o_flags(Const.ISKNOW)) {
+            Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj.getDefence(), 0, ObjectType.ARMOR)
+                    + " " + sp + " [";
+            if (!Global.terse) {
+                Global.prbuf = Global.prbuf + "protection ";
+            }
+            Global.prbuf = Global.prbuf + (10 - obj.getDefence()) + "]";
+        } else {
+            Global.prbuf = sp;
+        }
+        if (obj._o_label != Character.MIN_VALUE) {
+            Global.prbuf = Global.prbuf + " called " + obj._o_label;
+        }
+    }
+
+    /**
+     * inventoryName:
+     * <p>
+     * 旧inv_name
+     * Return the name of something as it would appear in an
+     * inventory.
      */
-    static String inv_name(ThingImp obj, boolean drop) {
-        String pb;
-        Obj_info op;
-        String sp;
-        int which;
-
-        boolean MASTER = false;
-
-        pb = Global.prbuf;
-        which = obj._o_which;
-        switch (obj.getDisplay()) {
-            case POTION:
-                try {
-                    Method m = ThingMethod.class.getMethod("nullstr", ThingImp.class);
-                    nameit(obj, "potion", Global.p_colors[which], Global.pot_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RING:
-                try {
-                    Method m = RingMethod.class.getMethod("ring_num", ThingImp.class);
-                    nameit(obj, "ring", Global.r_stones[which], Global.ring_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case STICK:
-                try {
-                    Method m = StickMethod.class.getMethod("charge_str", ThingImp.class);
-                    nameit(obj, Global.ws_type[which], Global.ws_made[which], Global.ws_info[which], m);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case SCROLL:
-                if (obj.getCount() == 1) {
-                    Global.prbuf = "A scroll ";
-                } else {
-                    Global.prbuf = obj.getCount() + " scrolls ";
-                }
-                op = Global.scr_info[which];
-                if (op.isKnown()) {
-                    Global.prbuf = Global.prbuf + "of " + op.getName();
-                } else if (op.isTemporaryNamed()) {
-                    Global.prbuf = Global.prbuf + "called " + op.getTemporaryName();
-                } else {
-                    Global.prbuf = Global.prbuf + "titled '" + Global.s_names[which] + "'";
-                }
-                break;
-            case FOOD:
-                if (which == 1) {
-                    if (obj.getCount() == 1) {
-                        Global.prbuf = "A" + Misc.vowelstr(Global.fruit) + " " + Global.fruit;
-                    } else {
-                        Global.prbuf = obj.getCount() + " " + Global.fruit + "s";
-                    }
-                } else if (obj.getCount() == 1) {
-                    Global.prbuf = "Some food";
-                } else {
-                    Global.prbuf = obj.getCount() + " rations of food";
-                }
-                break;
-            case WEAPON:
-                sp = Global.weap_info[which].getName();
-                if (obj.getCount() > 1) {
-                    Global.prbuf = obj.getCount() + " ";
-                } else {
-                    Global.prbuf = "A" + Misc.vowelstr(sp) + " ";
-                }
-                if (obj.contains_o_flags(Const.ISKNOW)) {
-                    Global.prbuf = Global.prbuf + WeaponMethod.num(obj._o_hplus, obj._o_dplus, ObjectType.WEAPON)
-                            + " " + sp;
-                } else {
-                    Global.prbuf = Global.prbuf + sp;
-                }
-                if (obj.getCount() > 1) {
-                    Global.prbuf = Global.prbuf + "s";
-                }
-                if (obj._o_label != Character.MIN_VALUE) {
-                    Global.prbuf = Global.prbuf + " called " + obj._o_label;
-                }
-                break;
-            case ARMOR:
-                sp = Global.arm_info[which].getName();
-                if (obj.contains_o_flags(Const.ISKNOW)) {
-                    Global.prbuf = WeaponMethod.num(Global.a_class[which] - obj._o_arm, 0, ObjectType.ARMOR)
-                            + " " + sp + " [";
-                    if (!Global.terse) {
-                        Global.prbuf = Global.prbuf + "protection ";
-                    }
-                    Global.prbuf = Global.prbuf + (10 - obj._o_arm) + "]";
-                } else {
-                    Global.prbuf = sp;
-                }
-                if (obj._o_label != Character.MIN_VALUE) {
-                    Global.prbuf = Global.prbuf + " called " + obj._o_label;
-                }
-                break;
-            case AMULET:
+    static String inventoryName(Thing obj, boolean drop) {
+        try {
+            if (obj instanceof Potion) {
+                inventoryName((Potion) obj);
+            } else if (obj instanceof Ring) {
+                inventoryName((Ring) obj);
+            } else if (obj instanceof Stick) {
+                inventoryName((Stick) obj);
+            } else if (obj instanceof Scroll) {
+                inventoryName((Scroll) obj);
+            } else if (obj instanceof Food) {
+                inventoryName((Food) obj);
+            } else if (obj instanceof Weapon) {
+                inventoryName((Weapon) obj);
+            } else if (obj instanceof Armor) {
+                inventoryName((Armor) obj);
+            } else if (obj instanceof Amulet) {
                 Global.prbuf = "The Amulet of Yendor";
-                break;
-            case GOLD:
-                Global.prbuf = obj._o_arm + " Gold pieces";
-                break;
-            default:
-                if (MASTER) {
-                    // debug("Picked up something funny %s", Display.unctrl(obj._o_type));
-                    // sprintf(pb, "Something bizarre %s", Display.unctrl(obj._o_type));
-                }
+            } else if (obj instanceof Gold) {
+                Global.prbuf = ((Gold) obj).getGold() + " Gold pieces";
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
         if (Global.inv_describe) {
             if (Human.instance.isEquippedArmor(obj)) {
@@ -301,7 +313,7 @@ public class ThingMethod {
      * nameit:
      *	Give the proper name to a potion, stick, or ring
      */
-    static void nameit(ThingImp obj, String type, char which, Obj_info op, Method prfunc) {
+    static void nameit(Thing obj, String type, char which, Obj_info op, Method prfunc) {
         if (op.isKnown() || op.isTemporaryNamed()) {
             if (obj.getCount() == 1) {
                 Global.prbuf = "A " + type + " ";
@@ -337,11 +349,11 @@ public class ThingMethod {
      * isDrop:
      *	Do special checks for dropping or unweilding|unwearing|unringing
      */
-    static boolean isDrop(ThingImp obj) {
+    static boolean isDrop(Thing obj) {
         if (obj == null) {
             return true;
         }
-        if (!Human.instance.isEquipped(obj)){
+        if (!Human.instance.isEquipped(obj)) {
             return true;
         }
         if (obj.contains_o_flags(Const.ISCURSED)) {
@@ -355,7 +367,7 @@ public class ThingMethod {
         } else {
             Global.cur_ring[obj == Global.cur_ring[Const.LEFT] ? Const.LEFT : Const.RIGHT] = null;
             if (obj instanceof AddStrengthRing) {
-                Misc.chg_str(-obj._o_arm);
+                Misc.chg_str(-((AddStrengthRing) obj).getStrength());
             } else if (obj instanceof SeeInvisibleRing) {
                 Daemons.unsee();
                 try {
@@ -369,23 +381,23 @@ public class ThingMethod {
         return true;
     }
 
+    /**
+     * drop check
+     * <p>
+     * Is this floor clear?
+     */
+    public static boolean dropCheck() {
+        ObjectType ch = Util.getPlace(Human.instance.getPosition()).p_ch;
+        return ch == ObjectType.FLOOR || ch == ObjectType.PASSAGE;
+    }
+
     /*
      * drop:
      *	Put something down
      */
-    public static void drop() {
-
-        ObjectType ch = Util.getPlace(Global.player._t_pos).p_ch;
-        if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
-            Global.after = false;
-            IOUtil.msg("there is something there already");
-            return;
-        }
-        ThingImp obj= Pack.get_item("drop", ObjectType.Initial);
-        if (obj == null) {
-            return;
-        }
-        if (!isDrop(obj)) {
+    public static void drop(Player player) {
+        Thing obj = Pack.get_item("drop", ObjectType.Initial);
+        if (obj == null || !isDrop(obj)) {
             return;
         }
         obj = Pack.leave_pack(obj, true, !Util.ISMULT(obj));
@@ -393,13 +405,13 @@ public class ThingMethod {
          * Link it into the level object list
          */
         Global.lvl_obj.add(obj);
-        Util.getPlace(Global.player._t_pos).p_ch = obj.getDisplay();
-        Util.getPlace(Global.player._t_pos).p_flags |= Const.F_DROPPED;
-        obj._o_pos = Global.player._t_pos;
+        Util.getPlace(player.getPosition()).p_ch = obj.getDisplay();
+        Util.getPlace(player.getPosition()).p_flags |= Const.F_DROPPED;
+        obj.setOPos(player.getPosition());
         if (obj instanceof Amulet) {
             Game.getInstance().setGoal(false);
         }
-        IOUtil.msg("dropped %s", inv_name(obj, true));
+        IOUtil.msg("dropped %s", inventoryName(obj, true));
     }
 
 }

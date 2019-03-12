@@ -4,6 +4,7 @@ import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.Obj_info;
 import org.hiro.Util;
+import org.hiro.character.Player;
 
 public class Stick extends ThingImp {
     private String power;
@@ -60,11 +61,23 @@ public class Stick extends ThingImp {
         return ObjectType.STICK;
     }
 
-    public void shake(){
+    public void shake(Player player){
         this.use();
     }
 
     public void use(){
         this.times--;
+    }
+
+    public boolean isUse(){
+        return this.times > 0;
+    }
+
+    public int getTimes(){
+        return this.times;
+    }
+
+    public void setTimes(int charge){
+        this.times = charge;
     }
 }

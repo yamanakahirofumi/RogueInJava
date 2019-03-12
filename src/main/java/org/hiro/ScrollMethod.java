@@ -1,7 +1,6 @@
 package org.hiro;
 
-import org.hiro.character.Human;
-import org.hiro.things.ObjectType;
+import org.hiro.character.Player;
 import org.hiro.things.Scroll;
 import org.hiro.things.Thing;
 
@@ -10,10 +9,9 @@ public class ScrollMethod {
      * read_scroll:
      *	Read a scroll from the pack and do the appropriate thing
      */
-    public static void read_scroll() {
+    public static void read_scroll(Player player, Thing obj) {
         boolean MASTER = false;
 
-        Thing obj = Pack.get_item("read", ObjectType.SCROLL);
         if (obj == null)
             return;
         if (!(obj instanceof Scroll)) {
@@ -28,14 +26,14 @@ public class ScrollMethod {
         /*
          * Calculate the effect it has on the poor guy.
          */
-        Human.instance.removeWeapon(scroll);
+        player.removeWeapon(scroll);
         /*
          * Get rid of the thing
          */
         Pack.leave_pack(scroll, false, false);
-        scroll.read();
+        scroll.read(player);
         Misc.look(true);    /* put the result of the scroll on the screen */
-        IOUtil.status();
+        IOUtil.status(player);
 
 
     }

@@ -3,6 +3,7 @@ package org.hiro.things;
 import org.hiro.Global;
 import org.hiro.Obj_info;
 import org.hiro.ThingMethod;
+import org.hiro.character.Player;
 
 import java.util.Arrays;
 
@@ -35,7 +36,7 @@ public class Scroll extends ThingImp {
         return ObjectType.SCROLL;
     }
 
-    public void read() {
+    public void read(Player player) {
 
     }
 }

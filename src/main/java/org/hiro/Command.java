@@ -1,6 +1,7 @@
 package org.hiro;
 
 import org.hiro.character.Human;
+import org.hiro.character.Player;
 import org.hiro.character.StateEnum;
 import org.hiro.input.keyboard.ChangeWizardModeCommand;
 import org.hiro.input.keyboard.DefaultCommand;
@@ -62,10 +63,10 @@ import org.hiro.input.keyboard.print.PrintStatusCommand;
 import org.hiro.input.keyboard.print.PrintVersionCommand;
 import org.hiro.input.keyboard.print.RedrawScreenCommand;
 import org.hiro.input.keyboard.print.RepeatLastMessageCommand;
-import org.hiro.map.Coordinate;
+import org.hiro.map.AbstractCoordinate;
 import org.hiro.output.Display;
 import org.hiro.things.ObjectType;
-import org.hiro.things.ThingImp;
+import org.hiro.things.Thing;
 import org.hiro.things.ringtype.SearchingRing;
 import org.hiro.things.ringtype.TeleportationRing;
 
@@ -119,9 +120,9 @@ public class Command {
             if (!Global.running) {
                 Global.door_stop = false;
             }
-            IOUtil.status();
+            IOUtil.status(Human.instance);
             Global.lastscore = Global.purse;
-            Display.move(Global.player._t_pos);
+            Display.move(Human.instance.getPosition());
             if (!((Global.running || Global.count != 0) && Global.jump)) {
                 Display.refresh();            /* Draw screen */
             }
@@ -243,11 +244,11 @@ public class Command {
 
                 // overで繰り返したい
                 if (commander.containsKey(ch)) {
-                    commander.get(ch).execute();
+                    commander.get(ch).execute(Human.instance);
                 } else {
                     // デフォルト処理
                     DefaultCommand defaultCommand = new DefaultCommand();
-                    defaultCommand.execute(ch);
+                    defaultCommand.execute(Human.instance, ch);
                 }
                 /*
                  * turn off flags if no longer needed
@@ -275,9 +276,9 @@ public class Command {
         Daemon.do_daemons(Const.AFTER);
         Daemon.do_fuses(Const.AFTER);
         if (SearchingRing.isInclude(Human.instance.getRings())) {
-            search();
+            search(Human.instance);
         } else if (TeleportationRing.isInclude(Human.instance.getRings()) && Util.rnd(50) == 0) {
-            Wizard.teleport();
+            Wizard.teleport(Human.instance);
         }
         // rightもね
     }
@@ -357,62 +358,55 @@ public class Command {
      * search:
      *	player gropes about him to find hidden things.
      */
-    public static void search() {
+    public static void search(Player player) {
 
-        int ey = Global.player._t_pos.y + 1;
-        int ex = Global.player._t_pos.x + 1;
-        int probinc = (Human.instance.containsState(StateEnum.ISHALU) ? 3 : 0);
-        probinc += (Human.instance.containsState(StateEnum.ISBLIND) ? 2 : 0);
+        int probinc = (player.containsState(StateEnum.ISHALU) ? 3 : 0);
+        probinc += (player.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
-        for (int y = Global.player._t_pos.y - 1; y <= ey; y++)
-            for (int x = Global.player._t_pos.x - 1; x <= ex; x++) {
-                Coordinate target = new Coordinate(x, y);
-                if (Global.player._t_pos.equals(target)) {
-                    continue;
-                }
-                int fp = Util.flat(target);
-                if ((fp & Const.F_REAL) == 0) {
-                    switch (Util.getPlace(target).p_ch) {
-                        case Vert:
-                        case Horizon:
-                            if (Util.rnd(5 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.DOOR;
-                            IOUtil.msg("a secret door");
-                            found = foundone(target);
+        for (AbstractCoordinate c : player.getPosition().near()) {
+            int fp = Util.flat(c);
+            if ((fp & Const.F_REAL) == 0) {
+                switch (Util.getPlace(c).p_ch) {
+                    case Vert:
+                    case Horizon:
+                        if (Util.rnd(5 + probinc) != 0) {
                             break;
-                        case FLOOR:
-                            if (Util.rnd(2 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.TRAP;
-                            if (!Global.terse) {
-                                IOUtil.addmsg("you found ");
-                            }
-                            if (Human.instance.containsState(StateEnum.ISHALU)) {
-                                IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
-                            } else {
-                                IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
-                                Util.getPlace(target).p_flags |= Const.F_SEEN;
-                            }
-                            found = foundone(target);
+                        }
+                        Util.getPlace(c).p_ch = ObjectType.DOOR;
+                        IOUtil.msg("a secret door");
+                        found = foundone(c);
+                        break;
+                    case FLOOR:
+                        if (Util.rnd(2 + probinc) != 0) {
                             break;
-                        case Blank:
-                            if (Util.rnd(3 + probinc) != 0) {
-                                break;
-                            }
-                            Util.getPlace(target).p_ch = ObjectType.PASSAGE;
-                            found = foundone(target);
-                    }
+                        }
+                        Util.getPlace(c).p_ch = ObjectType.TRAP;
+                        if (!Global.terse) {
+                            IOUtil.addmsg("you found ");
+                        }
+                        if (player.containsState(StateEnum.ISHALU)) {
+                            IOUtil.msg(Global.tr_name[Util.rnd(TrapEnum.count())]);
+                        } else {
+                            IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
+                            Util.getPlace(c).p_flags |= Const.F_SEEN;
+                        }
+                        found = foundone(c);
+                        break;
+                    case Blank:
+                        if (Util.rnd(3 + probinc) != 0) {
+                            break;
+                        }
+                        Util.getPlace(c).p_ch = ObjectType.PASSAGE;
+                        found = foundone(c);
                 }
             }
+        }
         if (found) {
             Misc.look(false);
         }
     }
 
-    static private boolean foundone(Coordinate coordinate) {
+    static private boolean foundone(AbstractCoordinate coordinate) {
         Util.getPlace(coordinate).p_flags |= Const.F_REAL;
         Global.count = 0;
         Global.running = false;
@@ -431,14 +425,14 @@ public class Command {
      * current:
      *	Print the current weapon/armor
      */
-    public static void current(ThingImp cur, String how, String where) {
+    public static void current(Thing cur, String how, String where) {
         Global.after = false;
         if (cur != null) {
             if (!Global.terse) {
                 IOUtil.addmsg("you are %s (", how);
             }
             Global.inv_describe = false;
-            IOUtil.addmsg("%c) %s", Human.instance.getPositionOfContent(cur), ThingMethod.inv_name(cur, true));
+            IOUtil.addmsg("%c) %s", Human.instance.getPositionOfContent(cur), ThingMethod.inventoryName(cur, true));
             Global.inv_describe = true;
             if (where != null) {
                 IOUtil.addmsg(" %s", where);
@@ -461,8 +455,8 @@ public class Command {
      *	Check to see if she's levitating, and if she is, print an
      *	appropriate message.
      */
-    public static boolean levit_check() {
-        if (!Human.instance.containsState(StateEnum.ISLEVIT)) {
+    public static boolean levit_check(Player player) {
+        if (!player.containsState(StateEnum.ISLEVIT)) {
             return false;
         }
         IOUtil.msg("You can't.  You're floating off the ground!");

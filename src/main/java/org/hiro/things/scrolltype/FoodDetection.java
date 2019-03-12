@@ -2,6 +2,7 @@ package org.hiro.things.scrolltype;
 
 import org.hiro.Global;
 import org.hiro.IOUtil;
+import org.hiro.character.Player;
 import org.hiro.things.Food;
 import org.hiro.things.Scroll;
 import org.hiro.things.ScrollEnum;
@@ -13,7 +14,7 @@ public class FoodDetection extends Scroll {
     }
 
     @Override
-    public void read() {
+    public void read(Player player) {
         /*
          * Potion of gold detection
          */

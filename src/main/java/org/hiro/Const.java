@@ -59,43 +59,6 @@ public class Const {
     static int MAXLINES = 32;    /* maximum number of screen lines used */
     static int MAXCOLS = 80;    /* maximum number of screen columns used */
 
-
-    /* flags for creatures */
-//    public static int CANHUH = 0000001;        /* creature can confuse */
-//    public static int CANSEE = 0000002;        /* creature can see invisible creatures */
-//    public static int ISBLIND = 0000004;        /* creature is blind */
-//    public static int ISCANC = 0000010;        /* creature has special qualities cancelled */
-//    public static int ISLEVIT = 0000010;        /* hero is levitating */
-//    public static int ISFOUND = 0000020;        /* creature has been seen (used for objects) */
-//    public static int ISGREED = 0000040;        /* creature runs to protect gold */
-//    public static int ISHASTE = 0000100;        /* creature has been hastened */
-//    public static int ISTARGET = 000200;        /* creature is the target of an 'f' command */
-//    public static int ISHELD = 0000400;        /* creature has been held */
-//    public static int ISHUH = 0001000;    /* creature is confused */
-//    public static int ISINVIS = 0002000;    /* creature is invisible */
-//    public static int ISMEAN = 0004000;    /* creature can wake when player enters room */
-//    public static int ISHALU = 0004000;    /* hero is on acid trip */
-//    public static int ISREGEN = 0010000;    /* creature can regenerate */
-//    public static int ISRUN = 0020000;    /* creature is running at the player */
-//    public static int SEEMONST = 040000;    /* hero can detect unseen monsters */
-//    public static int ISFLY = 0040000;    /* creature can fly */
-//    public static int ISSLOW = 0100000;    /* creature has been slowed */
-
-
-    /*
-     * Trap types
-     */
-    public static final int T_DOOR = 00;
-    public static final int T_ARROW = 01;
-    public static final int T_SLEEP = 02;
-    public static final int T_BEAR = 03;
-    public static final int T_TELEP = 04;
-    public static final int T_DART = 05;
-    public static final int T_RUST = 06;
-    public static final int T_MYST = 07;
-    public static int NTRAPS = 8;
-
-
     /*
      * Save against things
      */
