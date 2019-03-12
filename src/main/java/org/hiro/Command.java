@@ -69,6 +69,7 @@ import org.hiro.things.ObjectType;
 import org.hiro.things.Thing;
 import org.hiro.things.ringtype.SearchingRing;
 import org.hiro.things.ringtype.TeleportationRing;
+import org.hiro.trap.TrapEnum;
 
 import java.util.HashMap;
 import java.util.Map;

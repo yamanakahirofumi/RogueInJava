@@ -4,7 +4,7 @@ import org.hiro.Const;
 import org.hiro.Global;
 import org.hiro.IOUtil;
 import org.hiro.Misc;
-import org.hiro.TrapEnum;
+import org.hiro.trap.TrapEnum;
 import org.hiro.Util;
 import org.hiro.character.Player;
 import org.hiro.character.StateEnum;

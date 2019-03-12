@@ -13,6 +13,7 @@ import org.hiro.things.Weapon;
 import org.hiro.things.WeaponEnum;
 import org.hiro.things.ringtype.SustainStrengthRing;
 import org.hiro.things.scrolltype.Scare;
+import org.hiro.trap.TrapEnum;
 
 /**
  * hero movement commands
