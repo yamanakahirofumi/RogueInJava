@@ -163,7 +163,7 @@ public class Options {
      * put_bool
      *	Put out a boolean
      */
-    static void put_bool(Object b) {
+    public static void put_bool(Object b) {
         // waddstr(hw,  ( boolean )b ? "True" : "False");
     }
 
@@ -188,7 +188,7 @@ public class Options {
      *	Allow changing a boolean option and print it out
      *  引数のWindowは一旦削除
      */
-    int get_bool(Object vp) {
+    public int get_bool(Object vp) {
         //  WINDOW *win;　一旦削除された引数
         boolean bp = (boolean) vp;
         int oy, ox;
@@ -237,7 +237,7 @@ public class Options {
      *
      *  引数のWindowは一旦削除
      */
-    int get_sf(Object vp) {
+    public int get_sf(Object vp) {
         // , WINDOW *win  一旦削除された引数
         int bp = (int) vp;
         boolean was_sf;

@@ -66,8 +66,7 @@ public class Coordinate implements AbstractCoordinate {
         if (coordinate instanceof Coordinate) {
             throw new RuntimeException("型制限");
         }
-        AbstractCoordinate c = coordinate;
-        return new Coordinate(this.x + c.getX(), this.y + c.getY());
+        return new Coordinate(this.x + coordinate.getX(), this.y + coordinate.getY());
     }
 
     @Override

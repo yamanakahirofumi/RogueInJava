@@ -364,41 +364,40 @@ public class Command {
         probinc += (player.containsState(StateEnum.ISBLIND) ? 2 : 0);
         boolean found = false;
         for (AbstractCoordinate c : player.getPosition().near()) {
-            AbstractCoordinate target = c;
-            int fp = Util.flat(target);
+            int fp = Util.flat(c);
             if ((fp & Const.F_REAL) == 0) {
-                switch (Util.getPlace(target).p_ch) {
+                switch (Util.getPlace(c).p_ch) {
                     case Vert:
                     case Horizon:
                         if (Util.rnd(5 + probinc) != 0) {
                             break;
                         }
-                        Util.getPlace(target).p_ch = ObjectType.DOOR;
+                        Util.getPlace(c).p_ch = ObjectType.DOOR;
                         IOUtil.msg("a secret door");
-                        found = foundone(target);
+                        found = foundone(c);
                         break;
                     case FLOOR:
                         if (Util.rnd(2 + probinc) != 0) {
                             break;
                         }
-                        Util.getPlace(target).p_ch = ObjectType.TRAP;
+                        Util.getPlace(c).p_ch = ObjectType.TRAP;
                         if (!Global.terse) {
                             IOUtil.addmsg("you found ");
                         }
                         if (player.containsState(StateEnum.ISHALU)) {
-                            IOUtil.msg(Global.tr_name[Util.rnd(Const.NTRAPS)]);
+                            IOUtil.msg(Global.tr_name[Util.rnd(TrapEnum.count())]);
                         } else {
                             IOUtil.msg(Global.tr_name[fp & Const.F_TMASK]);
-                            Util.getPlace(target).p_flags |= Const.F_SEEN;
+                            Util.getPlace(c).p_flags |= Const.F_SEEN;
                         }
-                        found = foundone(target);
+                        found = foundone(c);
                         break;
                     case Blank:
                         if (Util.rnd(3 + probinc) != 0) {
                             break;
                         }
-                        Util.getPlace(target).p_ch = ObjectType.PASSAGE;
-                        found = foundone(target);
+                        Util.getPlace(c).p_ch = ObjectType.PASSAGE;
+                        found = foundone(c);
                 }
             }
         }
