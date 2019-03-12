@@ -150,7 +150,7 @@ public class Move {
                 move_stuff(fl, nh);
             case TRAP:
                 ch = ObjectType.get((char) be_trapped(player, nh));
-                if (ch.getValue() == Const.T_DOOR || ch.getValue() == Const.T_TELEP) {
+                if (ch.getValue() == TrapEnum.T_DOOR.getValue() || ch.getValue() == TrapEnum.T_TELEP.getValue()) {
                     return;
                 }
                 move_stuff(fl, nh);
@@ -271,7 +271,7 @@ public class Move {
         ObjectType tr;
 
         if (player.containsState(StateEnum.ISLEVIT)) {
-            return Const.T_RUST;    /* anything that's not a door or teleport */
+            return TrapEnum.T_RUST.getValue();    /* anything that's not a door or teleport */
         }
         Global.running = false;
         Global.count = 0;
@@ -279,100 +279,105 @@ public class Move {
         pp.p_ch = ObjectType.TRAP;
         tr = ObjectType.get((char) (pp.p_flags & Const.F_TMASK));
         pp.p_flags |= Const.F_SEEN;
-        switch ((int) tr.getValue()) {
-            case Const.T_DOOR:
-                player.upstairs();
-                New_Level.new_level(player);
-                IOUtil.msg("you fell into a trap!");
-                break;
-            case Const.T_BEAR:
-                Global.no_move += Const.BEARTIME;
-                IOUtil.msg("you are caught in a bear trap");
-                break;
-            case Const.T_MYST:
-                switch (Util.rnd(11)) {
-                    case 0:
-                        IOUtil.msg("you are suddenly in a parallel dimension");
-                        break;
-                    case 1:
-                        // IOUtil.msg("the light in here suddenly seems %s", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 2:
-                        IOUtil.msg("you feel a sting in the side of your neck");
-                        break;
-                    case 3:
-                        IOUtil.msg("multi-colored lines swirl around you, then fade");
-                        break;
-                    case 4:
-                        // IOUtil.msg("a %s light flashes in your eyes", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 5:
-                        IOUtil.msg("a spike shoots past your ear!");
-                        break;
-                    case 6:
-                        // IOUtil.msg("%s sparks dance across your armor", rainbow[rnd(cNCOLORS)]);
-                        break;
-                    case 7:
-                        IOUtil.msg("you suddenly feel very thirsty");
-                        break;
-                    case 8:
-                        IOUtil.msg("you feel time speed up suddenly");
-                        break;
-                    case 9:
-                        IOUtil.msg("time now seems to be going slower");
-                        break;
-                    case 10:
-                        // IOUtil.msg("you pack turns %s!", rainbow[rnd(cNCOLORS)]);
-                    default:
-                        break;
-                }
-                break;
-            case Const.T_SLEEP:
-                Global.no_command += Const.SLEEPTIME;
-                player.removeState(StateEnum.ISRUN);
-                IOUtil.msg("a strange white mist envelops you and you fall asleep");
-                break;
-            case Const.T_ARROW:
-                if (Fight.swing(Global.player.getStatus().s_lvl - 1, Global.player.getStatus().s_arm, 1)) {
-                    player.deleteHp(Dice.roll(1, 6));
-                    if (player.getHp() <= 0) {
-                        IOUtil.msg("an arrow killed you");
-                        Rip.death('a');
-                    } else
-                        IOUtil.msg("oh no! An arrow shot you");
-                } else {
-                    arrow = new Weapon(WeaponEnum.ARROW, 0);
-                    arrow.addCount(1);
-                    arrow.setOPos(player.getPosition());
-                    WeaponMethod.fall(arrow, false);
-                    IOUtil.msg("an arrow shoots past you");
-                }
-                break;
-            case Const.T_TELEP:
-                /*
-                 * since the hero's leaving, look() won't put a TRAP
-                 * down for us, so we have to do it ourself
-                 */
-                Wizard.teleport(player);
-                Display.mvaddch(tc, ObjectType.TRAP.getValue());
-                break;
-            case Const.T_DART:
-                if (!Fight.swing(Global.player.getStatus().s_lvl + 1, Global.player.getStatus().s_arm, 1)) {
-                    IOUtil.msg("a small dart whizzes by your ear and vanishes");
-                } else {
-                    player.deleteHp(Dice.roll(1, 4));
-                    if (player.getHp() <= 0) {
-                        IOUtil.msg("a poisoned dart killed you");
-                        Rip.death('d');
+        TrapEnum e = TrapEnum.get(tr.getValue());
+        if(e != null) {
+            switch (e) {
+                case T_DOOR:
+                    player.upstairs();
+                    New_Level.new_level(player);
+                    IOUtil.msg("you fell into a trap!");
+                    break;
+                case T_BEAR:
+                    Global.no_move += Const.BEARTIME;
+                    IOUtil.msg("you are caught in a bear trap");
+                    break;
+                case T_MYST:
+                    switch (Util.rnd(11)) {
+                        case 0:
+                            IOUtil.msg("you are suddenly in a parallel dimension");
+                            break;
+                        case 1:
+                            // IOUtil.msg("the light in here suddenly seems %s", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 2:
+                            IOUtil.msg("you feel a sting in the side of your neck");
+                            break;
+                        case 3:
+                            IOUtil.msg("multi-colored lines swirl around you, then fade");
+                            break;
+                        case 4:
+                            // IOUtil.msg("a %s light flashes in your eyes", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 5:
+                            IOUtil.msg("a spike shoots past your ear!");
+                            break;
+                        case 6:
+                            // IOUtil.msg("%s sparks dance across your armor", rainbow[rnd(cNCOLORS)]);
+                            break;
+                        case 7:
+                            IOUtil.msg("you suddenly feel very thirsty");
+                            break;
+                        case 8:
+                            IOUtil.msg("you feel time speed up suddenly");
+                            break;
+                        case 9:
+                            IOUtil.msg("time now seems to be going slower");
+                            break;
+                        case 10:
+                            // IOUtil.msg("you pack turns %s!", rainbow[rnd(cNCOLORS)]);
+                        default:
+                            break;
                     }
-                    if (!SustainStrengthRing.isInclude(player.getRings()) && !Monst.save(Const.VS_POISON))
-                        Misc.chg_str(-1);
-                    IOUtil.msg("a small dart just hit you in the shoulder");
-                }
-                break;
-            case Const.T_RUST:
-                IOUtil.msg("a gush of water hits you on the head");
-                rust_armor(player);
+                    break;
+                case T_SLEEP:
+                    Global.no_command += Const.SLEEPTIME;
+                    player.removeState(StateEnum.ISRUN);
+                    IOUtil.msg("a strange white mist envelops you and you fall asleep");
+                    break;
+                case T_ARROW:
+                    if (Fight.swing(Global.player.getStatus().s_lvl - 1, Global.player.getStatus().s_arm, 1)) {
+                        player.deleteHp(Dice.roll(1, 6));
+                        if (player.getHp() <= 0) {
+                            IOUtil.msg("an arrow killed you");
+                            Rip.death('a');
+                        } else {
+                            IOUtil.msg("oh no! An arrow shot you");
+                        }
+                    } else {
+                        arrow = new Weapon(WeaponEnum.ARROW, 0);
+                        arrow.addCount(1);
+                        arrow.setOPos(player.getPosition());
+                        WeaponMethod.fall(arrow, false);
+                        IOUtil.msg("an arrow shoots past you");
+                    }
+                    break;
+                case T_TELEP:
+                    /*
+                     * since the hero's leaving, look() won't put a TRAP
+                     * down for us, so we have to do it ourself
+                     */
+                    Wizard.teleport(player);
+                    Display.mvaddch(tc, ObjectType.TRAP.getValue());
+                    break;
+                case T_DART:
+                    if (!Fight.swing(Global.player.getStatus().s_lvl + 1, Global.player.getStatus().s_arm, 1)) {
+                        IOUtil.msg("a small dart whizzes by your ear and vanishes");
+                    } else {
+                        player.deleteHp(Dice.roll(1, 4));
+                        if (player.getHp() <= 0) {
+                            IOUtil.msg("a poisoned dart killed you");
+                            Rip.death('d');
+                        }
+                        if (!SustainStrengthRing.isInclude(player.getRings()) && !Monst.save(Const.VS_POISON)) {
+                            Misc.chg_str(-1);
+                        }
+                        IOUtil.msg("a small dart just hit you in the shoulder");
+                    }
+                    break;
+                case T_RUST:
+                    IOUtil.msg("a gush of water hits you on the head");
+                    rust_armor(player);
+            }
         }
         Mach_dep.flush_type();
         return tr.getValue();

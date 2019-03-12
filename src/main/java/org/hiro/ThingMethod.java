@@ -388,10 +388,7 @@ public class ThingMethod {
      */
     public static boolean dropCheck() {
         ObjectType ch = Util.getPlace(Human.instance.getPosition()).p_ch;
-        if (ch != ObjectType.FLOOR && ch != ObjectType.PASSAGE) {
-            return false;
-        }
-        return true;
+        return ch == ObjectType.FLOOR || ch == ObjectType.PASSAGE;
     }
 
     /*

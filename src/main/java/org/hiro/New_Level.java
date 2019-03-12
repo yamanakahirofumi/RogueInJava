@@ -76,7 +76,7 @@ public class New_Level {
 
                 int sp = Util.flat(Global.stairs);
                 sp &= ~(Const.F_REAL | Const.F_TMASK);
-                sp |= Util.rnd(Const.NTRAPS);
+                sp |= Util.rnd(TrapEnum.count());
             }
         }
         /*
