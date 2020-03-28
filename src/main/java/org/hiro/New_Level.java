@@ -11,6 +11,7 @@ import org.hiro.things.OriginalMonster;
 import org.hiro.things.Thing;
 import org.hiro.things.ThingFactory;
 import org.hiro.things.ThingImp;
+import org.hiro.trap.TrapEnum;
 
 import java.util.ArrayList;
 

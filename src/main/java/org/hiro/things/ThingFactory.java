@@ -2,6 +2,20 @@ package org.hiro.things;
 
 import org.hiro.Global;
 import org.hiro.ThingMethod;
+import org.hiro.things.potiontype.BlindPotion;
+import org.hiro.things.potiontype.ConfusePotion;
+import org.hiro.things.potiontype.HastePotion;
+import org.hiro.things.potiontype.HealingPotion;
+import org.hiro.things.potiontype.LSDPotion;
+import org.hiro.things.potiontype.LevitPotion;
+import org.hiro.things.potiontype.MonsterFindPotion;
+import org.hiro.things.potiontype.PoisonPotion;
+import org.hiro.things.potiontype.RaisePotion;
+import org.hiro.things.potiontype.RestorePotion;
+import org.hiro.things.potiontype.SeeInvisiblePotion;
+import org.hiro.things.potiontype.StrengthPotion;
+import org.hiro.things.potiontype.TrapFindPotion;
+import org.hiro.things.potiontype.XHealingPotion;
 import org.hiro.things.ringtype.AddDamageRing;
 import org.hiro.things.ringtype.AddStrengthRing;
 import org.hiro.things.ringtype.AggravateMonsterRing;
@@ -53,7 +67,7 @@ public class ThingFactory {
     public static Thing create() {
         switch (Global.no_food > 3 ? 2 : ThingMethod.pick_one(Arrays.asList(Global.things))) {
             case 0:
-                return new Potion();
+                return createPotion();
             case 1:
                 return createScroll();
             case 2:
@@ -182,6 +196,42 @@ public class ThingFactory {
             case Adornment:
             default:
                 return new Ring();
+        }
+    }
+
+    private static Potion createPotion(){
+        PotionEnum s = PotionEnum.get(ThingMethod.pick_one(Arrays.asList(Global.pot_info)));
+        switch (s){
+            case Confuse:
+                return new ConfusePotion();
+            case LSD:
+                return new LSDPotion();
+            case Poison:
+                return new PoisonPotion();
+            case Strength:
+                return new StrengthPotion();
+            case SeeInvisible:
+                return new SeeInvisiblePotion();
+            case Healing:
+                return new HealingPotion();
+            case MonsterFind:
+                return new MonsterFindPotion();
+            case TrapFind:
+                return new TrapFindPotion();
+            case P_RAISE:
+                return new RaisePotion();
+            case P_XHEAL:
+                return new XHealingPotion();
+            case P_HASTE:
+                return new HastePotion();
+            case P_RESTORE:
+                return new RestorePotion();
+            case Blind:
+                return new BlindPotion();
+            case P_LEVIT:
+                return new LevitPotion();
+            default:
+                return new Potion();
         }
 
     }

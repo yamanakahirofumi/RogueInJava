@@ -1,4 +1,4 @@
-package org.hiro;
+package org.hiro.trap;
 
 import java.util.Arrays;
 
